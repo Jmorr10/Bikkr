@@ -1,0 +1,22 @@
+<div id="roomOptionsForm" data-target="#content" data-add="self" class="theme default">
+
+	<h1>Select Room Type</h1>
+	<input type="radio" class="radio" name="roomType" value="group" id="typeGroup" />
+	<label for="typeGroup">Group</label>
+		<div class="group-sub-options">
+			<input type="radio" class="radio" name="groupType" value="freeForAll" id="groupFreeForAll" />
+			<label for="groupFreeForAll">Free-for-all</label>
+			<input type="radio" class="radio" name="groupType" value="allForOne" id="groupAllForOne" />
+			<label for="groupAllForOne">All-for-one</label>
+		</div>
+	<input type="radio" class="radio" name="roomType" value="individual" id="typeIndividual" checked="" />
+	<label for="typeIndividual">Individual</label>
+	<input type="submit" id="submitRoomOptions">
+	<p class="error-lbl">{{errorTxt}}</p>
+	<script>
+		require(['app/view_room_options'], function (view_room_options) {
+			view_room_options.start();
+		});
+	</script>
+
+</div>

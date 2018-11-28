@@ -1,0 +1,11 @@
+<div id="roomNameForm" data-target="#content" data-add="self" class="theme default">
+	<p>Please enter a room name</p>
+	<input type="text" name="roomName" id="roomName" placeholder="Room Name">
+	<input type="submit" id="submitRoom">
+	<p class="error-lbl">{{errorTxt}}</p>
+	<script>
+		require(['app/view_roomname'], function (view_roomname) {
+			view_roomname.start();
+		});
+	</script>
+</div>
