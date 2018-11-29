@@ -31,7 +31,7 @@ requirejs.config({
     "baseUrl": "/static/js/lib",
     "paths": {
       "app": "../app",
-      "jquery": "//code.jquery.com/jquery-2.2.4.min",
+      "jquery": "./jquery-2.2.4.min",
       "handlebars": "//cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.11/handlebars.amd.min"
     }
 });

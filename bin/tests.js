@@ -3,10 +3,19 @@ const assert = require("assert");
 // This module must be loaded AFTER the server has been started.
 let Player;
 const Events = require('./event_types');
+const Room = require('./room');
+const RoomList = require('./room_list');
+const PlayerList = require('./player_list');
+const Group = require('./group');
+const TEST_ROOM = 'AAAA';
+const TEST_ROOM_INVALID = 'AAA';
+const EVENT_MESSAGE_TEST = "message_test";
 
 describe('loading express', function () {
     let server;
     let io = require('socket.io-client');
+    let sio;
+    let serverSocket;
     let socketURL = 'http://localhost:5000';
     let options ={
         transports: ['websocket'],
@@ -16,8 +25,16 @@ describe('loading express', function () {
     let testClient2;
 
     before(function () {
-        server = require('./www');
+        server = require('./www').server;
         Player = require("./player");
+        sio = require('./www').sio;
+
+    });
+
+    beforeEach(function () {
+        testClient = io.connect(socketURL, options);
+        RoomList.reset();
+        PlayerList.reset();
     });
 
     it('responds to /teacher', function testSlash(done) {
@@ -33,15 +50,17 @@ describe('loading express', function () {
             .expect(404, done);
     });
 
+    // TODO: Students can't create rooms
+
     it('processes room creation requests', function testCreateRoom(done) {
         testClient = io.connect(socketURL, options);
-        testClient.emit(Events.CLIENT_CONNECTED);
+        testClient.emit(Events.CLIENT_CONNECTED, true);
 
         let nameTooShort = false;
 
         testClient.on(Events.RENDER_TEMPLATE, checkRoomNameLen);
 
-        testClient.emit(Events.NEW_ROOM, 'AAA');
+        testClient.emit(Events.NEW_ROOM, TEST_ROOM_INVALID);
 
         testClient.on(Events.ROOM_JOINED, function () {
             if (!nameTooShort) {
@@ -59,9 +78,124 @@ describe('loading express', function () {
             }
 
             testClient.removeListener(Events.RENDER_TEMPLATE, checkRoomNameLen);
-            testClient.emit(Events.NEW_ROOM, 'AAAA');
+            testClient.emit(Events.NEW_ROOM, TEST_ROOM);
         }
     });
+
+    it('handles duplicate room names', function testCreateRoom(done) {
+
+        function testFunc() {
+            testClient = io.connect(socketURL, options);
+            testClient.emit(Events.CLIENT_CONNECTED, true);
+            testClient.emit(Events.NEW_ROOM, TEST_ROOM);
+
+            testClient.on(Events.ROOM_JOINED, function (template, roomID) {
+                if (roomID && roomID === TEST_ROOM) {
+                    throw Error("Failed.");
+
+                } else if (roomID) {
+                    done();
+                }
+            });
+        }
+
+
+        createRoom(testFunc);
+    });
+
+    it('handles room option request - individual', function testRoomOptions(done) {
+
+        function sendOptions() {
+            testClient.on(Events.ROOM_SET_UP, testFunc);
+            testClient.emit(Events.ROOM_SETUP, TEST_ROOM, Room.TYPE_INDIVIDUAL, {});
+        }
+
+        function testFunc() {
+            done();
+        }
+
+        createRoom(sendOptions);
+
+    });
+
+    it('handles room option request - group', function testRoomOptions(done) {
+
+        function sendOptions() {
+            testClient.on(Events.ROOM_SET_UP, testFunc);
+            testClient.emit(Events.ROOM_SETUP, TEST_ROOM, Room.TYPE_GROUP, {groupType: Group.TYPE_ALL_FOR_ONE });
+        }
+
+        function testFunc() {
+            done();
+        }
+
+        createRoom(sendOptions);
+
+    });
+
+    it('allows students to join a room', function testStudentJoinRoom(done) {
+        function testFunc() {
+            testClient2 = io.connect(socketURL, options);
+            testClient2.emit(Events.CLIENT_CONNECTED, false);
+            testClient2.on(Events.ROOM_JOINED, finish);
+            testClient2.emit(Events.JOIN_ROOM, TEST_ROOM);
+        }
+
+        function finish() {
+            done();
+        }
+
+        createRoom(testFunc);
+
+    });
+
+    it('emits events to an entire room', function testRoomBroadcast(done) {
+        function testFunc() {
+
+            testClient2 = io.connect(socketURL, options);
+            testClient2.emit(Events.CLIENT_CONNECTED, false);
+            testClient2.on(Events.ROOM_JOINED, nextStep);
+            testClient2.emit(Events.JOIN_ROOM, TEST_ROOM);
+
+        }
+
+        function nextStep() {
+            testClient.on(EVENT_MESSAGE_TEST, finish1);
+            testClient2.on(EVENT_MESSAGE_TEST, finish2);
+            sio.to(TEST_ROOM).emit(EVENT_MESSAGE_TEST);
+        }
+
+        let t1 = false;
+        let t2 = false;
+        function finish1() {
+            t1 = true;
+            finish3();
+        }
+        function finish2() {
+            t2 = true;
+            finish3();
+        }
+        function finish3() {
+            if (t1 && t2) {
+                done();
+            }
+        }
+
+        createRoom(testFunc);
+
+    });
+
+
+    function createRoom(testFunc) {
+        testClient = io.connect(socketURL, options);
+        testClient.emit(Events.CLIENT_CONNECTED, true);
+
+        testClient.emit(Events.NEW_ROOM, TEST_ROOM);
+
+        testClient.on(Events.ROOM_JOINED, function () {
+            testFunc();
+        });
+    }
 
     /*
 

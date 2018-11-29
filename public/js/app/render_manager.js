@@ -41,7 +41,7 @@ define(['jquery'], function(jQ) {
      *      2. If found, set our render target to that value. If not, use the id attribute on the element
      *      3. Checks for the data-add attribute.
      *      4. If found, the render target will be replaced by the root-level element. If not, the render target will be
-     *      emptied, and the root-level element' children will be added to the render target.
+     *      emptied, and the root-level element's children will be added to the render target.
      *
      *      Note: if an element doesn't have either a data-target attribute or an id attribute, it will not be rendered.
      *

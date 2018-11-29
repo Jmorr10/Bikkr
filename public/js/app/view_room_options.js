@@ -33,29 +33,32 @@
  * @version 1.0
  * @since 1.0
  */
-define(['jquery', 'app/socket_manager', 'app/player',  'app/render_manager', 'event_types'],
-	function (jQ, socketManager, Player, roomOptions, username, render_manager, Events) {
+define(['jquery', 'app/socket_manager', 'app/player', 'app/view_sound_grid', 'app/render_manager', 'event_types'],
+	function (jQ, socketManager, Player, soundGrid, render_manager, Events) {
 
 	const socket = socketManager.getConnection();
-	let player = Player.getPlayer();
+	let player;
 
 	let submitBtn;
 	let roomTypeField;
-	let groupType;
+	let roomID;
 	let errorLbl;
 
 	const TYPE_GROUP = "typeGroup";
 	const ERR_CHOOSE_GROUP_TYPE = "Please choose a group type!";
 
-	function start() {
+	// TODO: Consider adding an invisible field/input to the template to provide the room number instead of hacky-templated-JS
+	function start(rID) {
 
-        submitBtn = jQ('#submitRoom');
+		roomID = rID;
+        submitBtn = jQ('#submitRoomOptions');
         roomTypeField = jQ('input[name="roomType"]:checked').val();
         errorLbl = jQ('.error-lbl');
 
 		submitBtn.click(submitOptions);
 
 		socket.on(Events.ROOM_SET_UP, finish);
+        player = Player.getPlayer();
 
 	}
 
@@ -74,7 +77,7 @@ define(['jquery', 'app/socket_manager', 'app/player',  'app/render_manager', 'ev
 		}
 
 		if (fieldValid) {
-			socket.emit(Events.ROOM_SETUP, roomTypeField, options);
+			socket.emit(Events.ROOM_SETUP, roomID, roomTypeField, options);
 		}
 
 	}
@@ -86,9 +89,7 @@ define(['jquery', 'app/socket_manager', 'app/player',  'app/render_manager', 'ev
 	function finish (template) {
         render_manager.renderResponse(template);
 		if (player.isTeacher) {
-			roomOptions.start();
-		} else {
-			username.start();
+			soundGrid.start();
 		}
 	}
 

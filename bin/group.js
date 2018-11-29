@@ -24,52 +24,34 @@
 
 "use strict";
 
-/** @module player **/
+/** @module group **/
 
-const debug = require('debug')('BoinKikuRenshuu:player');
-const PlayerList = require('./player_list');
-const RoomList = require('./room_list');
+const debug = require('debug')('BoinKikuRenshuu:group');
 const Util = require('./util');
+const TYPE_FREE_FOR_ALL = "ffa";
+const TYPE_ALL_FOR_ONE = "afo";
+const KEY_GROUP_TYPE = 'groupType';
 
 /**
- * Represents a player and its state.
+ * Represents a group and its state.
  *
  * @author Joseph Morris <JRM.Softworks@gmail.com>
  * @version 1.0
  * @since 1.0
  * @class
  */
-class Player {
+class Group {
 
     /**
-     * Creates a player instance and sets its default state.
+     * Creates a group instance and sets its default state.
      *
-     * @param socketID The socket which the player instance will represent
-     * @param isTeacher Whether or not this player is the teacher
+     * @param groupID The group's ID
      */
-    constructor(socketID, isTeacher) {
-        this.id = socketID;
-        this.isTeacher = (isTeacher === true);
-        this.name = this.isTeacher ? "Teacher" : "";
+    constructor(groupID) {
+        this.id = groupID;
+        this.type = TYPE_ALL_FOR_ONE;
+        this.players = {};
         this._points = 0;
-    }
-
-    set name(name) {
-        this._name = name.charAt(0).toUpperCase() + name.slice(1);
-    }
-
-    get name() {
-        return this._name;
-    }
-
-    set socket(socket) {
-        if (socket) {
-            this._socket = socket;
-        }
-    }
-
-    get socket() {
-        return (this._socket) ? this._socket : PlayerList.getPlayerBySocketID(this.id);
     }
 
     get points() {
@@ -101,33 +83,49 @@ class Player {
         this._points = 0;
     }
 
-    getRooms() {
-        let rooms = RoomList.getList();
-        let playerRooms = [];
-        for (const [key, val] of Object.entries(rooms)) {
-            if (val.hasPlayer(this)) {
-                playerRooms.push(val);
-            }
-        }
-
-        return playerRooms;
+    get playerCount() {
+        return Util.getLen(this.players);
     }
 
-    getGroups() {
-        let playerRooms = this.getRooms();
-        let playerGroups = {};
-        for (let i = 0; i < playerRooms.length; i++) {
-            let room = playerRooms[i];
-            for (const [key, group] of Object.entries(room.groups)) {
-                if (group.hasPlayer(this)) {
-                    playerGroups[room.id] = group;
-                }
-            }
+    /**
+     * Adds a player to this group and joins the group socket room
+     *
+     * @param player {Player} The Player class-instance to add to the group
+     */
+    addPlayer(player) {
+        if (player.socket) {
+            player.socket.join(`${player.id}@${this.id}`);
+            this.players[player.id] = player;
         }
+    }
 
-        return playerGroups;
+    /**
+     * Removes a player from this group and leaves the group socket room
+     *
+     * @param player {Player} THe Player class-instance to remove from the group
+     */
+    removePlayer(player) {
+        if (player.hasOwnProperty('id')) {
+            player.socket.leave(`${player.id}@${this.id}`);
+            delete this.players[player.id];
+        }
+    }
+
+    /**
+     * Whether or not this group contains the given Player
+     *
+     * @param player {Player} The Player class-instance to check for
+     * @returns {boolean} Whether or not the Player is in the group.
+     */
+    hasPlayer(player) {
+        return player.hasOwnProperty('id') && Util.hasKey(this.players, player.id);
     }
 
 }
 
-module.exports = Player;
+module.exports = {
+    Group: Group,
+    TYPE_ALL_FOR_ONE: TYPE_ALL_FOR_ONE,
+    TYPE_FREE_FOR_ALL: TYPE_FREE_FOR_ALL,
+    KEY_GROUP_TYPE: KEY_GROUP_TYPE
+};

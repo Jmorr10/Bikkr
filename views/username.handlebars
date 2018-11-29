@@ -1,7 +1,11 @@
-<h1>Username!</h1>
-<p class="error-lbl">{{errorTxt}}</p>
-<script>
-	require(['app/view_userame'], function (view_username) {
-		view_username.start();
-	});
-</script>
+<div id="usernameForm" data-target="#content" data-add="self">
+	<p>Please enter a username</p>
+	<input type="text" name="username" id="username" placeholder="Username">
+	<input type="submit" id="submitUsername">
+	<p class="error-lbl">{{errorTxt}}</p>
+	<script>
+		require(['app/view_userame'], function (view_username) {
+			view_username.start('{{roomID}}');
+		});
+	</script>
+</div>

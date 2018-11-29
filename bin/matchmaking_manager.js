@@ -42,6 +42,23 @@ const PlayerList = require('./player_list');
 const RoomList = require('./room_list');
 const TemplateManager = require('./template_manager');
 
+const RoomModule = require('./room');
+const Room = RoomModule.Room;
+const RoomTypes = {
+    TYPE_GROUP: RoomModule.TYPE_GROUP,
+    TYPE_INDIVIDUAL: RoomModule.TYPE_INDIVIDUAL
+};
+
+const GroupModule = require('./group');
+const Group = GroupModule.Group;
+const GroupTypes = {
+    TYPE_ALL_FOR_ONE: GroupModule.TYPE_ALL_FOR_ONE,
+    TYPE_FREE_FOR_ALL: GroupModule.TYPE_FREE_FOR_ALL
+};
+
+const ERR_ROOM_NAME_REQUIRED = 'You must enter a room name to begin!';
+const ERR_MUST_BE_TEACHER = 'Students cannot create rooms!';
+
 /**
  * Creates a player instance for the newly connected client and add it to the player list
  *
@@ -53,12 +70,12 @@ function clientConnected(socket, isTeacher) {
 
     let new_player = new Player(socket.id, isTeacher);
     new_player.socket = socket;
-    PlayerList.addPlayer(new_player, socket.id);
+    PlayerList.addPlayer(new_player);
 
     TemplateManager.sendPrecompiledTemplate(socket.id, 'roomname', {isTeacher: isTeacher});
 
     debug(`Client ${socket.id} has connected!`);
-    debug(`Players connected: ${PlayerList.getLen()}`);
+    debug(`Players connected: ${PlayerList.getLength()}`);
 
 }
 
@@ -70,11 +87,34 @@ function clientConnected(socket, isTeacher) {
  */
 function clientDisconnected(socket) {
 
-    //Just need player2, so the first is a dummy.
-    // noinspection JSUnusedLocalSymbols
+    let player = PlayerList.getPlayerBySocketID(socket.id);
+    if (player && player.isTeacher) {
+        RoomList.destroyRooms(player);
+        PlayerList.removePlayer(player);
+    }
+
+    if (player) {
+        PlayerList.removePlayer(player);
+
+        let playerGroups = player.getGroups();
+        for (const [roomID, group] of Object.entries(playerGroups)) {
+            group.removePlayer(player);
+            // TODO Implement this
+            TemplateManager.sendPrecompiledTemplate(roomID, 'partials/group_player_list', {players: group.players})
+        }
+
+        let playerRooms = player.getRooms();
+        for (let i = 0; i < playerRooms.length; i++) {
+            let room = playerRooms[i];
+            room.removePlayer(player);
+            TemplateManager.sendPrecompiledTemplate(room.id, 'partials/player_list', {players: room.players})
+        }
+
+    }
+
 
     debug(`Client ${socket.id} has disconnected!`);
-    debug(`Players connected: ${PlayerList.getLen()}`);
+    debug(`Players connected: ${PlayerList.getLength()}`);
 
 }
 
@@ -90,46 +130,67 @@ function createRoom(socket, roomName) {
     let roomExists = RoomList.roomExists(roomName);
     let player = PlayerList.getPlayerBySocketID(socket.id);
 
+    if (!player.isTeacher) {
+        TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: ERR_MUST_BE_TEACHER});
+        return;
+    }
 
     if (validName && !roomExists) {
-        RoomList.addRoom(roomName);
-        RoomList.addPlayer(roomName, socket.id);
+        let room = new Room(roomName, player);
+        RoomList.addRoom(room);
+        room.owner = player;
+        room.addPlayer(player);
 
         debug(`Room Created: ${roomName}`);
-
-        if (player.isTeacher) {
-            debug(`Sent room options`);
-            TemplateManager.emitWithTemplate(socket.id, 'room_options', {}, Events.ROOM_JOINED);
-        } else {
-            debug(`Sent username selection`);
-            TemplateManager.emitWithTemplate(socket.id, 'username', {}, Events.ROOM_JOINED);
-        }
+        debug(`Sent room options`);
+        TemplateManager.emitWithTemplate(socket.id, 'room_options', {roomID: roomName}, Events.ROOM_JOINED, roomName);
 
     } else if (roomExists) {
         roomName += "123456789".charAt(Math.floor(Math.random() * 10));
         createRoom(socket, roomName);
     } else {
-        TemplateManager.sendPrecompiledTemplate(socket.id, 'error', {errorTxt: 'You must enter a room name to begin!'});
+        TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: ERR_ROOM_NAME_REQUIRED});
     }
 
 }
 
-function setupRoom(socket, roomType, options) {
-    const TYPE_GROUP = "typeGroup";
-    const TYPE_INDIVIDUAL = "typeIndividual";
+function setupRoom(socket, roomID, roomType, options) {
 
     let player = PlayerList.getPlayerBySocketID(socket.id);
+    let room = RoomList.getRoomByID(roomID);
 
-    if (roomType === TYPE_INDIVIDUAL) {
-        if (player.isTeacher) {
-
-        } else {
-
+    if (player.isTeacher) {
+        if (roomType === RoomTypes.TYPE_INDIVIDUAL) {
+            room.type = RoomTypes.TYPE_INDIVIDUAL;
+        } else if (roomType === RoomTypes.TYPE_GROUP) {
+            room.type = RoomTypes.TYPE_GROUP;
+            options = options || {};
+            room.groupType = (
+                options.hasOwnProperty(GroupModule.KEY_GROUP_TYPE) && options.groupType === GroupTypes.TYPE_FREE_FOR_ALL)
+                ? GroupTypes.TYPE_FREE_FOR_ALL : GroupTypes.TYPE_ALL_FOR_ONE;
         }
-    } else if (roomType === TYPE_GROUP) {
-
     }
 
+    debug(`Room Setup: ${room.id} - ${room.type} - ${room.groupType}`);
+
+    TemplateManager.emitWithTemplate(player.id, 'sound_grid', {players: PlayerList.getList()}, Events.ROOM_SET_UP);
+
+}
+
+
+function joinRoom(socket, roomID) {
+    let player = PlayerList.getPlayerBySocketID(socket.id);
+    if (!player.isTeacher) {
+            let room = RoomList.getRoomByID(roomID);
+            if (room) {
+                room.addPlayer(player);
+                debug(`Sent username selection`);
+                TemplateManager.emitWithTemplate(socket.id, 'username', {roomID: room.id}, Events.ROOM_JOINED, room.id);
+            } else {
+                TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: 'Incorrect room name!'});
+            }
+
+    }
 }
 
 
@@ -140,32 +201,39 @@ function setupRoom(socket, roomType, options) {
  * @returns {*|boolean} Whether or not the name is valid
  */
 function isNameValid(name) {
-    return (name && name !== "" && name.length >= 4);
+    return (name && name !== "" && name.length >= 4) && !PlayerList.hasPlayerByName(name);
 }
 
 /**
- * Set a player's username (after validation) and sends them to the waiting room upon validation.
+ * Set a player's username (after validation) and sends them to the room upon validation.
  *
  * @param socket The socket of the player that is logging in
  * @param username The player's desired username
  */
-function setUsername(socket, username) {
+function setUsername(socket, roomID, username) {
 
     if (isNameValid(username)) {
         let player = PlayerList.getPlayerBySocketID(socket.id);
         if (player) {
-            player.name = username;
-            TemplateManager.emitWithTemplate(socket.id, 'waitingRoom',
-                {username: player.name, inviteCode: player.inviteCode}, Events.LOGIN_SUCCESS, player.inviteCode);
+            let room = RoomList.getRoomByID(roomID);
+            if (room) {
+                player.name = username;
+                TemplateManager.sendPrecompiledTemplate(roomID, 'partials/player_list', {players: room.players});
+                let template = (room.type === RoomTypes.TYPE_GROUP) ? 'group_selection' : 'sound_grid_student';
+                TemplateManager.emitWithTemplate(socket.id, template, {roomID: room.id}, Events.USERNAME_OK);
+            }
         } else {
-            TemplateManager.sendPrecompiledTemplate(socket.id, 'error', {errorTxt: 'No matching user'});
+            TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: 'No matching user'});
         }
 
     } else {
         if (username && username.length < 4) {
-            TemplateManager.sendPrecompiledTemplate(socket.id, 'error', {errorTxt: 'Your username must be at least 4 characters in length.'});
-        } else {
-            TemplateManager.sendPrecompiledTemplate(socket.id, 'error', {errorTxt: 'You must enter a username to begin!'});
+            TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: 'Your username must be at least 4 characters in length.'});
+        } else if (PlayerList.hasPlayerByName(username)) {
+            TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: 'Username already in use.'});
+        }
+        else {
+            TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: 'You must enter a username to begin!'});
         }
     }
 
@@ -175,5 +243,7 @@ module.exports = {
     clientConnected: clientConnected,
     clientDisconnected: clientDisconnected,
     setUsername: setUsername,
-    createRoom: createRoom
+    createRoom: createRoom,
+    setupRoom: setupRoom,
+    joinRoom: joinRoom
 };

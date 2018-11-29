@@ -34,9 +34,8 @@
  */
 define(['app/socket_manager'], function (socketManager) {
 	
-	let socket = socketManager.getConnection();
+	let socket;
 	let selfPlayer;
-	let initialized;
 
     /**
      * Represents a client-side player and its state.
@@ -61,6 +60,7 @@ define(['app/socket_manager'], function (socketManager) {
 			return this._name;
 		}
 
+		// TODO - Clean this up...
 		set state(state) {
 			this._state = state;
 			if (this.id === "" && state.id) {
@@ -77,8 +77,9 @@ define(['app/socket_manager'], function (socketManager) {
 
 	}
 
-	function resetPlayers() {
-        selfPlayer = new Player(socket.id, this.isTeacher);
+	function initializePlayer(isTeacher) {
+        socket = socketManager.getConnection();
+        selfPlayer = new Player(socket.id, isTeacher);
 	}
 
     function getPlayer() {
@@ -87,7 +88,7 @@ define(['app/socket_manager'], function (socketManager) {
 
 	return {
 		getPlayer: getPlayer,
-		resetPlayers: resetPlayers
+		initializePlayer: initializePlayer
 	}
 
 });

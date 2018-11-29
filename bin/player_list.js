@@ -40,17 +40,29 @@
  * @private
  * @type {{}}
  */
+
+const Util = require('./util');
 let players = {};
 
-function addPlayer(player, socketID) {
-    if (player && socketID && socketID !== "") {
-        players[socketID] = player;
+/**
+ * Adds a Player instance to the player list
+ *
+ * @param player {Player} The Player class-instance to add to the list
+ */
+function addPlayer(player) {
+    if (player && player.id !== "") {
+        players[player.id] = player;
     }
 }
 
-function removePlayer(socketID) {
-    if (socketID && socketID !== "" && hasKey(socketID)) {
-        delete players[socketID];
+/**
+ * Removes a Player instance from the player list
+ *
+ * @param player {Player} The Player class-instance to remove from the list
+ */
+function removePlayer(player) {
+    if (player && player.id !== "") {
+        delete players[player.id];
     }
 }
 
@@ -58,7 +70,7 @@ function getPlayerBySocketID(socketID) {
 
     let player;
 
-    if (hasKey(socketID)) {
+    if (Util.hasKey(players, socketID)) {
         player =  players[socketID];
     }
 
@@ -66,35 +78,35 @@ function getPlayerBySocketID(socketID) {
 
 }
 
-/**
- * A shorthand alias to help keep the code a little cleaner.
- *
- * @param socketID
- * @returns {boolean}
- */
+function hasPlayerByName(name) {
+    for (const [key, val] of Object.entries(players)) {
+        if (val.name.toLowerCase() === name.toLowerCase()) {
+            return true;
+        }
+    }
 
-function hasKey(socketID) {
-    return players.hasOwnProperty(socketID);
-}
-
-/**
- * Get the number of active players.
- *
- * @returns {number} Number of active players
- */
-function getLen() {
-    return Object.keys(players).length;
+    return false;
 }
 
 function getList() {
     return players;
 }
 
+function getLength() {
+    return Util.getLen(players);
+}
+
+function reset() {
+    players = {};
+}
+
 module.exports = {
     addPlayer: addPlayer,
     removePlayer: removePlayer,
     getPlayerBySocketID: getPlayerBySocketID,
-    getLen: getLen,
-    getList: getList
+    getList: getList,
+    getLength: getLength,
+    reset: reset,
+    hasPlayerByName: hasPlayerByName
 };
 

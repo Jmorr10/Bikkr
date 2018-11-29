@@ -41,11 +41,13 @@ const LOGIN_SUCCESS = "login_success";
 
 const CLIENT_CONNECTED = 'client_connected';
 const NEW_ROOM = 'new_room';
+const JOIN_ROOM = 'join_room';
 const ROOM_JOINED = "room_joined";
 const ROOM_SETUP = "room_setup";
 const ROOM_SET_UP = "room_set_up";
-const NEW_PLAYER = 'new_player';
-const GAME_DISCONNECTED = 'game_disconnected';
+const SET_USERNAME = 'set_username';
+const USERNAME_OK = 'username_ok';
+const HOST_DISCONNECTED = 'host_disconnected';
 
 // GUI
 const RENDER_TEMPLATE = "render_template";
@@ -56,10 +58,12 @@ module.exports = {
     LOGIN_SUCCESS: LOGIN_SUCCESS,
     CLIENT_CONNECTED: CLIENT_CONNECTED,
     NEW_ROOM: NEW_ROOM,
+    JOIN_ROOM: JOIN_ROOM,
     ROOM_JOINED: ROOM_JOINED,
     ROOM_SETUP: ROOM_SETUP,
     ROOM_SET_UP: ROOM_SET_UP,
-    NEW_PLAYER: NEW_PLAYER,
-    GAME_DISCONNECTED: GAME_DISCONNECTED,
+    SET_USERNAME: SET_USERNAME,
+    USERNAME_OK: USERNAME_OK,
+    HOST_DISCONNECTED: HOST_DISCONNECTED,
     RENDER_TEMPLATE: RENDER_TEMPLATE,
 };

@@ -32,8 +32,8 @@
  * @version 1.0
  * @since 1.0
  */
-define(['jquery', 'app/socket_manager', 'app/render_manager', 'event_types'],
-	function (jQ, socketManager, render_manager, Events) {
+define(['jquery', 'app/socket_manager', 'app/render_manager', 'app/player', 'event_types'],
+	function (jQ, socketManager, render_manager, Player, Events) {
 	
 	let socket = socketManager.getConnection();
 
@@ -44,7 +44,6 @@ define(['jquery', 'app/socket_manager', 'app/render_manager', 'event_types'],
 
 		// Let the server know we are connecting as a new player. This will kick off the application.
 		socket.emit('client_connected', isTeacher);
-
 	}
 
 	function preload(imageArray, callbk, index) {

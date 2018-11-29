@@ -24,51 +24,52 @@
 
 "use strict";
 
-/** @module app/view_username**/
+/** @module app/view_roomname**/
 
 /**
- * This module handles user interactions on the username screen.
+ * This module handles user interactions on the roomname screen.
  *
  * @author Joseph Morris <JRM.Softworks@gmail.com>
  * @version 1.0
  * @since 1.0
  */
-define(['jquery', 'app/socket_manager', 'app/view_group_selection', 'app/view_sound_grid_student', 'app/render_manager', 'event_types'],
-	function (jQ, socketManager, groupSelection, soundGridStudent, render_manager, Events) {
+define(['jquery', 'app/socket_manager', 'app/player', 'app/view_room_options', 'app/view_username', 'app/render_manager', 'event_types'],
+	function (jQ, socketManager, Player, roomOptions, username, render_manager, Events) {
 
 	const socket = socketManager.getConnection();
+	let player = Player.getPlayer();
 
 	let submitBtn;
-	let usernameField;
+	let roomNameField;
 	let errorLbl;
-	let roomID;
 
-	const ERR_NO_USERNAME = 'Please enter a username to begin!';
+	const ERR_NO_ROOMNAME = 'Please enter a room name to begin!';
 	
-	function start(rID) {
-		roomID = rID;
-        submitBtn = jQ('#submitUsername');
-        usernameField = jQ('#username');
+	function start() {
+
+        submitBtn = jQ('#submitRoom');
+        roomNameField = jQ('#roomName');
         errorLbl = jQ('.error-lbl');
 
 		submitBtn.click(signIn);
 
-		usernameField.keypress(function (e) {
+		roomNameField.keypress(function (e) {
             if (e.which === 13) {
                 signIn();
             }
         });
 		
-		socket.on(Events.USERNAME_OK, finish);
+		socket.on(Events.ROOM_JOINED, finish);
+
 	}
 
 
 	function signIn () {
-		let username = usernameField.val();
-		if (username && username !== '') {
-			socket.emit(Events.SET_USERNAME, roomID, username);
+		let roomname = roomNameField.val();
+		if (roomname && roomname !== '') {
+			socket.emit(Events.NEW_ROOM, roomname);
 		} else {
-			setError(ERR_NO_USERNAME);
+			setError(ERR_NO_ROOMNAME);
 		}
 	}
 
@@ -76,12 +77,12 @@ define(['jquery', 'app/socket_manager', 'app/view_group_selection', 'app/view_so
 		errorLbl.text(errorTxt);
 	}
 
-	function finish (template) {
+	function finish (template, roomID) {
         render_manager.renderResponse(template);
-        if (template.indexOf('group') !== -1) {
-        	//groupSelection.start();
+		if (player.isTeacher) {
+			roomOptions.start(roomID);
 		} else {
-        	//soundGridStudent.start();
+			username.start(roomID);
 		}
 	}
 

@@ -25,32 +25,39 @@
 "use strict";
 
 /**
- * Adds listeners for matchmaking-related events to the socket connection
+ * Provides utility methods to keep code cleaner
  *
  * @author Joseph Morris <JRM.Softworks@gmail.com>
  * @version 1.0
  * @since 1.0
  */
 
-/** @module matchmaking_events **/
-
-const Events = require('./event_types');
-const MatchmakingManager = require('./matchmaking_manager');
+/** @module util **/
 
 /**
- * Adds listeners to the socket
+ * A shorthand alias to help keep the code a little cleaner.
  *
- * @param socket The socket connection to listen on.
+ * @param obj The object being used
+ * @param key The key being looked for
+ * @returns {boolean}
  */
-function addSocketListeners (socket) {
 
-    socket.on(Events.CLIENT_CONNECTED, MatchmakingManager.clientConnected.bind(null, socket));
-    socket.on(Events.DISCONNECT, MatchmakingManager.clientDisconnected.bind(null, socket));
-    socket.on(Events.SET_USERNAME, MatchmakingManager.setUsername.bind(null, socket));
-    socket.on(Events.NEW_ROOM, MatchmakingManager.createRoom.bind(null, socket));
-    socket.on(Events.JOIN_ROOM, MatchmakingManager.joinRoom.bind(null, socket));
-    socket.on(Events.ROOM_SETUP, MatchmakingManager.setupRoom.bind(null, socket));
-
+function hasKey(obj, key) {
+    return obj.hasOwnProperty(key);
 }
 
-module.exports = addSocketListeners;
+/**
+ * Get the number of keys in an object.
+ *
+ * @param obj The object being counted
+ * @returns {number} Number of active rooms
+ */
+function getLen(obj) {
+    return Object.keys(obj).length;
+}
+
+
+module.exports =  {
+    hasKey: hasKey,
+    getLen: getLen
+};

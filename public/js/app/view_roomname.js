@@ -37,7 +37,7 @@ define(['jquery', 'app/socket_manager', 'app/player', 'app/view_room_options', '
 	function (jQ, socketManager, Player, roomOptions, username, render_manager, Events) {
 
 	const socket = socketManager.getConnection();
-	let player = Player.getPlayer();
+	let player;
 
 	let submitBtn;
 	let roomNameField;
@@ -61,13 +61,16 @@ define(['jquery', 'app/socket_manager', 'app/player', 'app/view_room_options', '
 		
 		socket.on(Events.ROOM_JOINED, finish);
 
+		player = Player.getPlayer();
+
 	}
 
 
 	function signIn () {
 		let roomname = roomNameField.val();
 		if (roomname && roomname !== '') {
-			socket.emit(Events.NEW_ROOM, roomname);
+			let event = (player.isTeacher) ? Events.NEW_ROOM : Events.JOIN_ROOM;
+			socket.emit(event, roomname);
 		} else {
 			setError(ERR_NO_ROOMNAME);
 		}
@@ -77,12 +80,12 @@ define(['jquery', 'app/socket_manager', 'app/player', 'app/view_room_options', '
 		errorLbl.text(errorTxt);
 	}
 
-	function finish (template) {
+	function finish (template, roomID) {
         render_manager.renderResponse(template);
 		if (player.isTeacher) {
-			roomOptions.start();
+			roomOptions.start(roomID);
 		} else {
-			username.start();
+			username.start(roomID);
 		}
 	}
 

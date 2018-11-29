@@ -4,7 +4,8 @@
 	<input type="submit" id="submitRoom">
 	<p class="error-lbl">{{errorTxt}}</p>
 	<script>
-		require(['app/view_roomname'], function (view_roomname) {
+		require(['app/view_roomname', 'app/player'], function (view_roomname, Player) {
+			Player.initializePlayer({{isTeacher}});
 			view_roomname.start();
 		});
 	</script>
