@@ -27,7 +27,7 @@
 /** @module room **/
 
 const debug = require('debug')('BoinKikuRenshuu:room');
-const util = require('./util');
+const Util = require('./util');
 const Events = require('./event_types');
 const Group = require('./group');
 const TYPE_GROUP = "group";
@@ -56,20 +56,24 @@ class Room {
         this.players = {};
         this.groups = {};
         this.groupType = Group.TYPE_ALL_FOR_ONE;
+        this.groupsAssigned = false;
+        this.setUp = false;
     }
 
     get playerCount() {
-        return util.getLen(this.players);
+        return Util.getLen(this.players);
     }
 
     get groupCount() {
-        return util.getLen(this.groups);
+        return Util.getLen(this.groups);
     }
 
-    addPlayer(player) {
+    addPlayer(player, isTeacher) {
         if (player.socket) {
             player.socket.join(this.id);
-            this.players[player.id] = player;
+            if (!isTeacher) {
+                this.players[player.id] = player;
+            }
         }
     }
 
@@ -93,15 +97,43 @@ class Room {
     }
 
     hasPlayer(player) {
-        return player.hasOwnProperty('id') && util.hasKey(this.players, player.id);
+        return player.hasOwnProperty('id') && Util.hasKey(this.players, player.id);
     }
 
     hasGroup(group) {
-        return group.hasOwnProperty('id') && util.hasKey(this.groups, group.id);
+        return group.hasOwnProperty('id') && Util.hasKey(this.groups, group.id);
     }
 
     destroy() {
         this.owner.socket.to(this.id).emit(Events.HOST_DISCONNECTED);
+    }
+
+    findGroupByPlayer(player) {
+        let noMatch = false;
+
+        if (player && this.hasPlayer(player)) {
+            for (const [k, v] of Object.entries(this.groups)) {
+                if (v.hasPlayer(player)) {
+                    return v;
+                }
+            }
+        }
+
+        return noMatch;
+    }
+
+    assignPlayerToGroup(player, exceedBase) {
+        // TODO: This is super sad and hackey...
+        for (const [k,v] of Object.entries(this.groups)) {
+            if (v.playerCount < v.baseNumber || exceedBase) {
+                v.addPlayer(this, player);
+                debug(`Added ${player.name} to ${v.id}`);
+                return v;
+            }
+        }
+
+        //If we reach this point, we need to make another loop to add the player to next group.
+        return this.assignPlayerToGroup(player, true);
     }
 
 }

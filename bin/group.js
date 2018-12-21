@@ -28,9 +28,12 @@
 
 const debug = require('debug')('BoinKikuRenshuu:group');
 const Util = require('./util');
-const TYPE_FREE_FOR_ALL = "ffa";
-const TYPE_ALL_FOR_ONE = "afo";
+const TYPE_FREE_FOR_ALL = "freeForAll";
+const TYPE_ALL_FOR_ONE = "allForOne";
 const KEY_GROUP_TYPE = 'groupType';
+const KEY_NUM_STUDENTS = 'numStudents';
+const KEY_ASSIGN_GROUPS = 'assignGroups';
+const BASE_STUDENTS_PER_GROUP = 5;
 
 /**
  * Represents a group and its state.
@@ -46,12 +49,14 @@ class Group {
      * Creates a group instance and sets its default state.
      *
      * @param groupID The group's ID
+     * @param baseNumber The number of members group will initially accept before overloading
      */
-    constructor(groupID) {
+    constructor(groupID, baseNumber) {
         this.id = groupID;
         this.type = TYPE_ALL_FOR_ONE;
         this.players = {};
         this._points = 0;
+        this.baseNumber = baseNumber;
     }
 
     get points() {
@@ -87,14 +92,25 @@ class Group {
         return Util.getLen(this.players);
     }
 
+
+    get playerScores() {
+        let playerScores = [];
+        for (const [k,v] of Object.entries(this.players)) {
+            playerScores.push({name: v.name, points: v.points});
+        }
+
+        return playerScores;
+    }
+
     /**
      * Adds a player to this group and joins the group socket room
      *
+     * @param room {Room} The room that this group is associated with
      * @param player {Player} The Player class-instance to add to the group
      */
-    addPlayer(player) {
+    addPlayer(room, player) {
         if (player.socket) {
-            player.socket.join(`${player.id}@${this.id}`);
+            player.socket.join(`${this.id}@${room.id}`);
             this.players[player.id] = player;
         }
     }
@@ -102,11 +118,12 @@ class Group {
     /**
      * Removes a player from this group and leaves the group socket room
      *
-     * @param player {Player} THe Player class-instance to remove from the group
+     * @param room {Room} The room that this group is associated with
+     * @param player {Player} The Player class-instance to remove from the group
      */
-    removePlayer(player) {
+    removePlayer(room, player) {
         if (player.hasOwnProperty('id')) {
-            player.socket.leave(`${player.id}@${this.id}`);
+            player.socket.leave(`${this.id}@${room.id}`);
             delete this.players[player.id];
         }
     }
@@ -127,5 +144,8 @@ module.exports = {
     Group: Group,
     TYPE_ALL_FOR_ONE: TYPE_ALL_FOR_ONE,
     TYPE_FREE_FOR_ALL: TYPE_FREE_FOR_ALL,
-    KEY_GROUP_TYPE: KEY_GROUP_TYPE
+    KEY_GROUP_TYPE: KEY_GROUP_TYPE,
+    KEY_NUM_STUDENTS: KEY_NUM_STUDENTS,
+    BASE_STUDENTS_PER_GROUP: BASE_STUDENTS_PER_GROUP,
+    KEY_ASSIGN_GROUPS: KEY_ASSIGN_GROUPS
 };

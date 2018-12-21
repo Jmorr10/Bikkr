@@ -50,6 +50,7 @@ function addSocketListeners (socket) {
     socket.on(Events.NEW_ROOM, MatchmakingManager.createRoom.bind(null, socket));
     socket.on(Events.JOIN_ROOM, MatchmakingManager.joinRoom.bind(null, socket));
     socket.on(Events.ROOM_SETUP, MatchmakingManager.setupRoom.bind(null, socket));
+    socket.on(Events.JOIN_GROUP, MatchmakingManager.joinGroup.bind(null, socket));
 
 }
 

@@ -45,8 +45,16 @@ const JOIN_ROOM = 'join_room';
 const ROOM_JOINED = "room_joined";
 const ROOM_SETUP = "room_setup";
 const ROOM_SET_UP = "room_set_up";
+const JOIN_GROUP = "join_group";
+const GROUP_JOINED = "group_joined";
 const SET_USERNAME = 'set_username';
 const USERNAME_OK = 'username_ok';
+const SET_QUESTION = 'set_question';
+const QUESTION_READY = "question_ready";
+const QUESTION_FINISHED = "question_finished";
+const QUESTION_FAILED = "question_failed";
+const QUESTION_ALREADY_ANSWERED = "question_already_answered";
+const STUDENT_RESPONSE = 'student_response';
 const HOST_DISCONNECTED = 'host_disconnected';
 
 // GUI
@@ -62,8 +70,16 @@ module.exports = {
     ROOM_JOINED: ROOM_JOINED,
     ROOM_SETUP: ROOM_SETUP,
     ROOM_SET_UP: ROOM_SET_UP,
+    JOIN_GROUP: JOIN_GROUP,
+    GROUP_JOINED: GROUP_JOINED,
     SET_USERNAME: SET_USERNAME,
     USERNAME_OK: USERNAME_OK,
+    SET_QUESTION: SET_QUESTION,
+    QUESTION_READY: QUESTION_READY,
+    QUESTION_FINISHED: QUESTION_FINISHED,
+    QUESTION_FAILED: QUESTION_FAILED,
+    QUESTION_ALREADY_ANSWERED: QUESTION_ALREADY_ANSWERED,
+    STUDENT_RESPONSE: STUDENT_RESPONSE,
     HOST_DISCONNECTED: HOST_DISCONNECTED,
     RENDER_TEMPLATE: RENDER_TEMPLATE,
 };

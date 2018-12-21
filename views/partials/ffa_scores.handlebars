@@ -1,0 +1,20 @@
+<div id="freeForAllScores">
+	<h1>Player Scores</h1>
+	{{#each groups}}
+		<div class="group-score-row">
+			<div class="group-score-name">{{id}}</div>
+			{{#each playerScores}}
+				{{#if winners}}
+					{{#each winners}}
+						<div><b>WINNER - {{name}}</b>
+					{{/each}}
+				{{else}}
+					<div class="score-row">
+				{{/if}}
+				<div class="score-name">{{name}}</div>
+				<div class="score-value">{{points}}</div>
+			</div>
+			{{/each}}
+		</div>
+	{{/each}}
+</div>

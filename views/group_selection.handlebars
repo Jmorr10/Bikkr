@@ -1,3 +1,11 @@
 <div id="groupSelectionForm" data-target="#content" data-add="self">
 	<h1>Group selection!</h1>
+	{{#each groups}}
+		<button data-group="{{id}}">{{id}}</button>
+	{{/each}}
+	<script>
+		require(['app/view_group_selection'], function (view_group_selection) {
+			view_group_selection.start('{{roomID}}');
+		});
+	</script>
 </div>

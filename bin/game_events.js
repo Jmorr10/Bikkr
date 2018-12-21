@@ -25,35 +25,27 @@
 "use strict";
 
 /**
- * Adds socket listeners to all sockets that connect
+ * Adds listeners for game-related events to the socket connection
  *
  * @author Joseph Morris <JRM.Softworks@gmail.com>
  * @version 1.0
  * @since 1.0
  */
 
-/** @module socket_listeners **/
+/** @module game_events **/
 
-const ConnectionManager = require('./connection_manager');
 const Events = require('./event_types');
+const GameManager = require('./game_manager');
 
 /**
- * Adds listeners to each socket that connects
+ * Adds listeners to the socket
  *
- * @param io The socket.io module instance created by the server.
+ * @param socket The socket connection to listen on.
  */
-function addSocketListeners (io) {
+function addSocketListeners (socket) {
 
-    // Store our io instance for later use by the template manager, etc.
-    ConnectionManager.init(io);
-
-    // Add the WebSocket handlers
-    io.on(Events.CONNECTION, function (socket) {
-
-        require('./matchmaking_events')(socket);
-        require('./game_events')(socket);
-
-    });
+    socket.on(Events.SET_QUESTION, GameManager.setQuestion.bind(null, socket));
+    socket.on(Events.STUDENT_RESPONSE, GameManager.processStudentResponse.bind(null, socket));
 
 }
 

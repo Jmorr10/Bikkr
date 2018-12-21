@@ -1,3 +1,5 @@
+// TODO: Option to have pronunciation sound file play on students' phones as well
+
 let createError = require('http-errors');
 let express = require('express');
 let path = require('path');

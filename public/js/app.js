@@ -32,7 +32,8 @@ requirejs.config({
     "paths": {
       "app": "../app",
       "jquery": "./jquery-2.2.4.min",
-      "handlebars": "//cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.11/handlebars.amd.min"
+      "handlebars": "//cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.11/handlebars.amd.min",
+      "bootstrap": "./bootstrap.bundle.min"
     }
 });
 

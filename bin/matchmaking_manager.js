@@ -58,6 +58,7 @@ const GroupTypes = {
 
 const ERR_ROOM_NAME_REQUIRED = 'You must enter a room name to begin!';
 const ERR_MUST_BE_TEACHER = 'Students cannot create rooms!';
+const ERR_INVALID_ROOM_OPTIONS = 'Invalid room options!';
 
 /**
  * Creates a player instance for the newly connected client and add it to the player list
@@ -98,8 +99,8 @@ function clientDisconnected(socket) {
 
         let playerGroups = player.getGroups();
         for (const [roomID, group] of Object.entries(playerGroups)) {
-            group.removePlayer(player);
-            // TODO Implement this
+            let room = RoomList.getRoomByID(roomID);
+            group.removePlayer(room, player);
             TemplateManager.sendPrecompiledTemplate(roomID, 'partials/group_player_list', {players: group.players})
         }
 
@@ -139,7 +140,7 @@ function createRoom(socket, roomName) {
         let room = new Room(roomName, player);
         RoomList.addRoom(room);
         room.owner = player;
-        room.addPlayer(player);
+        room.addPlayer(player, true);
 
         debug(`Room Created: ${roomName}`);
         debug(`Sent room options`);
@@ -164,17 +165,35 @@ function setupRoom(socket, roomID, roomType, options) {
             room.type = RoomTypes.TYPE_INDIVIDUAL;
         } else if (roomType === RoomTypes.TYPE_GROUP) {
             room.type = RoomTypes.TYPE_GROUP;
-            options = options || {};
-            room.groupType = (
-                options.hasOwnProperty(GroupModule.KEY_GROUP_TYPE) && options.groupType === GroupTypes.TYPE_FREE_FOR_ALL)
-                ? GroupTypes.TYPE_FREE_FOR_ALL : GroupTypes.TYPE_ALL_FOR_ONE;
+            if (options && options.hasOwnProperty(GroupModule.KEY_NUM_STUDENTS)) {
+                room.groupType = (
+                    options.hasOwnProperty(GroupModule.KEY_GROUP_TYPE) && options.groupType === GroupTypes.TYPE_FREE_FOR_ALL)
+                    ? GroupTypes.TYPE_FREE_FOR_ALL : GroupTypes.TYPE_ALL_FOR_ONE;
+                createGroups(room, options.numStudents);
+                room.groupsAssigned = (options.hasOwnProperty(GroupModule.KEY_ASSIGN_GROUPS)) ? options.assignGroups : false;
+            } else {
+                TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: ERR_INVALID_ROOM_OPTIONS});
+                return;
+            }
+
         }
     }
 
     debug(`Room Setup: ${room.id} - ${room.type} - ${room.groupType}`);
+    room.setUp = true;
 
-    TemplateManager.emitWithTemplate(player.id, 'sound_grid', {players: PlayerList.getList()}, Events.ROOM_SET_UP);
+    // Teacher sound grid should be locked until start is pressed.
+    TemplateManager.emitWithTemplate(player.id, 'sound_grid', {players: PlayerList.getList(), locked: true}, Events.ROOM_SET_UP);
 
+}
+
+function createGroups(room, numStudents) {
+    // This ugly piece of code means that base should be 2 for 10 students or less, 4 for 11 <= x < 25, and 5 for x >= 25
+    let base = (numStudents < 25) ? (numStudents < 16) ? 2 : 4 : GroupModule.BASE_STUDENTS_PER_GROUP;
+    let numGroups = Math.floor(numStudents / base);
+    for (let i = 1; i <= numGroups; i++) {
+        room.addGroup(new Group(`Group ${i}`, base));
+    }
 }
 
 
@@ -182,7 +201,9 @@ function joinRoom(socket, roomID) {
     let player = PlayerList.getPlayerBySocketID(socket.id);
     if (!player.isTeacher) {
             let room = RoomList.getRoomByID(roomID);
-            if (room) {
+            if (room && !room.setUp) {
+                TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: 'The teacher has not finished setting up the room!'});
+            } else if (room) {
                 room.addPlayer(player);
                 debug(`Sent username selection`);
                 TemplateManager.emitWithTemplate(socket.id, 'username', {roomID: room.id}, Events.ROOM_JOINED, room.id);
@@ -193,6 +214,38 @@ function joinRoom(socket, roomID) {
     }
 }
 
+
+function joinGroup(socket, roomID, groupID) {
+    let player = PlayerList.getPlayerBySocketID(socket.id);
+    if (!player.isTeacher) {
+        let room = RoomList.getRoomByID(roomID);
+        if (room) {
+
+            let group;
+
+            if (room.groupsAssigned) {
+                group = room.assignPlayerToGroup(player);
+            } else if (room.groups.hasOwnProperty(groupID)) {
+                group = room.groups[groupID];
+                group.addPlayer(room, player);
+            } else {
+                TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: 'Error joining group!'});
+            }
+
+            debug(`${player.name} joined ${group.id}`);
+            TemplateManager.emitWithTemplate(
+                socket.id,
+                'sound_grid_student',
+                {roomID: room.id, groupID: group.id, locked: true},
+                Events.GROUP_JOINED,
+                room.id,
+                group.id);
+        } else {
+            TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: 'Incorrect room name!'});
+        }
+
+    }
+}
 
 /**
  * Makes sure that the name or room name is not empty and is at least four characters in length
@@ -219,8 +272,18 @@ function setUsername(socket, roomID, username) {
             if (room) {
                 player.name = username;
                 TemplateManager.sendPrecompiledTemplate(roomID, 'partials/player_list', {players: room.players});
-                let template = (room.type === RoomTypes.TYPE_GROUP) ? 'group_selection' : 'sound_grid_student';
-                TemplateManager.emitWithTemplate(socket.id, template, {roomID: room.id}, Events.USERNAME_OK);
+                let template = (room.type === RoomTypes.TYPE_GROUP && !room.groupsAssigned) ? 'group_selection' : 'sound_grid_student';
+
+                let group;
+                let groupID = "";
+
+                if (room.groupsAssigned) {
+                    group = room.assignPlayerToGroup(player);
+                    groupID = (group && group.hasOwnProperty('id')) ? group.id : groupID;
+                }
+
+                // Student sound grid should be locked initially
+                TemplateManager.emitWithTemplate(socket.id, template, {roomID: room.id, locked: true, groups: room.groups, groupID: groupID}, Events.USERNAME_OK, roomID, groupID);
             }
         } else {
             TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: 'No matching user'});
@@ -245,5 +308,6 @@ module.exports = {
     setUsername: setUsername,
     createRoom: createRoom,
     setupRoom: setupRoom,
-    joinRoom: joinRoom
+    joinRoom: joinRoom,
+    joinGroup: joinGroup
 };

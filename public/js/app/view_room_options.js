@@ -44,15 +44,15 @@ define(['jquery', 'app/socket_manager', 'app/player', 'app/view_sound_grid', 'ap
 	let roomID;
 	let errorLbl;
 
-	const TYPE_GROUP = "typeGroup";
+	const TYPE_GROUP = "group";
 	const ERR_CHOOSE_GROUP_TYPE = "Please choose a group type!";
+	const ERR_TOO_FEW_STUDENTS= "You must have at least four students for groups!";
 
 	// TODO: Consider adding an invisible field/input to the template to provide the room number instead of hacky-templated-JS
 	function start(rID) {
 
 		roomID = rID;
         submitBtn = jQ('#submitRoomOptions');
-        roomTypeField = jQ('input[name="roomType"]:checked').val();
         errorLbl = jQ('.error-lbl');
 
 		submitBtn.click(submitOptions);
@@ -65,14 +65,20 @@ define(['jquery', 'app/socket_manager', 'app/player', 'app/view_sound_grid', 'ap
 
 	function submitOptions () {
 		let options = {};
+		roomTypeField = jQ('input[name="roomType"]:checked').val();
 		let fieldValid = roomTypeField && roomTypeField !== "";
 
 		if (fieldValid && roomTypeField === TYPE_GROUP) {
+			let numStudents = jQ('#numStudents').val();
 			let groupType = jQ('input[name="groupType"]:checked').val();
-			if (groupType && groupType !== "") {
-				options = {groupType: groupType};
+			let assignGroups = jQ('#assignGroups').prop('checked');
+
+			if (groupType && groupType !== "" && numStudents) {
+				options = {groupType: groupType, numStudents: numStudents, assignGroups: assignGroups};
+			} else if (numStudents && numStudents < 4) {
+				setError(ERR_TOO_FEW_STUDENTS);
 			} else {
-				setError(ERR_CHOOSE_GROUP_TYPE);
+                setError(ERR_CHOOSE_GROUP_TYPE);
 			}
 		}
 
@@ -89,7 +95,7 @@ define(['jquery', 'app/socket_manager', 'app/player', 'app/view_sound_grid', 'ap
 	function finish (template) {
         render_manager.renderResponse(template);
 		if (player.isTeacher) {
-			soundGrid.start();
+			soundGrid.start(roomID);
 		}
 	}
 

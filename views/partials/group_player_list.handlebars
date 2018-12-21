@@ -1,0 +1,13 @@
+<div id="groupPlayers">
+	<h1>Groups</h1>
+	{{#each groups}}
+	<div class="group-row">
+		<div class="group-name">{{id}}</div>
+		{{#each playerScores}}
+			<div class="player-row">
+				<div class="player-name">{{name}}</div>
+			</div>
+		{{/each}}
+	</div>
+	{{/each}}
+</div>

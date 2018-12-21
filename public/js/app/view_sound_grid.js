@@ -24,67 +24,72 @@
 
 "use strict";
 
-/** @module app/view_roomname**/
+/** @module app/view_sound_grid**/
 
 /**
- * This module handles user interactions on the roomname screen.
+ * This module handles user interactions on the sound grid.
  *
  * @author Joseph Morris <JRM.Softworks@gmail.com>
  * @version 1.0
  * @since 1.0
  */
-define(['jquery', 'app/socket_manager', 'app/player', 'app/view_room_options', 'app/view_username', 'app/render_manager', 'event_types'],
-	function (jQ, socketManager, Player, roomOptions, username, render_manager, Events) {
+define(['jquery', 'app/socket_manager', 'app/player', 'app/render_manager', 'event_types'],
+	function (jQ, socketManager, Player, render_manager, Events) {
 
 	const socket = socketManager.getConnection();
 	let player = Player.getPlayer();
 
-	let submitBtn;
-	let roomNameField;
+	let startBtn;
+	let soundGridHolder;
 	let errorLbl;
+	let roomID;
 
-	const ERR_NO_ROOMNAME = 'Please enter a room name to begin!';
-	
-	function start() {
+	function start(rID) {
 
-        submitBtn = jQ('#submitRoom');
-        roomNameField = jQ('#roomName');
+        startBtn = jQ('#startBtn');
+        soundGridHolder = jQ('#soundGridHolder');
         errorLbl = jQ('.error-lbl');
+        roomID = rID;
 
-		submitBtn.click(signIn);
-
-		roomNameField.keypress(function (e) {
-            if (e.which === 13) {
-                signIn();
-            }
+        startBtn.click(function () {
+            soundGridHolder.removeClass('locked');
+            startBtn.attr('disabled', true);
         });
-		
-		socket.on(Events.ROOM_JOINED, finish);
 
+        soundGridHolder.find('button').click(function (e) {
+        	e.stopImmediatePropagation();
+        	setQuestion(jQ(this).attr('data-sound'));
+		});
+
+		socket.on(Events.QUESTION_FINISHED, updateState);
+		socket.on(Events.QUESTION_FAILED, questionFailed);
 	}
 
 
-	function signIn () {
-		let roomname = roomNameField.val();
-		if (roomname && roomname !== '') {
-			socket.emit(Events.NEW_ROOM, roomname);
-		} else {
-			setError(ERR_NO_ROOMNAME);
-		}
+	function setQuestion (questionSound) {
+        // TODO: Add skip button and replay sound button
+		//soundGridHolder.addClass('locked');
+		let sound = new Audio(`/static/audio/${questionSound}.mp3`);
+		jQ(sound).bind('ended', function () {
+            socket.emit(Events.SET_QUESTION, roomID, questionSound);
+		});
+		sound.play();
+	}
+
+	function updateState(template) {
+		soundGridHolder.removeClass('locked');
+		render_manager.renderResponse(template);
+	}
+
+	function questionFailed(template) {
+		updateState(template);
+		alert('Lol... failed.');
 	}
 
 	function setError (errorTxt) {
 		errorLbl.text(errorTxt);
 	}
 
-	function finish (template, roomID) {
-        render_manager.renderResponse(template);
-		if (player.isTeacher) {
-			roomOptions.start(roomID);
-		} else {
-			username.start(roomID);
-		}
-	}
 
 	return {
 		start: start
