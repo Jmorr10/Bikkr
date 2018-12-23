@@ -37,7 +37,7 @@ define(['jquery', 'app/socket_manager', 'app/player', 'app/render_manager', 'eve
 	function (jQ, socketManager, Player, render_manager, Events) {
 
 	const socket = socketManager.getConnection();
-	let player = Player.getPlayer();
+	let player;
 
 	let startBtn;
 	let soundGridHolder;
@@ -46,6 +46,7 @@ define(['jquery', 'app/socket_manager', 'app/player', 'app/render_manager', 'eve
 
 	function start(rID) {
 
+		player = Player.getPlayer();
         startBtn = jQ('#startBtn');
         soundGridHolder = jQ('#soundGridHolder');
         errorLbl = jQ('.error-lbl');

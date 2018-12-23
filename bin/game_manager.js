@@ -101,6 +101,7 @@ function processStudentResponse(socket, roomID, studentResponse) {
         let isAllForOneMode = room.type === RoomTypes.TYPE_GROUP && room.groupType === GroupTypes.TYPE_ALL_FOR_ONE;
         let isFreeForAllMode = room.type === RoomTypes.TYPE_GROUP && room.groupType === GroupTypes.TYPE_FREE_FOR_ALL;
         let group;
+        let currentQuestionTmp = currentQuestion;
 
         // Each group can only have ONE response for All-for-One mode
         if (!isIndividualMode) {
@@ -112,8 +113,10 @@ function processStudentResponse(socket, roomID, studentResponse) {
                     TemplateManager.emitWithTemplate(
                         `${group.id}@${room.id}`,
                         'partials/player_already_answered',
-                        {player: groupsAnswered[group.id]},
-                        Events.QUESTION_ALREADY_ANSWERED
+                        {player: groupsAnswered[group.id],
+                        myAnswer: studentResponse, correctAnswer: currentQuestionTmp},
+                        Events.QUESTION_ALREADY_ANSWERED,
+                        groupsAnswered[group.id]
                     );
                     return;
                 }
@@ -160,7 +163,8 @@ function processStudentResponse(socket, roomID, studentResponse) {
                     roomID,
                     'partials/player_scores',
                     {players: room.players, correctAnswer: currentQuestion},
-                    Events.QUESTION_FAILED
+                    Events.QUESTION_FAILED,
+                    currentQuestionTmp
                 );
             }
         }
@@ -172,7 +176,8 @@ function processStudentResponse(socket, roomID, studentResponse) {
                     roomID,
                     'partials/player_scores',
                     {players: room.players, winner: player.name, correctAnswer: studentResponse},
-                    Events.QUESTION_FINISHED
+                    Events.QUESTION_FINISHED,
+                    currentQuestionTmp
                 );
                 debug('Question answered and finished!');
             } else if (isAllForOneMode) {
@@ -181,7 +186,8 @@ function processStudentResponse(socket, roomID, studentResponse) {
                     roomID,
                     ['partials/player_scores', 'partials/group_scores'],
                     [{players: room.players, groups: room.groups, winner: player.name, correctAnswer: studentResponse}],
-                    Events.QUESTION_FINISHED
+                    Events.QUESTION_FINISHED,
+                    currentQuestionTmp
                 );
                 debug('Question answered and finished!');
             } else if (isFreeForAllMode) {
@@ -198,7 +204,8 @@ function processStudentResponse(socket, roomID, studentResponse) {
                         roomID,
                         ['partials/player_scores', 'partials/group_scores', 'partials/ffa_scores'],
                         [{players: room.players, groups: room.groups, winners: ffaWinners, correctAnswer: studentResponse}],
-                        Events.QUESTION_FINISHED
+                        Events.QUESTION_FINISHED,
+                        currentQuestionTmp
                     );
                     debug('Question answered and finished!');
                 }

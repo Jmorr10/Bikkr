@@ -1,8 +1,174 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  padding: 60px 16px 16px 16px;
+  overflow: hidden;
 }
 
-a {
-  color: #00B7FF;
+#header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 60px;
+  width: 100vw;
+  background-color: #003c8f;
+  color: #FFFFFF;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 16px;
 }
+
+#header-text h1 {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 0;
+  margin-top: 8px;
+}
+
+#header-text h2 {
+  font-size: 1.0rem;
+  font-weight: bold;
+}
+
+#leaderboardBtn {
+  background-color: #1565c0;
+  border: none;
+  color: #FFFFFF;
+  position: absolute;
+  right: 11px;
+  font-size: 1.8rem;
+  display: inline-block;
+  border-radius: 60px;
+  box-shadow: 0 0 2px #888;
+  padding: 0.05em 0.15em;
+}
+
+#popup:not(.open) {
+  display: none;
+}
+
+#leaderboard:not(.open) {
+  display: none;
+}
+
+#soundGridHolder {
+  height: calc(100vh - 76px);
+  padding-top: 16px;
+}
+
+#soundGridHolder .row {
+  height: calc(100% / 5);
+}
+
+#soundGridHolder button {
+  height: calc(100% - 16px);
+  width: 100%;
+  background-color: #1565c0;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  color: white;
+  font-weight: bold;
+  font-size: 1.5rem;
+  border: none;
+  outline: none !important;
+}
+
+#soundGridHolder .col-6:after {
+  content: '';
+  font-family: 'boinkikurenshuu';
+  color: white;
+  font-size: 3.9rem;
+  position: absolute;
+  text-align: center;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: calc(100% - 24px);
+  height: calc(100% - 16px);
+  opacity:0.00;
+  transition: opacity 1.0s, background-color 1.0s, content 1.0s;
+  display: flex;
+  background-color: transparent;
+  pointer-events: none;
+}
+
+#soundGridHolder .col-6.correct:after {
+  opacity: 0.75;
+  content: '\f10c';
+  background-color: #d50000 !important;
+}
+
+#soundGridHolder .col-6.incorrect:after {
+  opacity: 0.75;
+  content: '\e801';
+  background-color: #003c8f !important;
+  font-size: 4.9rem !important;
+}
+
+#soundGridHolder.locked button {
+  background-color: #888888;
+  pointer-events: none;
+}
+
+#soundGridHolder .row .col-6 {
+  display: flex;
+  align-items: center;
+}
+
+#soundGridHolder .row .col-6:first-child {
+  padding-right: 8px;
+}
+
+#soundGridHolder .row .col-6:last-child {
+  padding-left: 8px;
+}
+
+#leaderboardContent, #popupContent {
+  position: fixed;
+  margin: auto;
+  height: calc(100vh - 32px);
+  width: calc(100vw - 32px);
+  background-color: white;
+  top: 16px;
+  left: 16px;
+  z-index: 55;
+  padding: 24px 16px 16px 16px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+#popupContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.modal-black {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: black;
+  z-index: 1;
+  opacity: 0.5;
+}
+
+#closeLeaderboardBtn, #closePopupBtn {
+  border: none;
+  background: none;
+  color: #d50000;
+  font-size: 1.5rem;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+#closePopupBtn {
+  z-index: 56;
+  top: 16px;
+  right: 16px;
+}
+

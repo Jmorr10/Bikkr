@@ -37,15 +37,27 @@ define(['jquery', 'app/socket_manager', 'app/player', 'app/render_manager', 'eve
     function (jQ, socketManager, Player, render_manager, Events) {
 
         const socket = socketManager.getConnection();
-        let player = Player.getPlayer();
+        let player;
 
         let soundGridHolder;
+        let leaderboardBtn;
+        let leaderboard;
+        let closeLeaderboardBtn;
+        let popup;
+        let closePopupBtn;
         let errorLbl;
         let roomID;
+        let myAnswer = "";
 
         function start(rID) {
 
+            player  = Player.getPlayer();
             soundGridHolder = jQ('#soundGridHolder');
+            leaderboardBtn = jQ('#leaderboardBtn');
+            leaderboard = jQ('#leaderboard');
+            closeLeaderboardBtn = jQ('#closeLeaderboardBtn');
+            popup = jQ('#popup');
+            closePopupBtn = jQ('#closePopupBtn');
             errorLbl = jQ('.error-lbl');
             roomID = rID;
 
@@ -55,9 +67,22 @@ define(['jquery', 'app/socket_manager', 'app/player', 'app/render_manager', 'eve
                 sendAnswer(jQ(this).attr('data-sound'));
             });
 
+            leaderboardBtn.click(function () {
+                leaderboard.addClass('open');
+            });
+
+            closeLeaderboardBtn.click(function () {
+                leaderboard.removeClass('open');
+            });
+
+            closePopupBtn.click(function () {
+                popup.removeClass('open');
+            });
+
             socket.on(Events.QUESTION_READY, unlockSoundGrid);
             socket.on(Events.QUESTION_FINISHED, processResults);
-            socket.on(Events.QUESTION_ALREADY_ANSWERED, processResults);
+            socket.on(Events.QUESTION_ALREADY_ANSWERED, alreadyAnswered);
+            socket.on(Events.QUESTION_FAILED, questionFailed);
         }
 
 
@@ -65,13 +90,38 @@ define(['jquery', 'app/socket_manager', 'app/player', 'app/render_manager', 'eve
             soundGridHolder.removeClass('locked');
         }
 
-        function processResults(template) {
+        function processResults(template, correctAnswer) {
+
             render_manager.renderResponse(template);
             soundGridHolder.addClass('locked');
+            let correctBtn = soundGridHolder.find(`button[data-sound=${correctAnswer}]`).parent();
+            let incorrectBtn;
+            if (myAnswer !== correctAnswer) {
+                incorrectBtn = soundGridHolder.find(`button[data-sound=${myAnswer}]`).parent();
+                incorrectBtn.addClass('incorrect');
+                setTimeout(function () { incorrectBtn.removeClass('incorrect'); }, 2000);
+            }
+
+            correctBtn.addClass('correct');
+            setTimeout(function () { correctBtn.removeClass('correct'); }, 2000);
+
+        }
+
+        function alreadyAnswered(template, playerName, correctAnswer) {
+            if (player.name !== playerName) {
+                processResults(template);
+                popup.addClass('open');
+            }
         }
 
         function sendAnswer(answer) {
+            myAnswer = answer;
             socket.emit(Events.STUDENT_RESPONSE, roomID, answer);
+        }
+
+        function questionFailed(template, correctAnswer) {
+            //Play class-failure animation here
+            processResults(template, correctAnswer);
         }
 
         return {

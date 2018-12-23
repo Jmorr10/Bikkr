@@ -198,7 +198,7 @@ describe('loading express', function () {
               }
           }
 
-          function finish(template, roomID, groupID) {
+          function finish(template, playerName, roomID, groupID) {
               let count = Object.entries(RoomList.getRoomByID(TEST_ROOM).groups).reduce(function (acc, currVal, currIdx, arr) {
                   return acc + currVal[1].playerCount;
               }, 0);

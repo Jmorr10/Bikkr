@@ -33,11 +33,11 @@
  * @version 1.0
  * @since 1.0
  */
-define(['jquery', 'app/socket_manager', 'app/view_group_selection', 'app/view_sound_grid_student', 'app/render_manager', 'event_types'],
-	function (jQ, socketManager, groupSelection, soundGridStudent, render_manager, Events) {
+define(['jquery', 'app/socket_manager', 'app/view_group_selection', 'app/view_sound_grid_student', 'app/player', 'app/render_manager', 'event_types'],
+	function (jQ, socketManager, groupSelection, soundGridStudent, Player, render_manager, Events) {
 
 	const socket = socketManager.getConnection();
-
+	let player;
 	let submitBtn;
 	let usernameField;
 	let errorLbl;
@@ -46,6 +46,7 @@ define(['jquery', 'app/socket_manager', 'app/view_group_selection', 'app/view_so
 	const ERR_NO_USERNAME = 'Please enter a username to begin!';
 	
 	function start(rID) {
+		player = Player.getPlayer();
 		roomID = rID;
         submitBtn = jQ('#submitUsername');
         usernameField = jQ('#username');
@@ -76,13 +77,9 @@ define(['jquery', 'app/socket_manager', 'app/view_group_selection', 'app/view_so
 		errorLbl.text(errorTxt);
 	}
 
-	function finish (template) {
+	function finish (template, playerName) {
         render_manager.renderResponse(template);
-        if (template.indexOf('group') !== -1) {
-        	//groupSelection.start();
-		} else {
-        	//soundGridStudent.start();
-		}
+        player.name = playerName;
 	}
 
 	return {

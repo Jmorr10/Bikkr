@@ -103,13 +103,14 @@ function emitWithTemplate(socketID, templateName, context, eventType, ...args) {
  * @param templateNames An array of the names of the templates to send
  * @param contexts An array of contexts to use for compiling the templates
  * @param eventType A member of the Events enum
+ * @param args Any additional arguments to be passed into the client's listening function.
  */
-function emitWithTemplateArray(socketID, templateNames, contexts, eventType) {
+function emitWithTemplateArray(socketID, templateNames, contexts, eventType, ...args) {
     // Check if each template has its own context
     if (templateNames && contexts && templateNames.length === contexts.length) {
 
         for (let i = 0, len = templateNames.length; i < len; i++) {
-            emitWithTemplate(socketID, templateNames[i], contexts[i], eventType);
+            emitWithTemplate(socketID, templateNames[i], contexts[i], eventType, ...args);
         }
 
     } else if (contexts && contexts.length === 1) {
@@ -117,7 +118,7 @@ function emitWithTemplateArray(socketID, templateNames, contexts, eventType) {
         // We using only one context for all the templates here
         // contexts is an array, so contexts[0] is necessary
         for (let i = 0, len = templateNames.length; i < len; i++) {
-            emitWithTemplate(socketID, templateNames[i], contexts[0], eventType);
+            emitWithTemplate(socketID, templateNames[i], contexts[0], eventType, ...args);
         }
 
     } else{

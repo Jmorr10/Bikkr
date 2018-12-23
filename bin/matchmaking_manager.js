@@ -283,7 +283,14 @@ function setUsername(socket, roomID, username) {
                 }
 
                 // Student sound grid should be locked initially
-                TemplateManager.emitWithTemplate(socket.id, template, {roomID: room.id, locked: true, groups: room.groups, groupID: groupID}, Events.USERNAME_OK, roomID, groupID);
+                TemplateManager.emitWithTemplate(socket.id, template, {
+                    roomID: room.id,
+                    locked: true,
+                    groups: room.groups,
+                    groupID: groupID,
+                    player: player,
+                    roomType: room.type,
+                    groupType: room.groupType}, Events.USERNAME_OK, player.name, roomID, groupID);
             }
         } else {
             TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: 'No matching user'});

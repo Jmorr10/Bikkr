@@ -1,0 +1,17 @@
+<div id="leaderboard">
+	<div class="modal-black"></div>
+	<div id="leaderboardContent">
+		{{#eq roomType "individual"}}
+			{{> player_scores}}
+		{{/eq}}
+		{{#eq roomType "group"}}
+			{{#eq groupType "freeForAll"}}
+				{{> ffa_scores}}
+			{{/eq}}
+			{{#eq groupType "allForOne"}}
+				{{> group_scores}}
+			{{/eq}}
+		{{/eq}}
+		<button id="closeLeaderboardBtn" class="icon-cancel"></button>
+	</div>
+</div>
