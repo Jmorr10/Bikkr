@@ -62,14 +62,20 @@ const TEMPLATE_ROOT = path.join(__dirname, "../views/");
  */
 function sendPrecompiledTemplate(socketID, templateName, context) {
 
-    handlebars.render(getTemplatePath(templateName), context)
-        .then(function (data) {
-            io.sockets.to(socketID).emit(Events.RENDER_TEMPLATE, data);
-        })
-        .catch(function (err) {
-            console.log(err);
-        });
+    if (Array.isArray(socketID)) {
+        for (const soc of socketID) {
+            sendPrecompiledTemplate(soc, templateName, context);
+        }
+    } else {
+        handlebars.render(getTemplatePath(templateName), context)
+            .then(function (data) {
+                io.sockets.to(socketID).emit(Events.RENDER_TEMPLATE, data);
+            })
+            .catch(function (err) {
+                console.log(err);
+            });
 
+    }
 }
 
 /**
@@ -84,15 +90,20 @@ function sendPrecompiledTemplate(socketID, templateName, context) {
  */
 function emitWithTemplate(socketID, templateName, context, eventType, ...args) {
 
-    handlebars.render(getTemplatePath(templateName), context)
-        .then(function (data) {
-            // The spread operator (...) is used here to convert args (an Array) back into individual arguments.
-            io.sockets.to(socketID).emit(eventType, data, ...args);
-        })
-        .catch(function (err) {
-            console.log(err);
-        });
-
+    if (Array.isArray(socketID)) {
+        for (const soc of socketID) {
+            emitWithTemplate(soc, templateName, context, eventType, ...args);
+        }
+    } else {
+        handlebars.render(getTemplatePath(templateName), context)
+            .then(function (data) {
+                // The spread operator (...) is used here to convert args (an Array) back into individual arguments.
+                io.sockets.to(socketID).emit(eventType, data, ...args);
+            })
+            .catch(function (err) {
+                console.log(err);
+            });
+    }
 }
 
 /**

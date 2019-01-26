@@ -1,11 +1,22 @@
 <div id="groupSelectionForm" data-target="#content" data-add="self">
-	<h1>Group selection!</h1>
-	{{#each groups}}
-		<button data-group="{{id}}">{{id}}</button>
-	{{/each}}
+	<div class="form-content">
+		<div class="login-img"></div>
+		<div style="flex:1;">
+			<h2 style="margin-bottom: 8px;">Choose a group</h2>
+			<div class="group-btn-holder">
+				{{#each groups}}
+					<button data-group="{{id}}">{{add @index 1}}</button>
+				{{/each}}
+			</div>
+		</div>
+	</div>
 	<script>
 		require(['app/view_group_selection'], function (view_group_selection) {
 			view_group_selection.start('{{roomID}}');
 		});
 	</script>
+</div>
+
+<div id="header-text">
+	<h1>母音聞く練習 - Group Selection</h1>
 </div>

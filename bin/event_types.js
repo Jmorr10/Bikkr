@@ -54,7 +54,10 @@ const QUESTION_READY = "question_ready";
 const QUESTION_FINISHED = "question_finished";
 const QUESTION_FAILED = "question_failed";
 const QUESTION_ALREADY_ANSWERED = "question_already_answered";
+const SKIP_QUESTION = "skip_question";
 const STUDENT_RESPONSE = 'student_response';
+const KICK_PLAYER = 'kick_player';
+const KICKED = "kicked";
 const HOST_DISCONNECTED = 'host_disconnected';
 
 // GUI
@@ -79,7 +82,10 @@ module.exports = {
     QUESTION_FINISHED: QUESTION_FINISHED,
     QUESTION_FAILED: QUESTION_FAILED,
     QUESTION_ALREADY_ANSWERED: QUESTION_ALREADY_ANSWERED,
+    SKIP_QUESTION: SKIP_QUESTION,
     STUDENT_RESPONSE: STUDENT_RESPONSE,
+    KICK_PLAYER: KICK_PLAYER,
+    KICKED: KICKED,
     HOST_DISCONNECTED: HOST_DISCONNECTED,
     RENDER_TEMPLATE: RENDER_TEMPLATE,
 };

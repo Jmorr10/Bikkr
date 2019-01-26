@@ -1,9 +1,28 @@
 <div id="sound-grid" data-target="body" data-add="self">
-	<h1>SOUND GRID!</h1>
-	{{> player_list}}
+	<div id="header">
+		<div id="header-text">
+			<h1>母音聞く練習 - Teacher</h1>
+		</div>
+		<button id="settingsBtn" class="icon-cog"></button>
+	</div>
+
+	<div id="teacherBar">
+		<button id="startBtn" class="icon-play"></button>
+		<button id="playerListBtn" class="icon-users"></button>
+		<button id="leaderboardBtn" class="icon-award"></button>
+		<button id="replayBtn" class="icon-cw"></button>
+		<button id="skipBtn" class="icon-forward"></button>
+	</div>
+
 	{{> vowel_grid}}
-	<button id="startBtn">Start</button>
-	{{> group_scores}}
-	{{> player_scores}}
-	{{> ffa_scores}}
+
+	{{> leaderboard}}
+
+	{{> player_list}}
+
+
+	<div id="popup">
+		<div id="popupContent"></div>
+	</div>
+
 </div>

@@ -1,9 +1,16 @@
 <div id="groupScores">
 	<h1>Group Scores</h1>
-	{{#each groups}}
-		<div class="score-row">
-			<div class="score-name">{{id}}</div>
-			<div class="score-value">{{points}}</div>
-		</div>
-	{{/each}}
+	<div class="score-holder">
+		{{#each groups}}
+			<div class="score-row">
+				<div class="score-name">{{id}}</div>
+				{{#if ../winner}}
+					{{#eq ../winner.id id}}
+						<i class="icon-crown round-winner"></i>
+					{{/eq}}
+				{{/if}}
+				<div class="score-value">{{points}}</div>
+			</div>
+		{{/each}}
+	</div>
 </div>

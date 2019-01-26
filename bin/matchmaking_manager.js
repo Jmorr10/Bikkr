@@ -88,6 +88,9 @@ function clientConnected(socket, isTeacher) {
  */
 function clientDisconnected(socket) {
 
+    // TODO: Need to eventually deal with students' phones sleeping and the whole reconnection process thereafter.
+
+
     let player = PlayerList.getPlayerBySocketID(socket.id);
     if (player && player.isTeacher) {
         RoomList.destroyRooms(player);
@@ -101,22 +104,40 @@ function clientDisconnected(socket) {
         for (const [roomID, group] of Object.entries(playerGroups)) {
             let room = RoomList.getRoomByID(roomID);
             group.removePlayer(room, player);
-            TemplateManager.sendPrecompiledTemplate(roomID, 'partials/group_player_list', {players: group.players})
         }
 
         let playerRooms = player.getRooms();
         for (let i = 0; i < playerRooms.length; i++) {
             let room = playerRooms[i];
             room.removePlayer(player);
-            TemplateManager.sendPrecompiledTemplate(room.id, 'partials/player_list', {players: room.players})
+            TemplateManager.emitWithTemplateArray(
+                room.id,
+                ['partials/player_list_content', 'partials/leaderboard_content'],
+                [{
+                    players: room.players,
+                    roomType: room.type,
+                    groupType: room.groupType,
+                    groups: room.groups
+                }],
+                Events.RENDER_TEMPLATE
+            );
         }
 
     }
 
-
     debug(`Client ${socket.id} has disconnected!`);
     debug(`Players connected: ${PlayerList.getLength()}`);
 
+}
+
+function kickPlayer(socket, playerID) {
+    if (playerID) {
+        let player = PlayerList.getPlayerBySocketID(playerID);
+        if (player) {
+            TemplateManager.sendPrecompiledTemplate(playerID, 'kicked', {});
+            player.socket.emit(Events.DISCONNECT);
+        }
+    }
 }
 
 
@@ -160,7 +181,7 @@ function setupRoom(socket, roomID, roomType, options) {
     let player = PlayerList.getPlayerBySocketID(socket.id);
     let room = RoomList.getRoomByID(roomID);
 
-    if (player.isTeacher) {
+    if (player && player.isTeacher) {
         if (roomType === RoomTypes.TYPE_INDIVIDUAL) {
             room.type = RoomTypes.TYPE_INDIVIDUAL;
         } else if (roomType === RoomTypes.TYPE_GROUP) {
@@ -183,7 +204,8 @@ function setupRoom(socket, roomID, roomType, options) {
     room.setUp = true;
 
     // Teacher sound grid should be locked until start is pressed.
-    TemplateManager.emitWithTemplate(player.id, 'sound_grid', {players: PlayerList.getList(), locked: true}, Events.ROOM_SET_UP);
+    TemplateManager.emitWithTemplate(player.id, 'sound_grid',
+        {players: room.players, roomType: room.type, groupType: room.groupType, locked: true}, Events.ROOM_SET_UP);
 
 }
 
@@ -199,7 +221,7 @@ function createGroups(room, numStudents) {
 
 function joinRoom(socket, roomID) {
     let player = PlayerList.getPlayerBySocketID(socket.id);
-    if (!player.isTeacher) {
+    if (player && !player.isTeacher) {
             let room = RoomList.getRoomByID(roomID);
             if (room && !room.setUp) {
                 TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: 'The teacher has not finished setting up the room!'});
@@ -217,7 +239,7 @@ function joinRoom(socket, roomID) {
 
 function joinGroup(socket, roomID, groupID) {
     let player = PlayerList.getPlayerBySocketID(socket.id);
-    if (!player.isTeacher) {
+    if (player && !player.isTeacher) {
         let room = RoomList.getRoomByID(roomID);
         if (room) {
 
@@ -225,21 +247,38 @@ function joinGroup(socket, roomID, groupID) {
 
             if (room.groupsAssigned) {
                 group = room.assignPlayerToGroup(player);
-            } else if (room.groups.hasOwnProperty(groupID)) {
-                group = room.groups[groupID];
+            } else if (room.hasGroupByID(groupID)) {
+                group = room.getGroupByID(groupID);
                 group.addPlayer(room, player);
             } else {
                 TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: 'Error joining group!'});
             }
 
             debug(`${player.name} joined ${group.id}`);
-            TemplateManager.emitWithTemplate(
-                socket.id,
-                'sound_grid_student',
-                {roomID: room.id, groupID: group.id, locked: true},
-                Events.GROUP_JOINED,
-                room.id,
-                group.id);
+
+            // Student sound grid should be locked initially
+            TemplateManager.emitWithTemplate(socket.id, 'sound_grid_student', {
+                roomID: room.id,
+                locked: true,
+                groups: room.groups,
+                groupID: groupID,
+                player: player,
+                roomType: room.type,
+                groupType: room.groupType}, Events.GROUP_JOINED, roomID);
+
+            TemplateManager.emitWithTemplateArray(
+                roomID,
+                ['partials/player_list_content', 'partials/leaderboard_content'],
+                [{players: room.players,
+                    roomType: room.type,
+                    groupType: room.groupType,
+                    groups: room.groups
+                }],
+                Events.RENDER_TEMPLATE
+            );
+
+
+
         } else {
             TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: 'Incorrect room name!'});
         }
@@ -271,7 +310,7 @@ function setUsername(socket, roomID, username) {
             let room = RoomList.getRoomByID(roomID);
             if (room) {
                 player.name = username;
-                TemplateManager.sendPrecompiledTemplate(roomID, 'partials/player_list', {players: room.players});
+                TemplateManager.sendPrecompiledTemplate(roomID, 'partials/player_list_content', {players: room.players, roomType: room.type, groupType: room.groupType, groups: room.groups});
                 let template = (room.type === RoomTypes.TYPE_GROUP && !room.groupsAssigned) ? 'group_selection' : 'sound_grid_student';
 
                 let group;
@@ -291,6 +330,16 @@ function setUsername(socket, roomID, username) {
                     player: player,
                     roomType: room.type,
                     groupType: room.groupType}, Events.USERNAME_OK, player.name, roomID, groupID);
+
+                TemplateManager.sendPrecompiledTemplate(
+                    roomID,
+                    'partials/leaderboard_content',
+                    {players: room.players,
+                        roomType: room.type,
+                        groupType: room.groupType,
+                        groups: room.groups
+                    }
+                );
             }
         } else {
             TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: 'No matching user'});
@@ -312,6 +361,7 @@ function setUsername(socket, roomID, username) {
 module.exports = {
     clientConnected: clientConnected,
     clientDisconnected: clientDisconnected,
+    kickPlayer: kickPlayer,
     setUsername: setUsername,
     createRoom: createRoom,
     setupRoom: setupRoom,

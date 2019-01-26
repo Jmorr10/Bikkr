@@ -1,8 +1,8 @@
 <div id="sound-grid" data-target="body" data-add="self">
 	<div id="header">
 		<div id="header-text">
-			<h1>母音聞く練習 - {{player.name}}</h1>
 			{{#if groupID}}<h2>{{groupID}}</h2>{{/if}}
+			<h1>母音聞く練習 - {{player.name}}</h1>
 		</div>
 		<button id="leaderboardBtn" class="icon-award"></button>
 	</div>
@@ -12,9 +12,7 @@
 
 
 	<div id="popup">
-		<div class="modal-black"></div>
 		<div id="popupContent"></div>
-		<button id="closePopupBtn" class="icon-cancel"></button>
 	</div>
 
 	<script>

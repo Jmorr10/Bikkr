@@ -1,0 +1,8 @@
+<div id="playerListContent" class="score-holder">
+	{{#eq roomType "individual"}}
+		{{> individual_player_list}}
+	{{/eq}}
+	{{#eq roomType "group"}}
+		{{> group_player_list}}
+	{{/eq}}
+</div>

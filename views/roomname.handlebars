@@ -1,12 +1,21 @@
 <div id="roomNameForm" data-target="#content" data-add="self" class="theme default">
-	<p>Please enter a room name</p>
-	<input type="text" name="roomName" id="roomName" placeholder="Room Name">
-	<input type="submit" id="submitRoom">
-	<p class="error-lbl">{{errorTxt}}</p>
+	<div class="form-content">
+		<div class="login-img"></div>
+		<div style="flex:1;">
+			<p>Please enter a room name</p>
+			<input type="text" name="roomName" id="roomName" placeholder="部屋の名前">
+			<p class="error-lbl">{{errorTxt}}</p>
+		</div>
+	</div>
+	<input type="submit" id="submitRoom" value="OK">
 	<script>
 		require(['app/view_roomname', 'app/player'], function (view_roomname, Player) {
 			Player.initializePlayer({{isTeacher}});
 			view_roomname.start();
 		});
 	</script>
+</div>
+
+<div id="header-text">
+	<h1>母音聞く練習 - Room Name</h1>
 </div>

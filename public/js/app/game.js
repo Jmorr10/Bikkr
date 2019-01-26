@@ -45,7 +45,7 @@ define(['jquery', 'app/socket_manager', 'app/render_manager', 'app/player', 'eve
         socket.on(Events.RENDER_TEMPLATE, render_manager.renderResponse);
 
 		// Let the server know we are connecting as a new player. This will kick off the application.
-		socket.emit('client_connected', isTeacher);
+		socket.emit(Events.CLIENT_CONNECTED, isTeacher);
 	}
 
 	function preload(imageArray, callbk, index) {

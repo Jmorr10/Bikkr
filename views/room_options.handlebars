@@ -1,19 +1,30 @@
-<div id="roomOptionsForm" data-target="#content" data-add="self" class="theme default">
-
-	<h1>Select Room Type</h1>
-	<input type="radio" class="radio" name="roomType" value="group" id="typeGroup" />
-	<label for="typeGroup">Group</label>
-		<div class="group-sub-options">
-			<input type="number" name="numStudents" min="4" placeholder="Number of Students" id="numStudents" />
-			<input type="radio" class="radio" name="groupType" value="freeForAll" id="groupFreeForAll" />
-			<label for="groupFreeForAll">Free-for-all</label>
-			<input type="radio" class="radio" name="groupType" value="allForOne" id="groupAllForOne" />
-			<label for="groupAllForOne">All-for-one</label>
-			<input type="checkbox" class="checkbox" name="assignGroups" id="assignGroups" />
-			<label for="assignGroups">Auto-Assign Groups</label>
+<div id="roomOptionsForm" data-target="#content" data-add="self" class="theme default" style="text-align: left;">
+	<div class="form-content">
+		<div class="login-img"></div>
+		<div class="inner-form">
+			<p style="margin-bottom: 0;">Select a room type - Individual or Group</p>
+			<input type="radio" class="radio" name="roomType" value="individual" id="typeIndividual" checked="" />
+			<label for="typeIndividual" class="radio-label"></label>
+			<input type="radio" class="radio" name="roomType" value="group" id="typeGroup" />
+			<label for="typeGroup" class="radio-label"></label>
+			<div class="group-sub-options">
+				<input type="number" name="numStudents" min="4" placeholder="Number of Students" id="numStudents"
+					   style="margin: 0.5rem 0;text-align: center;" />
+				<div>
+					<input type="radio" class="radio" name="groupType" value="freeForAll" id="groupFreeForAll" />
+					<label for="groupFreeForAll" style="margin-right: 1rem;margin-bottom: 0;">Free-for-all</label>
+					<input type="radio" class="radio" name="groupType" value="allForOne" id="groupAllForOne" />
+					<label for="groupAllForOne" style="margin-bottom: 0;">All-for-one</label>
+				</div>
+				<input type="checkbox" class="checkbox" name="assignGroups" id="assignGroups" checked="" />
+				<label for="assignGroups">Auto-Assign Groups</label>
+			</div>
+			<p class="error-lbl">{{errorTxt}}</p>
 		</div>
-	<input type="radio" class="radio" name="roomType" value="individual" id="typeIndividual" checked="" />
-	<label for="typeIndividual">Individual</label>
-	<input type="submit" id="submitRoomOptions">
-	<p class="error-lbl">{{errorTxt}}</p>
+	</div>
+	<input type="submit" id="submitRoomOptions" value="OK">
+</div>
+
+<div id="header-text">
+	<h1>母音聞く練習 - Room Options</h1>
 </div>

@@ -88,8 +88,7 @@ function setQuestion(socket, roomID, questionSound) {
 }
 
 
-function processStudentResponse(socket, roomID, studentResponse) {
-
+function processStudentResponseRWRT(socket, roomID, studentResponse) {
     if (questionActive) {
 
         studentResponse = studentResponse.toUpperCase();
@@ -99,35 +98,20 @@ function processStudentResponse(socket, roomID, studentResponse) {
         let isCorrect = studentResponse === currentQuestion;
         let isIndividualMode = room.type === RoomTypes.TYPE_INDIVIDUAL;
         let isAllForOneMode = room.type === RoomTypes.TYPE_GROUP && room.groupType === GroupTypes.TYPE_ALL_FOR_ONE;
-        let isFreeForAllMode = room.type === RoomTypes.TYPE_GROUP && room.groupType === GroupTypes.TYPE_FREE_FOR_ALL;
-        let group;
+        let isFreeForAllMode = room.type === RoomTypes.TYPE_GROUP && room.groupType === GroupTypes.TYPE_FREE_FOR_ALL;;
         let currentQuestionTmp = currentQuestion;
+        let failed = false;
 
-        // Each group can only have ONE response for All-for-One mode
-        if (!isIndividualMode) {
-            group = room.findGroupByPlayer(player);
+        individualCounter++;
 
-            if (isAllForOneMode) {
-                // Each group can only have one response for All-for-One mode
-                if (groupsAnswered.hasOwnProperty(group.id)) {
-                    TemplateManager.emitWithTemplate(
-                        `${group.id}@${room.id}`,
-                        'partials/player_already_answered',
-                        {player: groupsAnswered[group.id],
-                        myAnswer: studentResponse, correctAnswer: currentQuestionTmp},
-                        Events.QUESTION_ALREADY_ANSWERED,
-                        groupsAnswered[group.id]
-                    );
-                    return;
-                }
-            } else {
-                // Each group can only have one winner for Free-for-All mode
-                if (ffaWinners.hasOwnProperty(group.id)) {
-                    return;
-                }
-            }
-
+        if (isIndividualMode) {
+            failed = processIndividualResponse(room, player, currentQuestionTmp, isCorrect);
+        } else if (isAllForOneMode) {
+            failed = processAllForOneResponse(room, player, currentQuestionTmp, studentResponse, isCorrect);
+        } else {
+            failed = processFreeForAllResponse(room, player, currentQuestionTmp, isCorrect);
         }
+
 
         if (isCorrect && !isFreeForAllMode) {
             questionActive = false;
@@ -135,86 +119,166 @@ function processStudentResponse(socket, roomID, studentResponse) {
             individualCounter = 0;
             groupsAnswered = {};
             ffaWinners = {};
-        } else if (!isCorrect) {
-            // We need to handle incorrect responses appropriately depending on the game's mode
-            let failed = false;
-            if (isIndividualMode || isFreeForAllMode) {
-                individualCounter++;
-                // Minus 1 to account for teacher
-                if (individualCounter === room.playerCount) {
-                    failed = true;
-                }
-            } else {
-                // This, logically, must be All-for-One mode
-                groupsAnswered[group.id] = player.name;
-                if (Util.getLen(groupsAnswered) === room.groupCount) {
-                    failed = true;
-                }
-            }
+        }
 
-            if (failed) {
-                debug('Question failed! Resetting...');
-                questionActive = false;
-                currentQuestion = "";
-                individualCounter = 0;
-                groupsAnswered = {};
-                ffaWinners = {};
-                TemplateManager.emitWithTemplate(
-                    roomID,
-                    'partials/player_scores',
-                    {players: room.players, correctAnswer: currentQuestion},
-                    Events.QUESTION_FAILED,
-                    currentQuestionTmp
-                );
-            }
+        if (failed) {
+            debug('Question failed! Resetting...');
+            questionActive = false;
+            currentQuestion = "";
+            individualCounter = 0;
+            groupsAnswered = {};
+            ffaWinners = {};
+            let groups = (!isAllForOneMode) ?
+                room.groups : room.groups.sort(function (a,b) { return a.points < b.points; });
+            TemplateManager.emitWithTemplate(
+                roomID,
+                'partials/leaderboard_content',
+                {
+                    players: room.players.sort(function (a,b) { return a.points < b.points; }),
+                    roomType: room.type,
+                    groupType: room.groupType,
+                    groups: groups
+                },
+                Events.QUESTION_FAILED,
+                currentQuestionTmp
+            );
+        }
+    }
+}
+
+function processIndividualResponse(room, player, currentQuestionTmp, isCorrect) {
+    if (isCorrect) {
+        player.addPoints(1);
+        TemplateManager.emitWithTemplate(
+            room.id,
+            'partials/leaderboard_content',
+            {
+                players: room.players.sort(function (a,b) { return a.points < b.points; }),
+                roomType: room.type,
+                groupType: room.groupType,
+                winner: player
+            },
+            Events.QUESTION_FINISHED,
+            currentQuestionTmp
+        );
+        debug('Question answered and finished!');
+        return false;
+    } else {
+        if (individualCounter === room.playerCount) {
+            // This question has been failed!
+            return true;
+        }
+    }
+}
+
+function processAllForOneResponse(room, player, currentQuestionTmp, studentResponse, isCorrect) {
+    let group = room.findGroupByPlayer(player);
+
+        // Each group can only have one response for All-for-One mode
+        if (groupsAnswered.hasOwnProperty(group.id)) {
+            TemplateManager.emitWithTemplate(
+                `${group.id}@${room.id}`,
+                'partials/player_already_answered',
+                {player: groupsAnswered[group.id],
+                    myAnswer: studentResponse, correctAnswer: currentQuestionTmp},
+                Events.QUESTION_ALREADY_ANSWERED,
+                groupsAnswered[group.id]
+            );
+            return false;
         }
 
         if (isCorrect) {
-            if (isIndividualMode) {
-                player.addPoints(1);
-                TemplateManager.emitWithTemplate(
-                    roomID,
-                    'partials/player_scores',
-                    {players: room.players, winner: player.name, correctAnswer: studentResponse},
-                    Events.QUESTION_FINISHED,
-                    currentQuestionTmp
-                );
-                debug('Question answered and finished!');
-            } else if (isAllForOneMode) {
-                group.addPoints(1);
-                TemplateManager.emitWithTemplateArray(
-                    roomID,
-                    ['partials/player_scores', 'partials/group_scores'],
-                    [{players: room.players, groups: room.groups, winner: player.name, correctAnswer: studentResponse}],
-                    Events.QUESTION_FINISHED,
-                    currentQuestionTmp
-                );
-                debug('Question answered and finished!');
-            } else if (isFreeForAllMode) {
-                ffaWinners[group.id] = player.name;
-                player.addPoints(1);
-                if (Util.getLen(ffaWinners) === room.groupCount) {
-                    questionActive = false;
-                    currentQuestion = "";
-                    individualCounter = 0;
-                    groupsAnswered = {};
-                    ffaWinners = {};
+            group.addPoints(1);
+            TemplateManager.emitWithTemplate(
+                room.id,
+                'partials/leaderboard_content',
+                {players: room.players.sort(function (a,b) { return a.points < b.points; }),
+                    roomType: room.type,
+                    groupType: room.groupType,
+                    groups: room.groups.sort(function (a,b) { return a.points < b.points; })
+                },
+                Events.QUESTION_FINISHED,
+                currentQuestionTmp
+            );
+            debug('Question answered and finished!');
+            return false;
 
-                    TemplateManager.emitWithTemplateArray(
-                        roomID,
-                        ['partials/player_scores', 'partials/group_scores', 'partials/ffa_scores'],
-                        [{players: room.players, groups: room.groups, winners: ffaWinners, correctAnswer: studentResponse}],
-                        Events.QUESTION_FINISHED,
-                        currentQuestionTmp
-                    );
-                    debug('Question answered and finished!');
-                }
-            }
+        } else {
+            groupsAnswered[group.id] = player.name;
+            return Util.getLen(groupsAnswered) === room.groupCount;
         }
+}
+
+function processFreeForAllResponse(room, player, currentQuestionTmp, isCorrect) {
+    let group = room.findGroupByPlayer(player);
+
+    if (isCorrect) {
+        player.addPoints(1);
+
+        if (!ffaWinners.hasOwnProperty(group.id)) {
+            // Make note of the fastest player to answer correctly for each group
+            ffaWinners[group.id] = player.name;
+        }
+    }
+
+    if (individualCounter === room.playerCount) {
+        if (Util.getLen(ffaWinners) === 0) {
+            return true;
+        } else {
+            questionActive = false;
+            currentQuestion = "";
+            individualCounter = 0;
+            groupsAnswered = {};
+
+            TemplateManager.emitWithTemplate(
+                room.id,
+                'partials/leaderboard_content',
+                {players: room.players.sort(function (a,b) { return a.points < b.points; }),
+                    roomType: room.type,
+                    groupType: room.groupType,
+                    groups: room.groups,
+                    winners: ffaWinners
+                },
+                Events.QUESTION_FINISHED,
+                currentQuestionTmp
+            );
+
+            ffaWinners = {};
+
+            debug('Question answered and finished!');
+            return false;
+        }
+    }
+
+}
+
+
+function skipQuestion(socket, roomID, correctAnswer) {
+    let room = RoomList.getRoomByID(roomID);
+    if (room) {
+        debug('Question skipped! Resetting...');
+        questionActive = false;
+        currentQuestion = "";
+        individualCounter = 0;
+        groupsAnswered = {};
+        ffaWinners = {};
+        TemplateManager.emitWithTemplate(
+            roomID,
+            'partials/leaderboard_content',
+            {
+                players: room.players.sort(function (a,b) { return a.points < b.points; }),
+                roomType: room.type,
+                groupType: room.groupType,
+                groups: room.groups
+            },
+            Events.QUESTION_FAILED,
+            correctAnswer
+        );
     }
 }
 
 module.exports = {
     setQuestion: setQuestion,
-    processStudentResponse: processStudentResponse
+    processStudentResponse: processStudentResponseRWRT,
+    skipQuestion: skipQuestion
 };

@@ -1,13 +1,22 @@
 <div id="groupPlayers">
-	<h1>Groups</h1>
 	{{#each groups}}
-	<div class="group-row">
-		<div class="group-name">{{id}}</div>
-		{{#each playerScores}}
-			<div class="player-row">
-				<div class="player-name">{{name}}</div>
-			</div>
-		{{/each}}
-	</div>
+		<div class="group-row">
+			<h4 class="group-name">{{id}}</h4>
+			{{#each playerScores}}
+				<div class="player-row">
+					<div class="player-name">{{name}}</div>
+					<button class="player-value icon-cancel kick-btn" data-user="{{id}}"></button>
+				</div>
+			{{/each}}
+		</div>
 	{{/each}}
+	<script>
+		require(['jquery', 'app/view_sound_grid'], function (jQ, view_sound_grid) {
+
+			jQ('#playerListContent .kick-btn').click(function () {
+				view_sound_grid.kickPlayer(jQ(this).attr('data-user'));
+			});
+
+		});
+	</script>
 </div>

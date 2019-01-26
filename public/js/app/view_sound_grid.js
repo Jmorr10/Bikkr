@@ -43,6 +43,7 @@ define(['jquery', 'app/socket_manager', 'app/player', 'app/render_manager', 'eve
 	let soundGridHolder;
 	let errorLbl;
 	let roomID;
+	let currentQuestion = "";
 
 	function start(rID) {
 
@@ -54,7 +55,7 @@ define(['jquery', 'app/socket_manager', 'app/player', 'app/render_manager', 'eve
 
         startBtn.click(function () {
             soundGridHolder.removeClass('locked');
-            startBtn.attr('disabled', true);
+            startBtn.attr('disabled', true).hide();
         });
 
         soundGridHolder.find('button').click(function (e) {
@@ -62,22 +63,65 @@ define(['jquery', 'app/socket_manager', 'app/player', 'app/render_manager', 'eve
         	setQuestion(jQ(this).attr('data-sound'));
 		});
 
+        jQ('#playerListBtn').click(function () {
+        	jQ('#playerList').addClass('open');
+		});
+
+        jQ('#closePlayerListBtn').click(function () {
+        	jQ('#playerList').removeClass('open');
+		});
+
+        jQ('#leaderboardBtn').click(function () {
+        	jQ('#leaderboard').addClass('open');
+		});
+
+        jQ('#closeLeaderboardBtn').click(function () {
+        	jQ('#leaderboard').removeClass('open');
+		});
+
+        jQ('#skipBtn').click(function () {
+        	if (currentQuestion && currentQuestion !== "") {
+                socket.emit(Events.SKIP_QUESTION, roomID, currentQuestion);
+                currentQuestion = "";
+			}
+		});
+
+        jQ('#replayBtn').click(function () {
+        	if (currentQuestion && currentQuestion !== "") {
+                playSound(currentQuestion);
+			}
+		});
+
+        jQ('#settingsBtn').click();
+
 		socket.on(Events.QUESTION_FINISHED, updateState);
 		socket.on(Events.QUESTION_FAILED, questionFailed);
 	}
 
 
 	function setQuestion (questionSound) {
-        // TODO: Add skip button and replay sound button
-		//soundGridHolder.addClass('locked');
-		let sound = new Audio(`/static/audio/${questionSound}.mp3`);
-		jQ(sound).bind('ended', function () {
+		soundGridHolder.addClass('locked');
+		currentQuestion = questionSound;
+        let sound = new Audio(`/static/audio/${questionSound}.mp3`);
+        jQ(sound).bind('ended', function () {
             socket.emit(Events.SET_QUESTION, roomID, questionSound);
-		});
-		sound.play();
+        });
+        sound.play();
+	}
+
+	function playSound(questionSound) {
+        let sound = new Audio(`/static/audio/${questionSound}.mp3`);
+        sound.play();
+    }
+
+	function kickPlayer(playerID) {
+		if (socket) {
+            socket.emit(Events.KICK_PLAYER, playerID);
+		}
 	}
 
 	function updateState(template) {
+		currentQuestion = "";
 		soundGridHolder.removeClass('locked');
 		render_manager.renderResponse(template);
 	}
@@ -93,7 +137,8 @@ define(['jquery', 'app/socket_manager', 'app/player', 'app/render_manager', 'eve
 
 
 	return {
-		start: start
+		start: start,
+		kickPlayer: kickPlayer
 	};
 	
 });

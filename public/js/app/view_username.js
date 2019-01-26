@@ -61,6 +61,8 @@ define(['jquery', 'app/socket_manager', 'app/view_group_selection', 'app/view_so
         });
 		
 		socket.on(Events.USERNAME_OK, finish);
+
+		usernameField.focus();
 	}
 
 

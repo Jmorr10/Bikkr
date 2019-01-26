@@ -60,21 +60,6 @@ define(['app/socket_manager'], function (socketManager) {
 			return this._name;
 		}
 
-		// TODO - Clean this up...
-		set state(state) {
-			this._state = state;
-			if (this.id === "" && state.id) {
-				this.id = state.id;
-			}
-			if (!this._name && state.name) {
-				this._name = state.name;
-			}
-		}
-		
-		get state() {
-			return this._state;
-		}
-
 	}
 
 	function initializePlayer(isTeacher) {

@@ -43,6 +43,7 @@ define(['jquery', 'app/socket_manager', 'app/player', 'app/render_manager', 'eve
         let leaderboardBtn;
         let leaderboard;
         let closeLeaderboardBtn;
+        let modalBlack;
         let popup;
         let closePopupBtn;
         let errorLbl;
@@ -56,8 +57,9 @@ define(['jquery', 'app/socket_manager', 'app/player', 'app/render_manager', 'eve
             leaderboardBtn = jQ('#leaderboardBtn');
             leaderboard = jQ('#leaderboard');
             closeLeaderboardBtn = jQ('#closeLeaderboardBtn');
-            popup = jQ('#popup');
+            popup = jQ('#popupContent');
             closePopupBtn = jQ('#closePopupBtn');
+            modalBlack = jQ('.modal-black');
             errorLbl = jQ('.error-lbl');
             roomID = rID;
 
@@ -79,6 +81,16 @@ define(['jquery', 'app/socket_manager', 'app/player', 'app/render_manager', 'eve
                 popup.removeClass('open');
             });
 
+            modalBlack.click(function () {
+                jQ(this).parent().removeClass('open');
+            });
+
+            jQ('body').keypress(function (e) {
+                if (e.keyCode === 27) {
+                    modalBlack.parent().removeClass('open');
+                }
+            });
+
             socket.on(Events.QUESTION_READY, unlockSoundGrid);
             socket.on(Events.QUESTION_FINISHED, processResults);
             socket.on(Events.QUESTION_ALREADY_ANSWERED, alreadyAnswered);
@@ -96,11 +108,13 @@ define(['jquery', 'app/socket_manager', 'app/player', 'app/render_manager', 'eve
             soundGridHolder.addClass('locked');
             let correctBtn = soundGridHolder.find(`button[data-sound=${correctAnswer}]`).parent();
             let incorrectBtn;
-            if (myAnswer !== correctAnswer) {
+            if (myAnswer !== "" && myAnswer !== correctAnswer) {
                 incorrectBtn = soundGridHolder.find(`button[data-sound=${myAnswer}]`).parent();
                 incorrectBtn.addClass('incorrect');
                 setTimeout(function () { incorrectBtn.removeClass('incorrect'); }, 2000);
             }
+
+            myAnswer = "";
 
             correctBtn.addClass('correct');
             setTimeout(function () { correctBtn.removeClass('correct'); }, 2000);
@@ -109,8 +123,12 @@ define(['jquery', 'app/socket_manager', 'app/player', 'app/render_manager', 'eve
 
         function alreadyAnswered(template, playerName, correctAnswer) {
             if (player.name !== playerName) {
-                processResults(template);
+                render_manager.renderResponse(template);
+                soundGridHolder.addClass('locked');
                 popup.addClass('open');
+                setTimeout(function () {
+                    popup.removeClass('open');
+                }, 2000);
             }
         }
 

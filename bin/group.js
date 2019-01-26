@@ -93,13 +93,15 @@ class Group {
     }
 
 
+    // noinspection JSUnusedGlobalSymbols
+    // This function is used in a template
     get playerScores() {
         let playerScores = [];
         for (const [k,v] of Object.entries(this.players)) {
-            playerScores.push({name: v.name, points: v.points});
+            playerScores.push({name: v.name, points: v.points, id: v.id});
         }
 
-        return playerScores;
+        return playerScores.sort(function (a, b) { return a.points < b.points; });
     }
 
     /**

@@ -48,7 +48,8 @@ define(['jquery', 'app/socket_manager', 'app/player', 'app/view_sound_grid_stude
             errorLbl = jQ('.error-lbl');
             player = Player.getPlayer();
 
-            jQ('#groupSelectionForm button').click(function () {
+            jQ('#groupSelectionForm button').click(function (e) {
+                e.stopImmediatePropagation();
                 socket.emit(Events.JOIN_GROUP, roomID, jQ(this).data('group'));
             });
 

@@ -118,7 +118,7 @@ class Player {
         let playerGroups = {};
         for (let i = 0; i < playerRooms.length; i++) {
             let room = playerRooms[i];
-            for (const [key, group] of Object.entries(room.groups)) {
+            for (const group of room.groups) {
                 if (group.hasPlayer(this)) {
                     playerGroups[room.id] = group;
                 }

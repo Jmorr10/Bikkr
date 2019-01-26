@@ -1,20 +1,29 @@
 <div id="freeForAllScores">
 	<h1>Player Scores</h1>
-	{{#each groups}}
+	<div class="score-holder">
+		{{#each groups}}
 		<div class="group-score-row">
-			<div class="group-score-name">{{id}}</div>
+			<h4 class="group-score-name">{{id}}</h4>
 			{{#each playerScores}}
-				{{#if winners}}
-					{{#each winners}}
-						<div><b>WINNER - {{name}}</b>
-					{{/each}}
-				{{else}}
-					<div class="score-row">
+				<div class="score-row" {{#if ../../winners}}
+				{{#if (hasOwn ../../winners ../id)}}
+					{{#eq (get ../id ../../winners) name}}
+						style="order:-1!important;"
+					{{/eq}}
 				{{/if}}
+			{{/if}}>
 				<div class="score-name">{{name}}</div>
+				{{#if ../../winners}}
+					{{#if (hasOwn ../../winners ../id)}}
+						{{#eq (get ../id ../../winners) name}}
+							<i class="icon-crown round-winner"></i>
+						{{/eq}}
+					{{/if}}
+				{{/if}}
 				<div class="score-value">{{points}}</div>
 			</div>
 			{{/each}}
 		</div>
-	{{/each}}
+		{{/each}}
+	</div>
 </div>

@@ -57,8 +57,6 @@ describe('loading express', function () {
             .expect(404, done);
     });
 
-    // TODO: Students can't create rooms
-
     it('processes room creation requests', function testCreateRoom(done) {
         testClient = io.connect(socketURL, options);
         testClient.emit(Events.CLIENT_CONNECTED, true);
@@ -199,8 +197,8 @@ describe('loading express', function () {
           }
 
           function finish(template, playerName, roomID, groupID) {
-              let count = Object.entries(RoomList.getRoomByID(TEST_ROOM).groups).reduce(function (acc, currVal, currIdx, arr) {
-                  return acc + currVal[1].playerCount;
+              let count = RoomList.getRoomByID(TEST_ROOM).groups.reduce(function (acc, currVal, currIdx, arr) {
+                  return acc + currVal.playerCount;
               }, 0);
               assert(count === 41);
 
@@ -331,7 +329,7 @@ describe('loading express', function () {
         function testFunc() {
             let player = PlayerList.getPlayerBySocketID(testClient2.id);
             let group = RoomList.getRoomByID(TEST_ROOM).findGroupByPlayer(player);
-            if (player.points === 0 && group.points === 1) {
+            if (player && player.points === 0 && group && group.points === 1) {
                 done();
             }
         }

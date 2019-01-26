@@ -63,6 +63,7 @@ define(['jquery', 'app/socket_manager', 'app/player', 'app/view_room_options', '
 
 		player = Player.getPlayer();
 
+        roomNameField.focus();
 	}
 
 

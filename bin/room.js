@@ -28,6 +28,7 @@
 
 const debug = require('debug')('BoinKikuRenshuu:room');
 const Util = require('./util');
+const TemplateManager = require('./template_manager');
 const Events = require('./event_types');
 const Group = require('./group');
 const TYPE_GROUP = "group";
@@ -53,26 +54,26 @@ class Room {
         this.id = roomID;
         this.owner = owner;
         this.type = TYPE_INDIVIDUAL;
-        this.players = {};
-        this.groups = {};
+        this.players = [];
+        this.groups = [];
         this.groupType = Group.TYPE_ALL_FOR_ONE;
         this.groupsAssigned = false;
         this.setUp = false;
     }
 
     get playerCount() {
-        return Util.getLen(this.players);
+        return this.players.length;
     }
 
     get groupCount() {
-        return Util.getLen(this.groups);
+        return this.groups.length;
     }
 
     addPlayer(player, isTeacher) {
         if (player.socket) {
             player.socket.join(this.id);
             if (!isTeacher) {
-                this.players[player.id] = player;
+                this.players.push(player);
             }
         }
     }
@@ -80,41 +81,84 @@ class Room {
     removePlayer(player) {
         if (player.hasOwnProperty('id')) {
             player.socket.leave(this.id);
-            delete this.players[player.id];
+            let idx = this.players.indexOf(player);
+            if (idx !== -1) {
+                this.players.splice(idx,1);
+            }
         }
     }
 
     addGroup(group) {
         if (group.hasOwnProperty('id')) {
-            this.groups[group.id] = group;
+            if (!this.hasGroup(group)) {
+                this.groups.push(group);
+            }
         }
     }
 
     removeGroup(group) {
         if (group.hasOwnProperty('id')) {
-            delete this.groups[group.id];
+            let groupIdx = this.getGroupIndex(group);
+            if (groupIdx !== -1) {
+                this.groups.splice(groupIdx, 1);
+            }
         }
     }
 
     hasPlayer(player) {
-        return player.hasOwnProperty('id') && Util.hasKey(this.players, player.id);
+        return player.hasOwnProperty('id') && this.players.indexOf(player) !== -1;
     }
 
     hasGroup(group) {
-        return group.hasOwnProperty('id') && Util.hasKey(this.groups, group.id);
+        if (group.hasOwnProperty('id')) {
+           return this.getGroupIndex(group) !== -1;
+        }
+
+        return false;
+    }
+
+    hasGroupByID(groupID) {
+        return this.hasGroup({"id": groupID});
+    }
+
+    getGroupIndex(group) {
+
+        let idx = -1;
+
+        if (group.hasOwnProperty('id')) {
+            for (let i = 0; i < this.groups.length; i++) {
+                if (this.groups[i].id === group.id) {
+                    idx = i;
+                    break;
+                }
+            }
+        }
+
+        return idx;
+    }
+
+    getGroupByID(groupID) {
+        let group = false;
+        let groupIdx = this.getGroupIndex({"id": groupID});
+        if (groupIdx !== -1) {
+            group = this.groups[groupIdx];
+        }
+
+        return group;
     }
 
     destroy() {
-        this.owner.socket.to(this.id).emit(Events.HOST_DISCONNECTED);
+        TemplateManager.sendPrecompiledTemplate(this.id, 'disconnected', {});
+        this.owner.socket.to(this.id).emit(Events.DISCONNECT);
     }
 
     findGroupByPlayer(player) {
         let noMatch = false;
 
         if (player && this.hasPlayer(player)) {
-            for (const [k, v] of Object.entries(this.groups)) {
-                if (v.hasPlayer(player)) {
-                    return v;
+            for (const group of this.groups) {
+                if (group.hasPlayer(player)) {
+                    return group;
                 }
             }
         }
@@ -123,12 +167,26 @@ class Room {
     }
 
     assignPlayerToGroup(player, exceedBase) {
-        // TODO: This is super sad and hackey...
-        for (const [k,v] of Object.entries(this.groups)) {
-            if (v.playerCount < v.baseNumber || exceedBase) {
-                v.addPlayer(this, player);
-                debug(`Added ${player.name} to ${v.id}`);
-                return v;
+
+        if (exceedBase) {
+            let group = this.groups.sort(
+                function (a, b) {
+                    if (a.playerCount === b.playerCount) {
+                        return a.id > b.id;
+                    }
+
+                    return a.playerCount > b.playerCount;
+                })[0];
+            group.addPlayer(this, player);
+            debug(`Added ${player.name} to ${group.id}`);
+            return group;
+        }
+
+        for (const group of this.groups) {
+            if (group.playerCount < group.baseNumber) {
+                group.addPlayer(this, player);
+                debug(`Added ${player.name} to ${group.id}`);
+                return group;
             }
         }
 

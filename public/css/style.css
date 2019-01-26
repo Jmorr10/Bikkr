@@ -1,9 +1,10 @@
 body {
   padding: 60px 16px 16px 16px;
   overflow: hidden;
+  height: 100vh;
 }
 
-#header {
+#header, #teacherBar {
   position: fixed;
   top: 0;
   left: 0;
@@ -17,46 +18,94 @@ body {
   padding: 16px;
 }
 
+#sound-grid {
+  height: 100vh;
+}
+
+#teacherBar {
+  top: initial;
+  bottom: 0;
+  justify-content: space-around;
+}
+
+#header-text {
+  display: flex;
+  flex-direction: column;
+}
+
 #header-text h1 {
   font-size: 1.1rem;
   font-weight: bold;
   margin-bottom: 0;
-  margin-top: 8px;
+  order: 0;
 }
 
 #header-text h2 {
   font-size: 1.0rem;
   font-weight: bold;
+  order: 1;
 }
 
-#leaderboardBtn {
-  background-color: #1565c0;
+#header-text h2 + h1 {
+  margin-top: 8px;
+}
+
+#header #leaderboardBtn, #settingsBtn {
+  background: none;
   border: none;
   color: #FFFFFF;
   position: absolute;
   right: 11px;
   font-size: 1.8rem;
   display: inline-block;
-  border-radius: 60px;
-  box-shadow: 0 0 2px #888;
   padding: 0.05em 0.15em;
+  outline: none !important;
 }
 
-#popup:not(.open) {
-  display: none;
+
+#roomNameForm, #usernameForm, #groupSelectionForm, #roomOptionsForm {
+  display: flex;
+  height: calc(100vh - 92px);
+  flex-direction: column;
 }
 
-#leaderboard:not(.open) {
+#roomName {
+  margin-bottom: 8px;
+}
+
+.form-content {
+  text-align: center;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+#popupContent:not(.open) {
+  height: 0;
+  opacity: 0;
+  transition: height .5s, opacity .5s;
+  transition-timing-function: cubic-bezier(0.18, 0.89, 0.32, 1.28), cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+#leaderboard:not(.open),
+#playerList:not(.open){
   display: none;
 }
 
 #soundGridHolder {
-  height: calc(100vh - 76px);
-  padding-top: 16px;
+  height: calc(100% - 92px);
+  top: 15px;
+  position: relative;
 }
 
 #soundGridHolder .row {
   height: calc(100% / 5);
+}
+
+#teacherBar + #soundGridHolder {
+  height: calc(100vh - 150px) !important;
 }
 
 #soundGridHolder button {
@@ -98,7 +147,7 @@ body {
 
 #soundGridHolder .col-6.incorrect:after {
   opacity: 0.75;
-  content: '\e801';
+  content: '\e800';
   background-color: #003c8f !important;
   font-size: 4.9rem !important;
 }
@@ -121,7 +170,7 @@ body {
   padding-left: 8px;
 }
 
-#leaderboardContent, #popupContent {
+#leaderboardContent, #playerListContentHolder {
   position: fixed;
   margin: auto;
   height: calc(100vh - 32px);
@@ -133,14 +182,30 @@ body {
   padding: 24px 16px 16px 16px;
   overflow-x: hidden;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 #popupContent {
+  height: 3rem;
+  opacity: 1.0;
+  padding: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  box-shadow: 0 -3px 6px rgba(0,0,0,0.23);
+  background-color: #003c8f;
+  color: white;
+  font-weight: bold;
+  width: auto;
+  transition: height .5s, opacity .5s;
+  transition-timing-function: cubic-bezier(0.18, 0.89, 0.32, 1.28), cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  position: fixed;
+  margin: auto;
+  z-index: 100;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  text-align: center;
+  align-items: center;
 }
 
 .modal-black {
@@ -156,7 +221,7 @@ body {
   opacity: 0.5;
 }
 
-#closeLeaderboardBtn, #closePopupBtn {
+#closeLeaderboardBtn, #closePlayerListBtn {
   border: none;
   background: none;
   color: #d50000;
@@ -166,9 +231,261 @@ body {
   right: 0;
 }
 
-#closePopupBtn {
-  z-index: 56;
-  top: 16px;
-  right: 16px;
+.score-row, .player-row {
+  padding-left: 1rem;
+  display: flex;
+  position: relative;
 }
 
+.score-name, .player-name {
+  flex: 1;
+}
+
+.score-value, .player-value {
+  padding-right: 3rem;
+}
+
+#leaderboardContent h1,
+#playerListContentHolder h1 {
+  margin-bottom: 1rem;
+  border-bottom: 1px solid black;
+  padding-bottom: 8px;
+}
+
+.group-score-row {
+  margin-bottom: 0.75rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.group-score-name {
+  order: -999 !important;
+}
+
+#freeForAllScores, #groupScores, #playerScores {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.score-holder {
+  flex: 1;
+  overflow-x: hidden;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+#teacherBar button {
+  border: none;
+  background: none;
+  color: white;
+  font-size: 1.8rem;
+  outline: none !important;
+}
+
+#playerListContent .kick-btn {
+  background-color: #d50000;
+  border: none;
+  color: #FFFFFF;
+  font-size: 1rem;
+  display: inline-block;
+  border-radius: 60px;
+  box-shadow: 0 0 2px #888;
+  padding: 0.0em 0.05em;
+  min-width: 45px;
+  padding-bottom: 0.1875rem;
+  margin-right: 1.5rem;
+}
+
+.player-row {
+  margin-bottom: 16px;
+}
+
+.login-holder {
+  display: flex;
+  flex-direction: column;
+  padding-top: 16px;
+  height: calc(100vh - 60px);
+}
+
+.logo {
+  max-width: 80%;
+  margin-bottom: 1rem;
+}
+
+#typeGroup:not(:checked) ~ .group-sub-options  {
+  display: none;
+}
+
+.group-sub-options {
+  margin-top: 5px;
+}
+
+.group-btn-holder {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.group-btn-holder > button {
+  margin: 1rem;
+}
+
+.group-btn-holder button {
+  background-color: #1565c0;
+  outline: none !important;
+  border: none;
+  color: white;
+  padding: 0.5rem 0.5rem 0.7rem 0.5rem;
+  font-weight: bold;
+  border-radius: 30px;
+  min-width: 45px;
+}
+
+.login-holder input[type="submit"] {
+  width: 50%;
+  padding: 0.5rem;
+  background-color: #1565c0;
+  border: none;
+  outline: none !important;
+  color: white;
+  font-weight: bold;
+  border-radius: 30px;
+  margin: auto auto 0 auto;
+}
+
+.login-img {
+  overflow: hidden;
+  width: 90vw;
+  flex: 0 0 45vh;
+  /*flex: 0 0 70.752089136490250696378830083565vw;*/
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+}
+
+#roomNameForm .login-img {
+  background: url("../img/room.png");
+}
+
+#roomOptionsForm .login-img {
+  background: url("../img/room_settings.png");
+}
+
+#groupSelectionForm .login-img {
+  background: url('../img/group_selection.jpg');
+}
+
+#usernameForm .login-img {
+  background: url('../img/username.png');
+}
+
+
+
+
+
+
+
+#typeGroup, #typeIndividual {
+  position: relative;
+  height: 4.375rem;
+  width: 4.375rem;
+  left: 2.7rem;
+  top: 1.6rem;
+  z-index: -1;
+}
+
+input + .radio-label:after {
+  font-family: 'boinkikurenshuu';
+  background-color: #003c8f;
+  border-radius: 200px;
+  height: 4.375rem !important;
+  width: 4.375rem !important;
+  display: flex;
+  justify-content: center;
+  color: white;
+  align-items: center;
+  font-size: 2rem;
+}
+
+input#typeGroup + .radio-label:after {
+  content: '\e805';
+}
+
+input#typeIndividual + .radio-label:after {
+  content: '\e807';
+}
+
+input:checked + .radio-label:after {
+  background-color: #1565c0;
+}
+
+.inner-form {
+  position: relative;
+  top: -1rem;
+}
+
+.login-holder .error-lbl {
+  color: #d50000;
+}
+
+.radio-label {
+  position: relative;
+  left: -2rem;
+}
+
+
+.score-row .icon-crown {
+  order: 999;
+  position: absolute;
+  right: 0;
+  font-size: 1.5rem;
+  top: -0.35rem;
+}
+
+
+@media only screen and (min-width: 532px) {
+
+  #playerListContentHolder, #leaderboardContent {
+    max-width: 500px;
+    left: 0;
+    right: 0;
+  }
+
+  #popupContent {
+    max-width: 700px;
+  }
+
+  html {
+    background-color: #303030;
+  }
+
+  body {
+    max-width: 700px;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .login-img {
+    max-width: 700px !important;
+    flex: 0 0 23vw;
+  }
+
+
+
+  #header, #teacherBar {
+    max-width: 700px;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+}
+
+
+@media only screen and (min-width: 700px) {
+
+}
