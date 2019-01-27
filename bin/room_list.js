@@ -77,7 +77,6 @@ function destroyRooms(owner) {
         if (val.owner.id === owner.id) {
             removeRoom(val);
             // Inform clients of host disconnection
-            // TODO: HANDLE THIS ON THE CLIENT-SIDE
             val.destroy();
         }
     }

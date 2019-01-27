@@ -32,12 +32,12 @@
  * @version 1.0
  * @since 1.0
  */
-define(['jquery', 'app/socket_manager', 'app/render_manager', 'app/player', 'event_types'],
-	function (jQ, socketManager, render_manager, Player, Events) {
+define(['jquery', 'app/render_manager', 'app/player', 'event_types'],
+	function (jQ, render_manager, Player, Events) {
 
 	require(['bootstrap'], function() {});
 
-	let socket = socketManager.getConnection();
+	let socket = Player.getConnection();
 
 	function init(isTeacher) {
 

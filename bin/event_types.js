@@ -59,6 +59,7 @@ const STUDENT_RESPONSE = 'student_response';
 const KICK_PLAYER = 'kick_player';
 const KICKED = "kicked";
 const HOST_DISCONNECTED = 'host_disconnected';
+const RECONNECT = "reconnect";
 
 // GUI
 const RENDER_TEMPLATE = "render_template";
@@ -87,5 +88,6 @@ module.exports = {
     KICK_PLAYER: KICK_PLAYER,
     KICKED: KICKED,
     HOST_DISCONNECTED: HOST_DISCONNECTED,
+    RECONNECT: RECONNECT,
     RENDER_TEMPLATE: RENDER_TEMPLATE,
 };

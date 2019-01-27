@@ -358,6 +358,46 @@ function setUsername(socket, roomID, username) {
 
 }
 
+function reconnectPlayer(socket, playerState) {
+    let new_player = new Player(socket.id, false);
+    new_player.socket = socket;
+    PlayerList.addPlayer(new_player);
+    let room = RoomList.getRoomByID(playerState.room);
+    let group;
+
+    if (room) {
+        room.addPlayer(new_player);
+    }
+
+    new_player.name = playerState.name;
+
+    if (room && room.type === RoomTypes.TYPE_GROUP) {
+        group = room.getGroupByID(playerState.group);
+        group.addPlayer(room, new_player);
+    }
+
+    // Student sound grid should be locked initially
+    TemplateManager.sendPrecompiledTemplate(socket.id, 'sound_grid_student', {
+        roomID: room.id,
+        locked: true,
+        groups: room.groups,
+        groupID: group.id,
+        player: new_player,
+        roomType: room.type,
+        groupType: room.groupType});
+
+    TemplateManager.sendPrecompiledTemplate(
+        room.id,
+        'partials/leaderboard_content',
+        {players: room.players,
+            roomType: room.type,
+            groupType: room.groupType,
+            groups: room.groups
+        }
+    );
+
+}
+
 module.exports = {
     clientConnected: clientConnected,
     clientDisconnected: clientDisconnected,
@@ -366,5 +406,6 @@ module.exports = {
     createRoom: createRoom,
     setupRoom: setupRoom,
     joinRoom: joinRoom,
-    joinGroup: joinGroup
+    joinGroup: joinGroup,
+    reconnectPlayer: reconnectPlayer
 };

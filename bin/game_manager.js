@@ -159,7 +159,8 @@ function processIndividualResponse(room, player, currentQuestionTmp, isCorrect) 
                 winner: player
             },
             Events.QUESTION_FINISHED,
-            currentQuestionTmp
+            currentQuestionTmp,
+            player.points
         );
         debug('Question answered and finished!');
         return false;
@@ -198,7 +199,8 @@ function processAllForOneResponse(room, player, currentQuestionTmp, studentRespo
                     groups: room.groups.sort(function (a,b) { return a.points < b.points; })
                 },
                 Events.QUESTION_FINISHED,
-                currentQuestionTmp
+                currentQuestionTmp,
+                player.points
             );
             debug('Question answered and finished!');
             return false;
@@ -240,7 +242,8 @@ function processFreeForAllResponse(room, player, currentQuestionTmp, isCorrect) 
                     winners: ffaWinners
                 },
                 Events.QUESTION_FINISHED,
-                currentQuestionTmp
+                currentQuestionTmp,
+                player.points
             );
 
             ffaWinners = {};

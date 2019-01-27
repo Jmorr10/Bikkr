@@ -33,16 +33,4 @@
  * @version 1.0
  * @since 1.0
  */
-define([], function () {
-
-	let socket = io.connect();
-
-	function getConnection() {
-		return socket;
-	}
-
-	return {
-		getConnection: getConnection
-	};
-	
-});
+define([], function () {});

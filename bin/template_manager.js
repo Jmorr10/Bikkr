@@ -50,7 +50,7 @@ const handlebars = require('express-handlebars').create({
     }
 });
 
-const io = ConnectionManager.getIO();
+let io = ConnectionManager.getIO();
 const TEMPLATE_ROOT = path.join(__dirname, "../views/");
 
 /**
@@ -61,6 +61,13 @@ const TEMPLATE_ROOT = path.join(__dirname, "../views/");
  * @param context The context to use for compiling the template
  */
 function sendPrecompiledTemplate(socketID, templateName, context) {
+
+    if (!io) {
+        io = ConnectionManager.getIO();
+        if (!io) {
+            return;
+        }
+    }
 
     if (Array.isArray(socketID)) {
         for (const soc of socketID) {
@@ -90,6 +97,13 @@ function sendPrecompiledTemplate(socketID, templateName, context) {
  */
 function emitWithTemplate(socketID, templateName, context, eventType, ...args) {
 
+    if (!io) {
+        io = ConnectionManager.getIO();
+        if (!io) {
+            return;
+        }
+    }
+
     if (Array.isArray(socketID)) {
         for (const soc of socketID) {
             emitWithTemplate(soc, templateName, context, eventType, ...args);
@@ -117,6 +131,14 @@ function emitWithTemplate(socketID, templateName, context, eventType, ...args) {
  * @param args Any additional arguments to be passed into the client's listening function.
  */
 function emitWithTemplateArray(socketID, templateNames, contexts, eventType, ...args) {
+
+    if (!io) {
+        io = ConnectionManager.getIO();
+        if (!io) {
+            return;
+        }
+    }
+
     // Check if each template has its own context
     if (templateNames && contexts && templateNames.length === contexts.length) {
 

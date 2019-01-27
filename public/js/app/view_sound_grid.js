@@ -33,10 +33,10 @@
  * @version 1.0
  * @since 1.0
  */
-define(['jquery', 'app/socket_manager', 'app/player', 'app/render_manager', 'event_types'],
-	function (jQ, socketManager, Player, render_manager, Events) {
+define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
+	function (jQ, Player, render_manager, Events) {
 
-	const socket = socketManager.getConnection();
+	const socket = Player.getConnection();
 	let player;
 
 	let startBtn;
@@ -44,6 +44,7 @@ define(['jquery', 'app/socket_manager', 'app/player', 'app/render_manager', 'eve
 	let errorLbl;
 	let roomID;
 	let currentQuestion = "";
+	let modalBlack;
 
 	function start(rID) {
 
@@ -52,6 +53,7 @@ define(['jquery', 'app/socket_manager', 'app/player', 'app/render_manager', 'eve
         soundGridHolder = jQ('#soundGridHolder');
         errorLbl = jQ('.error-lbl');
         roomID = rID;
+        modalBlack = jQ('.modal-black');
 
         startBtn.click(function () {
             soundGridHolder.removeClass('locked');
@@ -93,6 +95,16 @@ define(['jquery', 'app/socket_manager', 'app/player', 'app/render_manager', 'eve
 		});
 
         jQ('#settingsBtn').click();
+
+        modalBlack.click(function () {
+            jQ(this).parent().removeClass('open');
+        });
+
+        jQ('body').keypress(function (e) {
+            if (e.keyCode === 27) {
+                modalBlack.parent().removeClass('open');
+            }
+        });
 
 		socket.on(Events.QUESTION_FINISHED, updateState);
 		socket.on(Events.QUESTION_FAILED, questionFailed);

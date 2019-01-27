@@ -33,10 +33,10 @@
  * @version 1.0
  * @since 1.0
  */
-define(['jquery', 'app/socket_manager', 'app/player', 'app/render_manager', 'event_types'],
-    function (jQ, socketManager, Player, render_manager, Events) {
+define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
+    function (jQ, Player, render_manager, Events) {
 
-        const socket = socketManager.getConnection();
+        const socket = Player.getConnection();
         let player;
 
         let soundGridHolder;
@@ -102,9 +102,10 @@ define(['jquery', 'app/socket_manager', 'app/player', 'app/render_manager', 'eve
             soundGridHolder.removeClass('locked');
         }
 
-        function processResults(template, correctAnswer) {
+        function processResults(template, correctAnswer, points) {
 
             render_manager.renderResponse(template);
+            player.points = points;
             soundGridHolder.addClass('locked');
             let correctBtn = soundGridHolder.find(`button[data-sound=${correctAnswer}]`).parent();
             let incorrectBtn;

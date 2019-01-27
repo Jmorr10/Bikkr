@@ -33,10 +33,10 @@
  * @version 1.0
  * @since 1.0
  */
-define(['jquery', 'app/socket_manager', 'app/player', 'app/view_sound_grid', 'app/render_manager', 'event_types'],
-	function (jQ, socketManager, Player, soundGrid, render_manager, Events) {
+define(['jquery', 'app/player', 'app/view_sound_grid', 'app/render_manager', 'event_types'],
+	function (jQ, Player, soundGrid, render_manager, Events) {
 
-	const socket = socketManager.getConnection();
+	const socket = Player.getConnection();
 	let player;
 
 	let submitBtn;

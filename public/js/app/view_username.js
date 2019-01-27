@@ -33,10 +33,10 @@
  * @version 1.0
  * @since 1.0
  */
-define(['jquery', 'app/socket_manager', 'app/view_group_selection', 'app/view_sound_grid_student', 'app/player', 'app/render_manager', 'event_types'],
-	function (jQ, socketManager, groupSelection, soundGridStudent, Player, render_manager, Events) {
+define(['jquery', 'app/view_group_selection', 'app/view_sound_grid_student', 'app/player', 'app/render_manager', 'event_types'],
+	function (jQ, groupSelection, soundGridStudent, Player, render_manager, Events) {
 
-	const socket = socketManager.getConnection();
+	const socket = Player.getConnection();
 	let player;
 	let submitBtn;
 	let usernameField;

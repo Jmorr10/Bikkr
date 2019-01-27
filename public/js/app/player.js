@@ -46,7 +46,7 @@ define(['app/socket_manager'], function (socketManager) {
      * @class
      */
 	class Player {
-		
+
 		constructor(socketID, isTeacher) {
 			this.id = socketID;
 			this.isTeacher = (isTeacher === true);
@@ -60,20 +60,87 @@ define(['app/socket_manager'], function (socketManager) {
 			return this._name;
 		}
 
+        get room() {
+            return this._room;
+        }
+
+        set room(value) {
+            this._room = value;
+        }
+
+        get points() {
+            return this._points;
+        }
+
+        set points(value) {
+            this._points = value;
+        }
+
+        get group() {
+            return this._group;
+        }
+
+        set group(value) {
+            this._group = value;
+        }
+
 	}
 
 	function initializePlayer(isTeacher) {
-        socket = socketManager.getConnection();
         selfPlayer = new Player(socket.id, isTeacher);
 	}
+
+    function connect() {
+
+        let wasConnected = false;
+
+        if (socket) {
+            socket.destroy();
+            socket = null;
+            wasConnected = true;
+        }
+
+        socket = io.connect(
+            'http://localhost:5000',
+            {
+                reconnection: true,
+                reconnectionDelay: 1000,
+                reconnectionDelayMax: 2000,
+                reconnectionAttempts: Infinity
+            }
+        );
+
+        socket.on('disconnect', function () {
+            window.setTimeout(connect, 5000);
+        });
+
+        socket.on('connect', function () {
+            let player = getPlayer();
+            if (wasConnected && !player.isTeacher) {
+                socket.emit(Events.RECONNECT, {
+                    name: player.name,
+                    room: player.room,
+                    group: player.group,
+                    points: player.points
+                });
+            }
+        });
+    }
 
     function getPlayer() {
 		return selfPlayer;
 	}
 
+	function getConnection() {
+		return socket;
+	}
+
+	connect();
+
 	return {
 		getPlayer: getPlayer,
-		initializePlayer: initializePlayer
+		initializePlayer: initializePlayer,
+		getConnection: getConnection
 	}
 
 });

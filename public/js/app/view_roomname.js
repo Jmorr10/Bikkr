@@ -33,10 +33,10 @@
  * @version 1.0
  * @since 1.0
  */
-define(['jquery', 'app/socket_manager', 'app/player', 'app/view_room_options', 'app/view_username', 'app/render_manager', 'event_types'],
-	function (jQ, socketManager, Player, roomOptions, username, render_manager, Events) {
+define(['jquery', 'app/player', 'app/view_room_options', 'app/view_username', 'app/render_manager', 'event_types'],
+	function (jQ, Player, roomOptions, username, render_manager, Events) {
 
-	const socket = socketManager.getConnection();
+	const socket = Player.getConnection();
 	let player;
 
 	let submitBtn;
@@ -83,6 +83,7 @@ define(['jquery', 'app/socket_manager', 'app/player', 'app/view_room_options', '
 
 	function finish (template, roomID) {
         render_manager.renderResponse(template);
+        player.room = roomID;
 		if (player.isTeacher) {
 			roomOptions.start(roomID);
 		} else {

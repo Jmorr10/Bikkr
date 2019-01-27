@@ -33,13 +33,13 @@
  * @version 1.0
  * @since 1.0
  */
-define(['jquery', 'app/socket_manager', 'app/player', 'app/view_sound_grid_student', 'app/render_manager', 'event_types'],
-    function (jQ, socketManager, Player, soundGridStudent, render_manager, Events) {
+define(['jquery', 'app/player', 'app/view_sound_grid_student', 'app/render_manager', 'event_types'],
+    function (jQ, Player, soundGridStudent, render_manager, Events) {
 
-        const socket = socketManager.getConnection();
+        const socket = Player.getConnection();
         let player;
         let roomID;
-
+        let groupID;
         let errorLbl;
 
         function start(rID) {
@@ -50,7 +50,8 @@ define(['jquery', 'app/socket_manager', 'app/player', 'app/view_sound_grid_stude
 
             jQ('#groupSelectionForm button').click(function (e) {
                 e.stopImmediatePropagation();
-                socket.emit(Events.JOIN_GROUP, roomID, jQ(this).data('group'));
+                groupID = jQ(this).data('group');
+                socket.emit(Events.JOIN_GROUP, roomID, groupID);
             });
 
             socket.on(Events.GROUP_JOINED, finish);
@@ -62,6 +63,7 @@ define(['jquery', 'app/socket_manager', 'app/player', 'app/view_sound_grid_stude
 
         function finish (template, roomID) {
             render_manager.renderResponse(template);
+            player.group = groupID;
             soundGridStudent.start(roomID);
         }
 
