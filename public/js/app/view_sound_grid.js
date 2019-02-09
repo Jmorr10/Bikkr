@@ -94,7 +94,13 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 			}
 		});
 
-        jQ('#settingsBtn').click();
+        jQ('#settingsBtn').click(function () {
+            jQ('#settings').addClass('open');
+		});
+
+        jQ('#closeSettingsBtn').click(function () {
+            jQ('#settings').removeClass('open');
+        });
 
         modalBlack.click(function () {
             jQ(this).parent().removeClass('open');
@@ -136,6 +142,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 		currentQuestion = "";
 		soundGridHolder.removeClass('locked');
 		render_manager.renderResponse(template);
+		updateScoreboard();
 	}
 
 	function questionFailed(template) {
@@ -145,6 +152,14 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 
 	function setError (errorTxt) {
 		errorLbl.text(errorTxt);
+	}
+
+	function updateScoreboard() {
+		let content = jQ('#leaderboardContent')[0].innerHTML;
+		let popup = window.open('', 'Scoreboard');
+		if (popup) {
+            jQ('body', popup.document).empty().add(content);
+		}
 	}
 
 

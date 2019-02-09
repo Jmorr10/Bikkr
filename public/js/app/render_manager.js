@@ -47,7 +47,8 @@ define(['jquery'], function(jQ) {
      *
      * @param html The HTML received from the server
      */
-    function renderResponse(html) {
+    function renderResponse(html, callback) {
+
         let rendered = jQ([]).add(html);
         let arr = jQ.makeArray(rendered);
 
@@ -65,6 +66,10 @@ define(['jquery'], function(jQ) {
                     target.empty().append(el.html());
                 }
             }
+        }
+
+        if (callback) {
+            callback();
         }
     }
 

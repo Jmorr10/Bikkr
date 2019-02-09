@@ -90,7 +90,8 @@ body {
 }
 
 #leaderboard:not(.open),
-#playerList:not(.open){
+#playerList:not(.open),
+#settings:not(.open) {
   display: none;
 }
 
@@ -170,7 +171,7 @@ body {
   padding-left: 8px;
 }
 
-#leaderboardContent, #playerListContentHolder {
+#leaderboardContent, #playerListContentHolder, #settingsContent {
   position: fixed;
   margin: auto;
   height: calc(100vh - 32px);
@@ -221,7 +222,7 @@ body {
   opacity: 0.5;
 }
 
-#closeLeaderboardBtn, #closePlayerListBtn {
+#closeLeaderboardBtn, #closePlayerListBtn, #closeSettingsBtn {
   border: none;
   background: none;
   color: #d50000;
@@ -246,7 +247,8 @@ body {
 }
 
 #leaderboardContent h1,
-#playerListContentHolder h1 {
+#playerListContentHolder h1,
+#settingsContent h1 {
   margin-bottom: 1rem;
   border-bottom: 1px solid black;
   padding-bottom: 8px;
@@ -382,6 +384,10 @@ body {
   background: url('../img/username.png');
 }
 
+.scoreboard button {
+  display: none !important;
+}
+
 
 
 
@@ -448,7 +454,7 @@ input:checked + .radio-label:after {
 
 @media only screen and (min-width: 532px) {
 
-  #playerListContentHolder, #leaderboardContent {
+  #playerListContentHolder, #leaderboardContent, #settingsContent {
     max-width: 500px;
     left: 0;
     right: 0;

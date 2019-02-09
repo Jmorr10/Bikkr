@@ -32,7 +32,7 @@
  * @version 1.0
  * @since 1.0
  */
-define(['app/socket_manager'], function (socketManager) {
+define(['event_types'], function (Events) {
 	
 	let socket;
 	let selfPlayer;
@@ -125,6 +125,10 @@ define(['app/socket_manager'], function (socketManager) {
                 });
             }
         });
+
+        window.getSocket = function () {
+            return socket;
+        }
     }
 
     function getPlayer() {

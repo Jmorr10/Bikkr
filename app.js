@@ -8,6 +8,7 @@ let logger = require('morgan');
 
 let indexRouter = require('./routes/index');
 let teacherRouter = require('./routes/teacher');
+let scoreboardRouter = require('./routes/scoreboard');
 
 let app = express();
 
@@ -31,6 +32,9 @@ app.use('/static', express.static(__dirname + '/public'));
 
 app.use('/', indexRouter);
 app.use('/teacher', teacherRouter);
+app.use('/scoreboard', scoreboardRouter);
+
+// TODO - START HERE - CREATE ROUTE FOR SEPARATE SCOREBOARD
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
