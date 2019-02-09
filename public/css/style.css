@@ -535,15 +535,20 @@ input:checked + .slider:before {
 
 .lds-default {
   display: inline-block;
-  position: relative;
   width: 64px;
   height: 64px;
+  position: fixed;
+  margin: auto;
+  left: 0;
+  right: 0;
+  top: 60px;
+  bottom: 0;
 }
 .lds-default div {
   position: absolute;
   width: 5px;
   height: 5px;
-  background: #fff;
+  background: #000;
   border-radius: 50%;
   animation: lds-default 1.2s linear infinite;
 }
