@@ -17,7 +17,7 @@ describe('loading express', function () {
     let io = require('socket.io-client');
     let sio;
     let serverSocket;
-    let socketURL = 'http://localhost:5000';
+    let socketURL = 'https://dev-boinkikurenshuu.herokuapp.com';
     let options ={
         transports: ['websocket'],
         'force new connection': true

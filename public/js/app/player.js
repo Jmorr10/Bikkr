@@ -101,7 +101,7 @@ define(['event_types'], function (Events) {
         }
 
         socket = io.connect(
-            'http://localhost:5000',
+            'https://dev-boinkikurenshuu.herokuapp.com',
             {
                 reconnection: true,
                 reconnectionDelay: 1000,
