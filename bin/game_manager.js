@@ -76,13 +76,16 @@ let groupsAnswered = {};
 let ffaWinners = {};
 
 
-function setQuestion(socket, roomID, questionSound) {
+function setQuestion(socket, roomID, questionSound, studentsPlaySound) {
     questionSound = questionSound.toUpperCase();
     if (SOUNDS.hasOwnProperty(questionSound)) {
         currentQuestion = questionSound;
         questionActive = true;
         socket.emit(Events.QUESTION_READY);
         socket.to(roomID).emit(Events.QUESTION_READY);
+        if (studentsPlaySound) {
+            socket.to(roomID).emit(Events.PLAY_SOUND, questionSound);
+        }
         debug('Question set!');
     }
 }
@@ -280,8 +283,13 @@ function skipQuestion(socket, roomID, correctAnswer) {
     }
 }
 
+function playSound(socket, roomID, questionSound) {
+    socket.to(roomID).emit(Events.PLAY_SOUND, questionSound);
+}
+
 module.exports = {
     setQuestion: setQuestion,
     processStudentResponse: processStudentResponseRWRT,
-    skipQuestion: skipQuestion
+    skipQuestion: skipQuestion,
+    playSound: playSound
 };

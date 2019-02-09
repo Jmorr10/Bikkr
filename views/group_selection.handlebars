@@ -1,4 +1,5 @@
 <div id="groupSelectionForm" data-target="#content" data-add="self">
+	<input type="hidden" value="{{roomID}}" id="roomIDVal"/>
 	<div class="form-content">
 		<div class="login-img"></div>
 		<div style="flex:1;">
@@ -12,7 +13,7 @@
 	</div>
 	<script>
 		require(['app/view_group_selection'], function (view_group_selection) {
-			view_group_selection.start('{{roomID}}');
+			view_group_selection.start();
 		});
 	</script>
 </div>

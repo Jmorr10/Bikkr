@@ -45,14 +45,16 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 	let roomID;
 	let currentQuestion = "";
 	let modalBlack;
+	let studentsPlaySound = false;
+	let disableMainSound = false;
 
-	function start(rID) {
+	function start() {
 
 		player = Player.getPlayer();
         startBtn = jQ('#startBtn');
         soundGridHolder = jQ('#soundGridHolder');
         errorLbl = jQ('.error-lbl');
-        roomID = rID;
+        roomID = jQ('#roomIDVal').val();
         modalBlack = jQ('.modal-black');
 
         startBtn.click(function () {
@@ -120,16 +122,26 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 	function setQuestion (questionSound) {
 		soundGridHolder.addClass('locked');
 		currentQuestion = questionSound;
-        let sound = new Audio(`/static/audio/${questionSound}.mp3`);
-        jQ(sound).bind('ended', function () {
-            socket.emit(Events.SET_QUESTION, roomID, questionSound);
-        });
-        sound.play();
+        if (disableMainSound) {
+            socket.emit(Events.SET_QUESTION, roomID, questionSound, studentsPlaySound);
+		} else {
+            let sound = new Audio(`/static/audio/${questionSound}.mp3`);
+            jQ(sound).bind('ended', function () {
+                socket.emit(Events.SET_QUESTION, roomID, questionSound, studentsPlaySound);
+            });
+            sound.play();
+		}
 	}
 
 	function playSound(questionSound) {
-        let sound = new Audio(`/static/audio/${questionSound}.mp3`);
-        sound.play();
+		if (!disableMainSound) {
+            let sound = new Audio(`/static/audio/${questionSound}.mp3`);
+            sound.play();
+		}
+
+		if (studentsPlaySound) {
+         	socket.emit(Events.PLAY_SOUND, roomID, questionSound);
+		}
     }
 
 	function kickPlayer(playerID) {
@@ -142,7 +154,6 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 		currentQuestion = "";
 		soundGridHolder.removeClass('locked');
 		render_manager.renderResponse(template);
-		updateScoreboard();
 	}
 
 	function questionFailed(template) {
@@ -154,18 +165,20 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 		errorLbl.text(errorTxt);
 	}
 
-	function updateScoreboard() {
-		let content = jQ('#leaderboardContent')[0].innerHTML;
-		let popup = window.open('', 'Scoreboard');
-		if (popup) {
-            jQ('body', popup.document).empty().add(content);
-		}
+	function setStudentsPlaySound(val) {
+		studentsPlaySound = val;
+	}
+
+	function setDisableMainSound(val) {
+		disableMainSound = val;
 	}
 
 
 	return {
 		start: start,
-		kickPlayer: kickPlayer
+		kickPlayer: kickPlayer,
+		setStudentsPlaySound: setStudentsPlaySound,
+		setDisableMainSound: setDisableMainSound
 	};
 	
 });

@@ -88,7 +88,7 @@ function clientConnected(socket, isTeacher) {
  */
 function clientDisconnected(socket) {
 
-    // TODO: Need to eventually deal with students' phones sleeping and the whole reconnection process thereafter.
+    // TODO: Need to test the whole reconnection flow
 
 
     let player = PlayerList.getPlayerBySocketID(socket.id);

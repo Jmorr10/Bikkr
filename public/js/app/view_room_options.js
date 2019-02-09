@@ -48,7 +48,6 @@ define(['jquery', 'app/player', 'app/view_sound_grid', 'app/render_manager', 'ev
 	const ERR_CHOOSE_GROUP_TYPE = "Please choose a group type!";
 	const ERR_TOO_FEW_STUDENTS= "You must have at least four students for groups!";
 
-	// TODO: Consider adding an invisible field/input to the template to provide the room number instead of hacky-templated-JS
 	function start(rID) {
 
 		roomID = rID;

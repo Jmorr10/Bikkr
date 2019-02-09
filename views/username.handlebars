@@ -1,4 +1,5 @@
 <div id="usernameForm" data-target="#content" data-add="self">
+	<input type="hidden" value="{{roomID}}" id="roomIDVal"/>
 	<div class="form-content">
 		<div class="login-img"></div>
 		<div style="flex: 1;">
@@ -10,7 +11,8 @@
 	<input type="submit" id="submitUsername" value="OK">
 	<script>
 		require(['app/view_username'], function (view_username) {
-			view_username.start('{{roomID}}');
+			// FIXME: DELETE
+		    //view_username.start();
 		});
 	</script>
 </div>

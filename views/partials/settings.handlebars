@@ -1,17 +1,43 @@
 <div id="settings">
 	<div class="modal-black"></div>
 	<div id="settingsContent">
-		<div>
-			<button id="showScoreboardBtn">Show Scoreboard</button>
+		<h1>Settings</h1>
+		<div class="options-holder">
+			<div>
+				<label>Show Popup Scoreboard</label>
+				<button id="showScoreboardBtn" class="btn btn-primary icon-award"></button>
+			</div>
+			<div>
+				<label>Play sound on students' devices.</label>
+				<label class="switch">
+					<input id="studentsPlaySound" name="studentsPlaySound" type="checkbox">
+					<span class="slider round"></span>
+				</label>
+			</div>
+			<div>
+				<label>Disable sound on teacher's device.</label>
+				<label class="switch">
+					<input id="disableMainSound" name="disableMainSound" type="checkbox">
+					<span class="slider round"></span>
+				</label>
+			</div>
 		</div>
 		<button id="closeSettingsBtn" class="icon-cancel"></button>
 	</div>
 
 	<script>
-		require(['jquery'], function (jQ) {
+		require(['jquery', 'app/view_sound_grid'], function (jQ, soundGrid) {
 
 			jQ('#showScoreboardBtn').click(function () {
 			    window.open('http://localhost:5000/scoreboard/', 'Scoreboard');
+			});
+
+			jQ('#studentsPlaySound').click(function () {
+			    soundGrid.setStudentsPlaySound(jQ('#studentsPlaySound').prop('checked'));
+			});
+
+			jQ('#disableMainSound').click(function () {
+				soundGrid.setDisableMainSound(jQ('#disableMainSound').prop('checked'));
 			});
 
 		});

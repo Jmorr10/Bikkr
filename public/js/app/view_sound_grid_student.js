@@ -50,7 +50,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
         let roomID;
         let myAnswer = "";
 
-        function start(rID) {
+        function start() {
 
             player  = Player.getPlayer();
             soundGridHolder = jQ('#soundGridHolder');
@@ -61,7 +61,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
             closePopupBtn = jQ('#closePopupBtn');
             modalBlack = jQ('.modal-black');
             errorLbl = jQ('.error-lbl');
-            roomID = rID;
+            roomID = jQ('#roomIDVal').val();
 
             soundGridHolder.find('button').click(function (e) {
                 e.stopImmediatePropagation();
@@ -95,6 +95,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
             socket.on(Events.QUESTION_FINISHED, processResults);
             socket.on(Events.QUESTION_ALREADY_ANSWERED, alreadyAnswered);
             socket.on(Events.QUESTION_FAILED, questionFailed);
+            socket.on(Events.PLAY_SOUND, playSound);
         }
 
 
@@ -141,6 +142,11 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
         function questionFailed(template, correctAnswer) {
             //Play class-failure animation here
             processResults(template, correctAnswer);
+        }
+
+        function playSound(questionSound) {
+            let sound = new Audio(`/static/audio/${questionSound}.mp3`);
+            sound.play();
         }
 
         return {

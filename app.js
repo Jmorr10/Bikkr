@@ -1,5 +1,3 @@
-// TODO: Option to have pronunciation sound file play on students' phones as well
-
 let createError = require('http-errors');
 let express = require('express');
 let path = require('path');
@@ -33,8 +31,6 @@ app.use('/static', express.static(__dirname + '/public'));
 app.use('/', indexRouter);
 app.use('/teacher', teacherRouter);
 app.use('/scoreboard', scoreboardRouter);
-
-// TODO - START HERE - CREATE ROUTE FOR SEPARATE SCOREBOARD
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

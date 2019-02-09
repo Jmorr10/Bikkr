@@ -42,9 +42,9 @@ define(['jquery', 'app/player', 'app/view_sound_grid_student', 'app/render_manag
         let groupID;
         let errorLbl;
 
-        function start(rID) {
+        function start() {
 
-            roomID = rID;
+            roomID = jQ('#roomIDVal').val();
             errorLbl = jQ('.error-lbl');
             player = Player.getPlayer();
 
@@ -64,7 +64,8 @@ define(['jquery', 'app/player', 'app/view_sound_grid_student', 'app/render_manag
         function finish (template, roomID) {
             render_manager.renderResponse(template);
             player.group = groupID;
-            soundGridStudent.start(roomID);
+            // FIXME: DELETE
+            //soundGridStudent.start(roomID);
         }
 
         return {

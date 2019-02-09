@@ -169,7 +169,7 @@ class Room {
     assignPlayerToGroup(player, exceedBase) {
 
         if (exceedBase) {
-            let group = this.groups.sort(
+            let group = this.groups.slice(0).sort(
                 function (a, b) {
                     if (a.playerCount === b.playerCount) {
                         return a.id > b.id;
