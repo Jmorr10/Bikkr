@@ -16,7 +16,6 @@ describe('loading express', function () {
     let server;
     let io = require('socket.io-client');
     let sio;
-    let serverSocket;
     let socketURL = 'https://dev-boinkikurenshuu.herokuapp.com';
     let options ={
         transports: ['websocket'],

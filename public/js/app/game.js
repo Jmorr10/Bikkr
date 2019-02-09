@@ -37,15 +37,26 @@ define(['jquery', 'app/render_manager', 'app/player', 'event_types'],
 
 	require(['bootstrap'], function() {});
 
+	let imageRoot = "/static/img/";
+
 	let socket = Player.getConnection();
 
 	function init(isTeacher) {
 
-        // Set up our template rendering system to receive templates from the server.
-        socket.on(Events.RENDER_TEMPLATE, render_manager.renderResponse);
+		preload([
+			'group_selection.jpg',
+			'room.png',
+			'room_settings.png',
+			'username.png'
+		], function () {
 
-		// Let the server know we are connecting as a new player. This will kick off the application.
-		socket.emit(Events.CLIENT_CONNECTED, isTeacher);
+            // Set up our template rendering system to receive templates from the server.
+            socket.on(Events.RENDER_TEMPLATE, render_manager.renderResponse);
+
+            // Let the server know we are connecting as a new player. This will kick off the application.
+            socket.emit(Events.CLIENT_CONNECTED, isTeacher);
+
+		});
 	}
 
 	function preload(imageArray, callbk, index) {
@@ -55,7 +66,7 @@ define(['jquery', 'app/render_manager', 'app/player', 'event_types'],
 			img.onload = function() {
 				preload(imageArray, callbk, index + 1);
 			};
-			img.src = imageRoot + images[index];
+			img.src = imageRoot + imageArray[index];
 		} else if (imageArray && imageArray.length > 0) {
 			callbk();
 		}
