@@ -32,6 +32,12 @@
  * @version 1.0
  * @since 1.0
  */
+
+// TODO: Should be able to randomize vowel label spellings (maybe allow user to select which ones?)
+// TODO: Should be able to press a stop button to end the game and show the winner
+// TODO: Should be able to display the round's winner on the score pop-up, and then update scoreboard.
+// FIXME: Need to take mobile-browser address bar into account re: CSS
+
 define(['jquery', 'app/render_manager', 'app/player', 'event_types'],
 	function (jQ, render_manager, Player, Events) {
 
@@ -41,7 +47,7 @@ define(['jquery', 'app/render_manager', 'app/player', 'event_types'],
 	const LOCAL = "http://localhost:5000";
 	const HEROKU = 'https://dev-boinkikurenshuu.herokuapp.com';
 
-	const SERVER_PATH = HEROKU;
+	const SERVER_PATH = LOCAL;
 
 	let imageRoot = "/static/img/";
 
