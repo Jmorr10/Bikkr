@@ -10,8 +10,10 @@
 	</div>
 </div>
 <script>
-	requirejs(["app/game"], function (game) {
-	  game.init(false);
+	require(['/static/js/app.js'], function () {
+		requirejs(["app/game"], function (game) {
+			game.init(false);
+		});
 	});
 </script>
 
