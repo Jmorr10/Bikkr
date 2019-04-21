@@ -12,7 +12,7 @@ const TEST_ROOM_INVALID = 'AAA';
 const TEST_GROUP = 'Group 1';
 const EVENT_MESSAGE_TEST = "message_test";
 
-const LOCAL = "localhost:5000";
+const LOCAL = "http://localhost:5000";
 const HEROKU = 'https://dev-boinkikurenshuu.herokuapp.com';
 
 describe('loading express', function () {
@@ -60,33 +60,33 @@ describe('loading express', function () {
     });
 
     it('processes room creation requests', function testCreateRoom(done) {
-        testClient = io.connect(socketURL, options);
-        testClient.emit(Events.CLIENT_CONNECTED, true);
+        connectClient(function () {
+            testClient.emit(Events.CLIENT_CONNECTED, true);
+            let nameTooShort = false;
 
-        let nameTooShort = false;
+            testClient.on(Events.RENDER_TEMPLATE, checkRoomNameLen);
 
-        testClient.on(Events.RENDER_TEMPLATE, checkRoomNameLen);
+            testClient.emit(Events.NEW_ROOM, TEST_ROOM_INVALID);
 
-        testClient.emit(Events.NEW_ROOM, TEST_ROOM_INVALID);
+            testClient.on(Events.ROOM_JOINED, function () {
+                if (nameTooShort) {
+                    done();
+                } else {
+                    throw Error("Failed.");
+                }
+            });
 
-        testClient.on(Events.ROOM_JOINED, function () {
-            if (!nameTooShort) {
-                done();
-            } else {
-                throw Error("Failed.");
+            function checkRoomNameLen (template) {
+                if (template.indexOf('roomNameForm') !== -1) {
+                    return;
+                } else if (template.indexOf("characters") !== -1) {
+                    nameTooShort = true;
+                }
+
+                testClient.removeListener(Events.RENDER_TEMPLATE, checkRoomNameLen);
+                testClient.emit(Events.NEW_ROOM, TEST_ROOM);
             }
         });
-
-        function checkRoomNameLen (template) {
-            if (template.indexOf('roomNameForm') !== -1) {
-                return;
-            } else if (template.indexOf("characters") !== -1) {
-                nameTooShort = true;
-            }
-
-            testClient.removeListener(Events.RENDER_TEMPLATE, checkRoomNameLen);
-            testClient.emit(Events.NEW_ROOM, TEST_ROOM);
-        }
     });
 
     it('handles duplicate room names', function testCreateRoom(done) {
@@ -339,26 +339,33 @@ describe('loading express', function () {
         createGroupAFORoom(setQuestion);
     });
 
-    function createRoom(testFunc) {
+    function connectClient(testFunc) {
         testClient = io.connect(socketURL, options);
-        testClient.emit(Events.CLIENT_CONNECTED, true);
+        testClient.on('connect', testFunc);
+    }
 
-        testClient.emit(Events.NEW_ROOM, TEST_ROOM);
+    function createRoom(testFunc) {
+        connectClient(function () {
+            testClient.emit(Events.CLIENT_CONNECTED, true);
 
-        testClient.on(Events.ROOM_JOINED, function () {
-            testFunc();
+            testClient.emit(Events.NEW_ROOM, TEST_ROOM);
+
+            testClient.on(Events.ROOM_JOINED, function () {
+                testFunc();
+            });
         });
     }
 
     function createGroupAFORoom(testFunc) {
-        testClient = io.connect(socketURL, options);
-        testClient.emit(Events.CLIENT_CONNECTED, true);
+        connectClient(function () {
+            testClient.emit(Events.CLIENT_CONNECTED, true);
 
-        testClient.emit(Events.NEW_ROOM, TEST_ROOM);
+            testClient.emit(Events.NEW_ROOM, TEST_ROOM);
 
-        testClient.on(Events.ROOM_JOINED, function () {
-            testClient.emit(Events.ROOM_SETUP, TEST_ROOM, Room.TYPE_GROUP, {groupType: Group.TYPE_ALL_FOR_ONE, numStudents: 41, assignGroups: true});
-            testFunc();
+            testClient.on(Events.ROOM_JOINED, function () {
+                testClient.emit(Events.ROOM_SETUP, TEST_ROOM, Room.TYPE_GROUP, {groupType: Group.TYPE_ALL_FOR_ONE, numStudents: 41, assignGroups: true});
+                testFunc();
+            });
         });
     }
 
