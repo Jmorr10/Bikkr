@@ -57,6 +57,7 @@ const GroupTypes = {
 };
 
 const ERR_ROOM_NAME_REQUIRED = 'You must enter a room name to begin!';
+const ERR_ROOM_NAME_TOO_SHORT = 'Room name must be at least 4 characters long.';
 const ERR_MUST_BE_TEACHER = 'Students cannot create rooms!';
 const ERR_INVALID_ROOM_OPTIONS = 'Invalid room options!';
 
@@ -148,7 +149,7 @@ function kickPlayer(socket, playerID) {
  */
 function createRoom(socket, roomName) {
 
-    let validName = isNameValid(roomName);
+    let validName = isRoomNameValid(roomName);
     let roomExists = RoomList.roomExists(roomName);
     let player = PlayerList.getPlayerBySocketID(socket.id);
 
@@ -170,6 +171,8 @@ function createRoom(socket, roomName) {
     } else if (roomExists) {
         roomName += "123456789".charAt(Math.floor(Math.random() * 10));
         createRoom(socket, roomName);
+    } else if (roomName && roomName.length < 4) {
+        TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: ERR_ROOM_NAME_TOO_SHORT});
     } else {
         TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: ERR_ROOM_NAME_REQUIRED});
     }
@@ -287,12 +290,23 @@ function joinGroup(socket, roomID, groupID) {
 }
 
 /**
- * Makes sure that the name or room name is not empty and is at least four characters in length
+ * Makes sure that room name is not empty and is at least four characters in length
  *
  * @param name The name to validate
  * @returns {*|boolean} Whether or not the name is valid
  */
-function isNameValid(name) {
+function isRoomNameValid(name) {
+    //return (name && name !== "" && name.length >= 4) && !PlayerList.hasPlayerByName(name);
+    return (name && name !== "" && name.length >= 4);
+}
+
+/**
+ * Makes sure that the name is not empty and is at least four characters in length
+ *
+ * @param name The name to validate
+ * @returns {*|boolean} Whether or not the name is valid
+ */
+function isUserNameValid(name) {
     return (name && name !== "" && name.length >= 4) && !PlayerList.hasPlayerByName(name);
 }
 
@@ -304,7 +318,7 @@ function isNameValid(name) {
  */
 function setUsername(socket, roomID, username) {
 
-    if (isNameValid(username)) {
+    if (isUserNameValid(username)) {
         let player = PlayerList.getPlayerBySocketID(socket.id);
         if (player) {
             let room = RoomList.getRoomByID(roomID);
