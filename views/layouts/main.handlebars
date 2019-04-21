@@ -7,11 +7,13 @@
 
 		<title>{{title}}</title>
 		<script src="/socket.io/socket.io.js"></script>
-		<script data-main="/static/js/app" src="/static/js/lib/require.js"></script>
+		<script src="/static/js/lib/require.js"></script>
 		<script>
 			define("event_types", [], function() {
 				return {{{constants}}};
 			});
+
+			require(['/static/js/app'], function () {});
 		</script>
 		<link rel='stylesheet' href='/static/css/style.css' />
 		<link rel='stylesheet' href='/static/css/boinkikurenshuu.css'/>
