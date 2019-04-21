@@ -36,6 +36,12 @@ define(['event_types'], function (Events) {
 	
 	let socket;
 	let selfPlayer;
+    let SERVER_PATH;
+
+    require(['app/game'], function (game) {
+        SERVER_PATH = game.SERVER_PATH;
+    });
+
 
     /**
      * Represents a client-side player and its state.
@@ -101,8 +107,7 @@ define(['event_types'], function (Events) {
         }
 
         socket = io.connect(
-            //'http://localhost:5000',
-            'https://dev-boinkikurenshuu.herokuapp.com',
+            SERVER_PATH,
             {
                 reconnection: true,
                 reconnectionDelay: 1000,

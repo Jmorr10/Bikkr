@@ -28,8 +28,14 @@
 	<script>
 		require(['jquery', 'app/view_sound_grid'], function (jQ, soundGrid) {
 
+			let SERVER_PATH;
+
+			require(['app/game'], function (game) {
+				SERVER_PATH = game.SERVER_PATH;
+			});
+
 			jQ('#showScoreboardBtn').click(function () {
-			    window.open('https://dev-boinkikurenshuu.herokuapp.com/scoreboard/', '_blank', 'Scoreboard');
+			    window.open(SERVER_PATH + '/scoreboard/', '_blank', 'Scoreboard');
 			});
 
 			jQ('#studentsPlaySound').click(function () {

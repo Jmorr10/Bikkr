@@ -37,6 +37,12 @@ define(['jquery', 'app/render_manager', 'app/player', 'event_types'],
 
 	require(['bootstrap'], function() {});
 
+
+	const LOCAL = "http://localhost:5000";
+	const HEROKU = 'https://dev-boinkikurenshuu.herokuapp.com';
+
+	const SERVER_PATH = LOCAL;
+
 	let imageRoot = "/static/img/";
 
 	let socket = Player.getConnection();
@@ -73,7 +79,8 @@ define(['jquery', 'app/render_manager', 'app/player', 'event_types'],
 	}
 
 	return {
-		init : init
+		init : init,
+		SERVER_PATH: SERVER_PATH
 	};
 
 });
