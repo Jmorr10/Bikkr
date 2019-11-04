@@ -69,6 +69,21 @@ const SOUNDS = {
     UE: "UE",
 };
 
+const DEFAULT_VOWELS = ["A", "AI", "E", "EE", "I", "IE", "O", "OA", "U", "UE"];
+
+const VOWEL_LABELS = {
+    "short_a": ["A", "/æ/"],
+    "long_a": ["AI", "AY", "EY", "EIGH", "/eɪ/"],
+    "short_e": ["E", "/ɛ/"],
+    "long_e": ["EE", "EA", "IE", "/i/"],
+    "short_i": ["I", "/I/"],
+    "long_i": ["IE", "IGH", "/aɪ/"],
+    "short_o": ["O", "/ɑ/"],
+    "long_o": ["OA", "/oʊ/"],
+    "short_u": ["U", "/ʊ/"],
+    "long_u": ["UE", "OO", "EW", "/u/"]
+};
+
 let currentQuestion = "";
 let questionActive = false;
 let individualCounter = 0;
@@ -76,12 +91,13 @@ let groupsAnswered = {};
 let ffaWinners = {};
 
 
-function setQuestion(socket, roomID, questionSound, studentsPlaySound) {
+function setQuestion(socket, roomID, questionSound, studentsPlaySound, vowelSounds) {
     questionSound = questionSound.toUpperCase();
     if (SOUNDS.hasOwnProperty(questionSound)) {
         currentQuestion = questionSound;
         questionActive = true;
-        socket.emit(Events.QUESTION_READY);
+        TemplateManager.sendPrecompiledTemplate(roomID, 'partials/vowel_grid_labels', {vowels: vowelSounds});
+        //socket.emit(Events.QUESTION_READY);
         socket.to(roomID).emit(Events.QUESTION_READY);
         if (studentsPlaySound) {
             socket.to(roomID).emit(Events.PLAY_SOUND, questionSound);
@@ -101,7 +117,7 @@ function processStudentResponseRWRT(socket, roomID, studentResponse) {
         let isCorrect = studentResponse === currentQuestion;
         let isIndividualMode = room.type === RoomTypes.TYPE_INDIVIDUAL;
         let isAllForOneMode = room.type === RoomTypes.TYPE_GROUP && room.groupType === GroupTypes.TYPE_ALL_FOR_ONE;
-        let isFreeForAllMode = room.type === RoomTypes.TYPE_GROUP && room.groupType === GroupTypes.TYPE_FREE_FOR_ALL;;
+        let isFreeForAllMode = room.type === RoomTypes.TYPE_GROUP && room.groupType === GroupTypes.TYPE_FREE_FOR_ALL;
         let currentQuestionTmp = currentQuestion;
         let failed = false;
 
@@ -133,6 +149,7 @@ function processStudentResponseRWRT(socket, roomID, studentResponse) {
             ffaWinners = {};
             let groups = (!isAllForOneMode) ?
                 room.groups : room.groups.sort(function (a,b) { return a.points < b.points; });
+            // TODO: Start here
             TemplateManager.emitWithTemplate(
                 roomID,
                 'partials/leaderboard_content',
@@ -291,5 +308,7 @@ module.exports = {
     setQuestion: setQuestion,
     processStudentResponse: processStudentResponseRWRT,
     skipQuestion: skipQuestion,
-    playSound: playSound
+    playSound: playSound,
+    DEFAULT_VOWELS: DEFAULT_VOWELS,
+    VOWEL_LABELS: VOWEL_LABELS
 };

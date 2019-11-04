@@ -42,6 +42,11 @@ const PlayerList = require('./player_list');
 const RoomList = require('./room_list');
 const TemplateManager = require('./template_manager');
 
+const GameManager = require('./game_manager');
+const DEFAULT_VOWELS = GameManager.DEFAULT_VOWELS;
+const VOWEL_LABELS = GameManager.VOWEL_LABELS;
+
+
 const RoomModule = require('./room');
 const Room = RoomModule.Room;
 const RoomTypes = {
@@ -208,7 +213,7 @@ function setupRoom(socket, roomID, roomType, options) {
 
     // Teacher sound grid should be locked until start is pressed.
     TemplateManager.emitWithTemplate(player.id, 'sound_grid',
-        {players: room.players, roomType: room.type, groupType: room.groupType, roomID: room.id, locked: true}, Events.ROOM_SET_UP);
+        {players: room.players, roomType: room.type, groupType: room.groupType, roomID: room.id, locked: true, vowels: VOWEL_LABELS}, Events.ROOM_SET_UP);
 
 }
 
@@ -263,6 +268,7 @@ function joinGroup(socket, roomID, groupID) {
             TemplateManager.emitWithTemplate(socket.id, 'sound_grid_student', {
                 roomID: room.id,
                 locked: true,
+                vowels: DEFAULT_VOWELS,
                 groups: room.groups,
                 groupID: groupID,
                 player: player,
@@ -339,6 +345,7 @@ function setUsername(socket, roomID, username) {
                 TemplateManager.emitWithTemplate(socket.id, template, {
                     roomID: room.id,
                     locked: true,
+                    vowels: DEFAULT_VOWELS,
                     groups: room.groups,
                     groupID: groupID,
                     player: player,
@@ -394,6 +401,7 @@ function reconnectPlayer(socket, playerState) {
     TemplateManager.sendPrecompiledTemplate(socket.id, 'sound_grid_student', {
         roomID: room.id,
         locked: true,
+        vowels: DEFAULT_VOWELS,
         groups: room.groups,
         groupID: group.id,
         player: new_player,

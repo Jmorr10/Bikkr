@@ -47,6 +47,20 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 	let modalBlack;
 	let studentsPlaySound = false;
 	let disableMainSound = false;
+	let randomizeVowelLabels = false;
+	let vowelLabels = {
+        "short_a": ["A", "/æ/"],
+        "long_a": ["AI", "AY", "EY", "EIGH", "/eɪ/"],
+        "short_e": ["E", "/ɛ/"],
+        "long_e": ["EE", "EA", "IE", "/i/"],
+        "short_i": ["I", "/I/"],
+        "long_i": ["IE", "IGH", "/aɪ/"],
+        "short_o": ["O", "/ɑ/"],
+        "long_o": ["OA", "/oʊ/"],
+        "short_u": ["U", "/ʊ/"],
+		"long_u": ["UE", "OO", "EW", "/u/"]
+	};
+	let enabledVowelLabels = jQ.extend(true, {}, vowelLabels);
 
 	function start() {
 
@@ -100,9 +114,9 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
             jQ('#settings').addClass('open');
 		});
 
-        jQ('#closeSettingsBtn').click(function () {
-            jQ('#settings').removeClass('open');
-        });
+        jQ('.modal-close-btn').click(function () {
+        	jQ(this).parents('.modal-popup').removeClass('open');
+		});
 
         modalBlack.click(function () {
             jQ(this).parent().removeClass('open');
@@ -122,16 +136,27 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 	function setQuestion (questionSound) {
 		soundGridHolder.addClass('locked');
 		currentQuestion = questionSound;
+		let vowelLabels = getVowelLabels();
         if (disableMainSound) {
-            socket.emit(Events.SET_QUESTION, roomID, questionSound, studentsPlaySound);
+            socket.emit(Events.SET_QUESTION, roomID, questionSound, studentsPlaySound, vowelLabels);
 		} else {
             let sound = new Audio(`/static/audio/${questionSound}.mp3`);
             jQ(sound).bind('ended', function () {
-                socket.emit(Events.SET_QUESTION, roomID, questionSound, studentsPlaySound);
+                socket.emit(Events.SET_QUESTION, roomID, questionSound, studentsPlaySound, vowelLabels);
             });
             sound.play();
 		}
 	}
+
+	function getVowelLabels() {
+		let labels = [];
+        jQ.each(enabledVowelLabels, function (key, val) {
+			let idx = (randomizeVowelLabels) ? Math.floor(Math.random() * val.length) : 0;
+			labels.push(val[idx]);
+		});
+
+		return labels;
+    }
 
 	function playSound(questionSound) {
 		if (!disableMainSound) {
@@ -173,12 +198,36 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 		disableMainSound = val;
 	}
 
+	function openVowelLabelsSelector() {
+        jQ('#vowelSelector').addClass('open');
+	}
+
+	function toggleVowelLabel(listID, itemID, enabled) {
+		let vowelList = enabledVowelLabels[listID];
+		if (vowelList) {
+			let idx = vowelList.indexOf(itemID);
+			if (idx === -1 && enabled) {
+				vowelList.push(itemID);
+			} else if (idx !== -1 && !enabled) {
+				vowelList.splice(idx, 1);
+			}
+		}
+	}
+
+	function setRandomizeVowelLabels(val) {
+		randomizeVowelLabels = val;
+	}
+
 
 	return {
 		start: start,
 		kickPlayer: kickPlayer,
 		setStudentsPlaySound: setStudentsPlaySound,
-		setDisableMainSound: setDisableMainSound
+		setDisableMainSound: setDisableMainSound,
+		openVowelLabelsSelector: openVowelLabelsSelector,
+		toggleVowelLabel: toggleVowelLabel,
+        setRandomizeVowelLabels: setRandomizeVowelLabels,
+		VOWEL_LABELS: vowelLabels
 	};
 	
 });

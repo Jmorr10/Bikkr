@@ -1,6 +1,6 @@
-<div id="settings">
+<div id="settings" class="modal-popup">
 	<div class="modal-black"></div>
-	<div id="settingsContent">
+	<div id="settingsContent" class="modal-popup-content">
 		<h1>Settings</h1>
 		<div class="options-holder">
 			<div>
@@ -21,8 +21,19 @@
 					<span class="slider round"></span>
 				</label>
 			</div>
+			<div>
+				<label>Choose Vowel Labels</label>
+				<button id="showVowelLabelsBtn" class="btn btn-primary icon-cog"></button>
+			</div>
+			<div>
+				<label>Randomize Vowel Labels</label>
+				<label class="switch">
+					<input id="randomizeVowelLabels" name="randomizeVowelLabels" type="checkbox">
+					<span class="slider round"></span>
+				</label>
+			</div>
 		</div>
-		<button id="closeSettingsBtn" class="icon-cancel"></button>
+		<button id="closeSettingsBtn" class="modal-close-btn icon-cancel"></button>
 	</div>
 
 	<script>
@@ -44,6 +55,14 @@
 
 			jQ('#disableMainSound').click(function () {
 				soundGrid.setDisableMainSound(jQ('#disableMainSound').prop('checked'));
+			});
+
+			jQ('#showVowelLabelsBtn').click(function () {
+			    soundGrid.openVowelLabelsSelector();
+			});
+
+			jQ('#randomizeVowelLabels').click(function () {
+				soundGrid.setRandomizeVowelLabels(jQ('#randomizeVowelLabels').prop('checked'));
 			});
 
 		});

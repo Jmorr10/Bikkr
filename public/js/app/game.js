@@ -33,10 +33,9 @@
  * @since 1.0
  */
 
-// TODO: Should be able to randomize vowel label spellings (maybe allow user to select which ones?)
+// TODO: Should be able to randomize vowel label -positions-
 // TODO: Should be able to press a stop button to end the game and show the winner
-// TODO: Should be able to display the round's winner on the score pop-up, and then update scoreboard.
-// FIXME: Need to take mobile-browser address bar into account re: CSS
+// TODO: Should be able to display the round's winner AND ANSWER on the score pop-up, and then update scoreboard.
 
 define(['jquery', 'app/render_manager', 'app/player', 'event_types'],
 	function (jQ, render_manager, Player, Events) {
@@ -54,6 +53,14 @@ define(['jquery', 'app/render_manager', 'app/player', 'event_types'],
 	let socket = Player.getConnection();
 
 	function init(isTeacher) {
+
+		jQ('html').css('height', window.innerHeight + "px");
+
+		jQ(window).on('orientationchange', function () {
+			jQ(window).one('resize', function () {
+                jQ('html').css('height', window.innerHeight + "px");
+			});
+        });
 
 		preload([
 			'group_selection.jpg',
