@@ -97,7 +97,8 @@ function setQuestion(socket, roomID, questionSound, studentsPlaySound, vowelSoun
         currentQuestion = questionSound;
         questionActive = true;
         TemplateManager.sendPrecompiledTemplate(roomID, 'partials/vowel_grid_labels', {vowels: vowelSounds});
-        //socket.emit(Events.QUESTION_READY);
+        // FIXME: Who does this emit to? I need to emit to the current socket AND to those in the room.
+        socket.emit(Events.QUESTION_READY);
         socket.to(roomID).emit(Events.QUESTION_READY);
         if (studentsPlaySound) {
             socket.to(roomID).emit(Events.PLAY_SOUND, questionSound);
