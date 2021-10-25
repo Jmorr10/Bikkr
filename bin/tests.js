@@ -217,15 +217,15 @@ describe('loading express', function () {
     it('emits events to an entire room', function testRoomBroadcast(done) {
         function testFunc() {
 
-            testClient.on(Events.ROOM_SET_UP, testFunc);
+            testClient.on(Events.ROOM_SET_UP, otherPlayerJoin);
             testClient.emit(Events.ROOM_SETUP, TEST_ROOM, Room.TYPE_INDIVIDUAL, {});
+        }
 
-
+        function otherPlayerJoin() {
             testClient2 = io.connect(socketURL, options);
             testClient2.emit(Events.CLIENT_CONNECTED, false);
             testClient2.on(Events.ROOM_JOINED, nextStep);
             testClient2.emit(Events.JOIN_ROOM, TEST_ROOM);
-
         }
 
         function nextStep() {
