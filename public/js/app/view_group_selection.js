@@ -64,8 +64,6 @@ define(['jquery', 'app/player', 'app/view_sound_grid_student', 'app/render_manag
         function finish (template, roomID) {
             render_manager.renderResponse(template);
             player.group = groupID;
-            // FIXME: DELETE
-            //soundGridStudent.start(roomID);
         }
 
         return {

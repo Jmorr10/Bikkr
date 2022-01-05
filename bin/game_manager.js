@@ -38,6 +38,7 @@ const debug = require('debug')('BoinKikuRenshuu:game');
 const Events = require('./event_types');
 const RoomList = require('./room_list');
 const PlayerList = require('./player_list');
+const ConnectionManager = require('./connection_manager');
 const Util = require('./util');
 
 const TemplateManager = require('./template_manager');
@@ -97,9 +98,8 @@ function setQuestion(socket, roomID, questionSound, studentsPlaySound, vowelSoun
         currentQuestion = questionSound;
         questionActive = true;
         TemplateManager.sendPrecompiledTemplate(roomID, 'partials/vowel_grid_labels', {vowels: vowelSounds});
-        // FIXME: Who does this emit to? I need to emit to the current socket AND to those in the room.
-        socket.emit(Events.QUESTION_READY);
-        socket.to(roomID).emit(Events.QUESTION_READY);
+        let io = ConnectionManager.getIO();
+        io.in(roomID).emit(Events.QUESTION_READY);
         if (studentsPlaySound) {
             socket.to(roomID).emit(Events.PLAY_SOUND, questionSound);
         }
@@ -150,7 +150,6 @@ function processStudentResponseRWRT(socket, roomID, studentResponse) {
             ffaWinners = {};
             let groups = (!isAllForOneMode) ?
                 room.groups : room.groups.sort(function (a,b) { return a.points < b.points; });
-            // TODO: Start here
             TemplateManager.emitWithTemplate(
                 roomID,
                 'partials/leaderboard_content',
