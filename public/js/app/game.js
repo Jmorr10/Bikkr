@@ -33,6 +33,7 @@
  * @since 1.0
  */
 
+// FIXME: If all vowel labels are disabled, then remove that button.
 // TODO: Should be able to randomize vowel label -positions-
 // TODO: Should be able to press a stop button to end the game and show the winner
 // TODO: Should be able to display the round's winner AND ANSWER on the score pop-up, and then update scoreboard.
@@ -43,7 +44,7 @@ define(['jquery', 'app/render_manager', 'app/player', 'event_types'],
 	require(['bootstrap'], function() {});
 
 
-	const LOCAL = "http://localhost:5000";
+	const LOCAL = "http://127.0.0.1:5000";
 	const HEROKU = 'https://dev-boinkikurenshuu.herokuapp.com';
 
 	const SERVER_PATH = LOCAL;
