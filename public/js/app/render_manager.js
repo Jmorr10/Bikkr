@@ -40,13 +40,25 @@ define(['jquery'], function(jQ) {
      *      1. Search for a data-target attribute on the element
      *      2. If found, set our render target to that value. If not, use the id attribute on the element
      *      3. Checks for the data-add attribute.
-     *      4. If found, the render target will be replaced by the root-level element. If not, the render target will be
+     *
+     *      * data-mode="append" will simply append the element to the render target
+     *      * data-mode="update" will update/replace the render target itself.
+     *      * data-mode="append-update" will append the element to the render target if it doesn't exist or update the element
+     *        within the target if it does. (Note: must specify child ID)
+     *
+     *      4. If data-add attribute is found, the render target's contents will be replaced by the root-level element. If not, the render will be
      *      emptied, and the root-level element's children will be added to the render target.
      *
      *      Note: if an element doesn't have either a data-target attribute or an id attribute, it will not be rendered.
      *
      * @param html The HTML received from the server
      */
+
+    const MODE_REPLACE_CONTENT = "replace-content";
+    const MODE_APPEND = "append";
+    const MODE_UPDATE = "update";
+    const MODE_APPEND_OR_UPDATE_CHILD = "append-update";
+
     function renderResponse(html, callback) {
 
         let rendered = jQ([]).add(html);
@@ -55,15 +67,36 @@ define(['jquery'], function(jQ) {
         for (let el of arr) {
             el = jQ(el);
             let target = jQ(el.data('target'));
+            let addSelf = (el.data('add') && el.data('add') === 'self');
+            let modeData = el.data('mode');
+            let mode = (modeData) ? modeData : MODE_REPLACE_CONTENT;
+
             if (target.length === 0) {
                 target = jQ(`#${el.attr('id')}`);
             }
+
             if (target.length !== 0) {
-                let addSelf = (el.data('add') && el.data('add') === 'self');
-                if (addSelf) {
-                    target.empty().append(el);
-                } else {
-                    target.empty().append(el.html());
+
+                let content = (addSelf) ? el : el.html();
+
+                switch (mode) {
+                    case MODE_REPLACE_CONTENT:
+                        target.empty().append(content);
+                        break;
+                    case MODE_APPEND:
+                        target.append(content);
+                        break;
+                    case MODE_UPDATE:
+                        target.replaceWith(content);
+                        break;
+                    case MODE_APPEND_OR_UPDATE_CHILD:
+                        let child = target.find('#' + el.attr('id'));
+                        if (child.length > 0) {
+                            child.replaceWith(content);
+                        } else {
+                            target.append(content);
+                        }
+                        break;
                 }
             }
         }

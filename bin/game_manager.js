@@ -58,31 +58,42 @@ const GroupTypes = {
 };
 
 const SOUNDS = {
-    A: "A",
-    AI: "AI",
-    E: "E",
-    EE: "EE",
-    I: "I",
-    IE: "IE",
-    O: "O",
-    OA: "OA",
-    U: "U",
-    UE: "UE",
+    SHORT_A: "SHORT_A",
+    LONG_A: "LONG_A",
+    SHORT_E: "SHORT_E",
+    LONG_E: "LONG_E",
+    SHORT_I: "SHORT_I",
+    LONG_I: "LONG_I",
+    SHORT_O: "SHORT_O",
+    LONG_O: "LONG_O",
+    SHORT_U: "SHORT_U",
+    LONG_U: "LONG_U",
 };
 
-const DEFAULT_VOWELS = ["A", "AI", "E", "EE", "I", "IE", "O", "OA", "U", "UE"];
+const DEFAULT_VOWELS = [
+    {sound: "SHORT_A", label:"A"},
+    {sound: "LONG_A", label:"AI"},
+    {sound: "SHORT_E", label:"E"},
+    {sound: "LONG_E", label:"EE"},
+    {sound: "SHORT_I", label:"I"},
+    {sound: "LONG_I", label:"IE"},
+    {sound: "SHORT_O", label:"O"},
+    {sound: "LONG_O", label:"OA"},
+    {sound: "SHORT_U", label:"U"},
+    {sound: "LONG_U", label:"UE"}
+];
 
 const VOWEL_LABELS = {
-    "short_a": ["A", "/æ/"],
-    "long_a": ["AI", "AY", "EY", "EIGH", "/eɪ/"],
-    "short_e": ["E", "/ɛ/"],
-    "long_e": ["EE", "EA", "IE", "/i/"],
-    "short_i": ["I", "/I/"],
-    "long_i": ["IE", "IGH", "/aɪ/"],
-    "short_o": ["O", "/ɑ/"],
-    "long_o": ["OA", "/oʊ/"],
-    "short_u": ["U", "/ʊ/"],
-    "long_u": ["UE", "OO", "EW", "/u/"]
+    "SHORT_A": ["/æ/", "A"],
+    "LONG_A": ["/eɪ/", "AI", "AY", "EY", "EIGH"],
+    "SHORT_E": ["/ɛ/", "E"],
+    "LONG_E": ["/i/", "EE", "EA", "IE"],
+    "SHORT_I": ["/I/", "I"],
+    "LONG_I": ["/aɪ/", "IE", "IGH"],
+    "SHORT_O": ["/ɑ/", "O"],
+    "LONG_O": ["/oʊ/", "OA"],
+    "SHORT_U": ["/ʊ/", "U"],
+    "LONG_U": ["/u/", "UE", "OO", "EW"]
 };
 
 let currentQuestion = "";
@@ -91,13 +102,21 @@ let individualCounter = 0;
 let groupsAnswered = {};
 let ffaWinners = {};
 
+class Button {
+    constructor(sound, label) {
+        this.sound = sound;
+        this.label = label;
+    }
+}
 
-function setQuestion(socket, roomID, questionSound, studentsPlaySound, vowelSounds) {
-    questionSound = questionSound.toUpperCase();
+
+function setQuestion(socket, roomID, questionSound, buttonOptions, studentsPlaySound) {
     if (SOUNDS.hasOwnProperty(questionSound)) {
         currentQuestion = questionSound;
         questionActive = true;
-        TemplateManager.sendPrecompiledTemplate(roomID, 'partials/vowel_grid_labels', {vowels: vowelSounds});
+        let buttons = getButtons(buttonOptions);
+        TemplateManager.sendPrecompiledTemplate(roomID, 'partials/vowel_grid',
+            {locked: false, buttons: buttons});
         let io = ConnectionManager.getIO();
         io.in(roomID).emit(Events.QUESTION_READY);
         if (studentsPlaySound) {
@@ -107,11 +126,30 @@ function setQuestion(socket, roomID, questionSound, studentsPlaySound, vowelSoun
     }
 }
 
+function getButtons(buttonOptions) {
+
+    if (!buttonOptions) {
+        return DEFAULT_VOWELS;
+    }
+
+    let vowelLabels = buttonOptions.vowelLabels;
+    let buttons = [];
+
+    for (let i = 0; i < vowelLabels.length; i++) {
+        let vowel = vowelLabels[i];
+        buttons.push(new Button(vowel.sound, vowel.label));
+    }
+
+    if (buttonOptions.randomizeVowelPositions) {
+        Util.shuffle(buttons);
+    }
+
+    return buttons;
+}
+
 
 function processStudentResponseRWRT(socket, roomID, studentResponse) {
     if (questionActive) {
-
-        studentResponse = studentResponse.toUpperCase();
 
         let room = RoomList.getRoomByID(roomID);
         let player = PlayerList.getPlayerBySocketID(socket.id);

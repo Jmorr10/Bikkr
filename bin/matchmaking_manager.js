@@ -268,7 +268,7 @@ function joinGroup(socket, roomID, groupID) {
             TemplateManager.emitWithTemplate(socket.id, 'sound_grid_student', {
                 roomID: room.id,
                 locked: true,
-                vowels: DEFAULT_VOWELS,
+                buttons: DEFAULT_VOWELS,
                 groups: room.groups,
                 groupID: groupID,
                 player: player,
@@ -345,7 +345,7 @@ function setUsername(socket, roomID, username) {
                 TemplateManager.emitWithTemplate(socket.id, template, {
                     roomID: room.id,
                     locked: true,
-                    vowels: DEFAULT_VOWELS,
+                    buttons: DEFAULT_VOWELS,
                     groups: room.groups,
                     groupID: groupID,
                     player: player,
@@ -401,7 +401,7 @@ function reconnectPlayer(socket, playerState) {
     TemplateManager.sendPrecompiledTemplate(socket.id, 'sound_grid_student', {
         roomID: room.id,
         locked: true,
-        vowels: DEFAULT_VOWELS,
+        buttons: DEFAULT_VOWELS,
         groups: room.groups,
         groupID: group.id,
         player: new_player,

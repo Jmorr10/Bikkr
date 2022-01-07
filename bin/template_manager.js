@@ -45,8 +45,7 @@ const handlebars = require('express-handlebars').create({
     partialsDir: path.join(__dirname, "../views/partials"),
     defaultLayout: 'main',
     helpers: {
-        for: forHelper,
-        cardClass: cardClass
+        for: forHelper
     }
 });
 
@@ -174,11 +173,6 @@ function forHelper (from, to, incr, block) {
     for(let i = from; i < to; i += incr)
         accum += block.fn(i);
     return accum;
-}
-
-function cardClass(card) {
-    return (card.card_type === 0) ?
-        `card-${card.value}` : `card-${card.name.toLowerCase().replace(/ /g, '-')}`;
 }
 
 module.exports = {

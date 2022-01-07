@@ -4,116 +4,22 @@
 		<h1>Select Enabled Vowels</h1>
 		<div class="options-holder">
 			<!-- FIXME: This can DEFINITELY be simplified... This is sad and lazy... -->
-			<ul id="short_a">/æ/
-				{{#each vowels.short_a}}
-					<li>
-						<label>{{this}}</label>
-						<label class="switch">
-							<input id="{{this}}" name="{{this}}" type="checkbox" checked="checked">
-							<span class="slider round"></span>
-						</label>
-					</li>
-				{{/each}}
-			</ul>
-			<ul id="long_a">/eɪ/
-				{{#each vowels.long_a}}
-					<li>
-						<label>{{this}}</label>
-						<label class="switch">
-							<input id="{{this}}" name="{{this}}" type="checkbox" checked="checked">
-							<span class="slider round"></span>
-						</label>
-					</li>
-				{{/each}}
-			</ul>
-			<ul id="short_e">/ɛ/
-				{{#each vowels.short_e}}
-					<li>
-						<label>{{this}}</label>
-						<label class="switch">
-							<input id="{{this}}" name="{{this}}" type="checkbox" checked="checked">
-							<span class="slider round"></span>
-						</label>
-					</li>
-				{{/each}}
-			</ul>
-			<ul id="long_e">/i/
-				{{#each vowels.long_e}}
-					<li>
-						<label>{{this}}</label>
-						<label class="switch">
-							<input id="{{this}}" name="{{this}}" type="checkbox" checked="checked">
-							<span class="slider round"></span>
-						</label>
-					</li>
-				{{/each}}
-			</ul>
-			<ul id="short_i">/I/
-				{{#each vowels.short_i}}
-					<li>
-						<label>{{this}}</label>
-						<label class="switch">
-							<input id="{{this}}" name="{{this}}" type="checkbox" checked="checked">
-							<span class="slider round"></span>
-						</label>
-					</li>
-				{{/each}}
-			</ul>
-			<ul id="long_i">/aɪ/
-				{{#each vowels.long_i}}
-					<li>
-						<label>{{this}}</label>
-						<label class="switch">
-							<input id="{{this}}" name="{{this}}" type="checkbox" checked="checked">
-							<span class="slider round"></span>
-						</label>
-					</li>
-				{{/each}}
-			</ul>
-			<ul id="short_o">/ɑ/
-				{{#each vowels.short_o}}
-					<li>
-						<label>{{this}}</label>
-						<label class="switch">
-							<input id="{{this}}" name="{{this}}" type="checkbox" checked="checked">
-							<span class="slider round"></span>
-						</label>
-					</li>
-				{{/each}}
-			</ul>
-			<ul id="long_o">/oʊ/
-				{{#each vowels.long_o}}
-					<li>
-						<label>{{this}}</label>
-						<label class="switch">
-							<input id="{{this}}" name="{{this}}" type="checkbox" checked="checked">
-							<span class="slider round"></span>
-						</label>
-					</li>
-				{{/each}}
-			</ul>
-			<ul id="short_u">/ʊ/
-				{{#each vowels.short_u}}
-					<li>
-						<label>{{this}}</label>
-						<label class="switch">
-							<input id="{{this}}" name="{{this}}" type="checkbox" checked="checked">
-							<span class="slider round"></span>
-						</label>
-					</li>
-				{{/each}}
-			</ul>
-			<ul id="long_u">/u/
-				{{#each vowels.long_u}}
-					<li>
-						<label>{{this}}</label>
-						<label class="switch">
-							<input id="{{this}}" name="{{this}}" type="checkbox" checked="checked">
-							<span class="slider round"></span>
-						</label>
-					</li>
-				{{/each}}
-			</ul>
+			{{#each vowels}}
+                <ul id="{{@key}}">{{this.[0]}}
+
+                    {{#each this}}
+                        <li>
+                            <label>{{this}}</label>
+                            <label class="switch">
+                                <input id="{{this}}" name="{{this}}" type="checkbox" checked="checked">
+                                <span class="slider round"></span>
+                            </label>
+                        </li>
+                    {{/each}}
+
+                </ul>
+			{{/each}}
+
 		</div>
 		<button id="closeVowelSelectorBtn" class="modal-close-btn icon-cancel"></button>
 	</div>

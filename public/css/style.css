@@ -100,33 +100,37 @@ body {
   display: none;
 }
 
-#soundGridHolder {
+.vowel-grid-holder {
   height: calc(100% - 92px);
   top: 15px;
   position: relative;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  padding: 0;
 }
 
-#soundGridHolder .row {
-  height: calc(100% / 5);
-}
-
-#teacherBar + #soundGridHolder {
+#teacherBar + .vowel-grid-holder {
   height: calc(100% - 75px) !important;
 }
 
-#soundGridHolder button {
-  height: calc(100% - 16px);
-  width: 100%;
+.vowel-grid-holder button {
+  min-height: 45px;
   background-color: #1565c0;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  box-shadow: 0 3px 6px rgb(0 0 0 / 16%), 0 3px 6px rgb(0 0 0 / 23%);
   color: white;
   font-weight: bold;
   font-size: 1.5rem;
   border: none;
   outline: none !important;
+  flex: 1 1;
+  flex-basis: calc(50% - 2rem);
+  margin: 1rem;
+  position: relative;
 }
 
-#soundGridHolder .col-6:after {
+.vowel-grid-holder button:after {
   content: '';
   font-family: 'boinkikurenshuu';
   color: white;
@@ -136,44 +140,33 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: calc(100% - 24px);
-  height: calc(100% - 16px);
-  opacity:0.00;
+  width: 100%;
+  height: 100%;
+  opacity: 0.00;
   transition: opacity 1.0s, background-color 1.0s, content 1.0s;
   display: flex;
   background-color: transparent;
   pointer-events: none;
+  top: 0;
+  left: 0;
 }
 
-#soundGridHolder .col-6.correct:after {
+.vowel-grid-holder button.correct:after {
   opacity: 0.75;
   content: '\f10c';
   background-color: #d50000 !important;
 }
 
-#soundGridHolder .col-6.incorrect:after {
+.vowel-grid-holder button.incorrect:after {
   opacity: 0.75;
   content: '\e800';
   background-color: #003c8f !important;
   font-size: 4.9rem !important;
 }
 
-#soundGridHolder.locked button {
+.vowel-grid-holder.locked button {
   background-color: #888888;
   pointer-events: none;
-}
-
-#soundGridHolder .row .col-6 {
-  display: flex;
-  align-items: center;
-}
-
-#soundGridHolder .row .col-6:first-child {
-  padding-right: 8px;
-}
-
-#soundGridHolder .row .col-6:last-child {
-  padding-left: 8px;
 }
 
 .modal-popup-content {

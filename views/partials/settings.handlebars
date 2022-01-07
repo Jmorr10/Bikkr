@@ -32,6 +32,13 @@
 					<span class="slider round"></span>
 				</label>
 			</div>
+            <div>
+                <label>Randomize Vowel Button Positions</label>
+                <label class="switch">
+                    <input id="randomizeVowelPositions" name="randomizeVowelPositions" type="checkbox">
+                    <span class="slider round"></span>
+                </label>
+            </div>
 		</div>
 		<button id="closeSettingsBtn" class="modal-close-btn icon-cancel"></button>
 	</div>
@@ -64,6 +71,10 @@
 			jQ('#randomizeVowelLabels').click(function () {
 				soundGrid.setRandomizeVowelLabels(jQ('#randomizeVowelLabels').prop('checked'));
 			});
+
+            jQ('#randomizeVowelPositions').click(function () {
+                soundGrid.setRandomizeVowelPositions(jQ('#randomizeVowelPositions').prop('checked'));
+            });
 
 		});
 	</script>

@@ -1,10 +1,5 @@
-<button id="sound_A" data-sound="A">{{vowels.[0]}}</button>
-<button id="sound_AI" data-sound="AI">{{vowels.[1]}}</button>
-<button id="sound_E" data-sound="E">{{vowels.[2]}}</button>
-<button id="sound_EE" data-sound="EE">{{vowels.[3]}}</button>
-<button id="sound_I" data-sound="I">{{vowels.[4]}}</button>
-<button id="sound_IE" data-sound="IE">{{vowels.[5]}}</button>
-<button id="sound_O" data-sound="O">{{vowels.[6]}}</button>
-<button id="sound_OA" data-sound="OA">{{vowels.[7]}}</button>
-<button id="sound_U" data-sound="U">{{vowels.[8]}}</button>
-<button id="sound_UE" data-sound="UE">{{vowels.[9]}}</button>
+<!-- TODO: PASS IN AN ARRAY AND THEN LOOP THROUGH TO CREATE BUTTONS. This will allow greater flexibility in terms of
+number of buttons and position of buttons -->
+{{# each buttons}}
+    <button id="button{{@index}}" data-add="self" data-mode="update" data-sound="{{sound}}">{{label}}</button>
+{{/each}}

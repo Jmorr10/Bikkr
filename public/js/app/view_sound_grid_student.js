@@ -53,7 +53,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
         function start() {
 
             player  = Player.getPlayer();
-            soundGridHolder = jQ('#soundGridHolder');
+            soundGridHolder = jQ('#S_soundGridHolder');
             leaderboardBtn = jQ('#leaderboardBtn');
             leaderboard = jQ('#leaderboard');
             closeLeaderboardBtn = jQ('#closeLeaderboardBtn');
@@ -63,11 +63,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
             errorLbl = jQ('.error-lbl');
             roomID = jQ('#roomIDVal').val();
 
-            soundGridHolder.find('button').click(function (e) {
-                e.stopImmediatePropagation();
-                soundGridHolder.addClass('locked');
-                sendAnswer(jQ(this).attr('data-sound'));
-            });
+           addButtonListeners();
 
             leaderboardBtn.click(function () {
                 leaderboard.addClass('open');
@@ -98,6 +94,13 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
             socket.on(Events.PLAY_SOUND, playSound);
         }
 
+        function addButtonListeners() {
+            soundGridHolder.find('button').click(function (e) {
+                e.stopImmediatePropagation();
+                soundGridHolder.addClass('locked');
+                sendAnswer(jQ(this).attr('data-sound'));
+            });
+        }
 
         function unlockSoundGrid () {
             soundGridHolder.removeClass('locked');
@@ -108,10 +111,10 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
             render_manager.renderResponse(template);
             player.points = points;
             soundGridHolder.addClass('locked');
-            let correctBtn = soundGridHolder.find(`button[data-sound=${correctAnswer}]`).parent();
+            let correctBtn = soundGridHolder.find(`button[data-sound=${correctAnswer}]`);
             let incorrectBtn;
             if (myAnswer !== "" && myAnswer !== correctAnswer) {
-                incorrectBtn = soundGridHolder.find(`button[data-sound=${myAnswer}]`).parent();
+                incorrectBtn = soundGridHolder.find(`button[data-sound=${myAnswer}]`);
                 incorrectBtn.addClass('incorrect');
                 setTimeout(function () { incorrectBtn.removeClass('incorrect'); }, 2000);
             }

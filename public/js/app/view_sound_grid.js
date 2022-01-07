@@ -48,17 +48,18 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 	let studentsPlaySound = false;
 	let disableMainSound = false;
 	let randomizeVowelLabels = false;
+	let randomizeVowelPositions = false;
 	let vowelLabels = {
-        "short_a": ["A", "/æ/"],
-        "long_a": ["AI", "AY", "EY", "EIGH", "/eɪ/"],
-        "short_e": ["E", "/ɛ/"],
-        "long_e": ["EE", "EA", "IE", "/i/"],
-        "short_i": ["I", "/I/"],
-        "long_i": ["IE", "IGH", "/aɪ/"],
-        "short_o": ["O", "/ɑ/"],
-        "long_o": ["OA", "/oʊ/"],
-        "short_u": ["U", "/ʊ/"],
-		"long_u": ["UE", "OO", "EW", "/u/"]
+        "SHORT_A": ["A", "/æ/"],
+        "LONG_A": ["AI", "AY", "EY", "EIGH", "/eɪ/"],
+        "SHORT_E": ["E", "/ɛ/"],
+        "LONG_E": ["EE", "EA", "IE", "/i/"],
+        "SHORT_I": ["I", "/I/"],
+        "LONG_I": ["IE", "IGH", "/aɪ/"],
+        "SHORT_O": ["O", "/ɑ/"],
+        "LONG_O": ["OA", "/oʊ/"],
+        "SHORT_U": ["U", "/ʊ/"],
+		"LONG_U": ["UE", "OO", "EW", "/u/"]
 	};
 	let enabledVowelLabels = jQ.extend(true, {}, vowelLabels);
 
@@ -66,7 +67,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 
 		player = Player.getPlayer();
         startBtn = jQ('#startBtn');
-        soundGridHolder = jQ('#soundGridHolder');
+        soundGridHolder = jQ('#T_soundGridHolder');
         errorLbl = jQ('.error-lbl');
         roomID = jQ('#roomIDVal').val();
         modalBlack = jQ('.modal-black');
@@ -76,10 +77,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
             startBtn.attr('disabled', true).hide();
         });
 
-        soundGridHolder.find('button').click(function (e) {
-        	e.stopImmediatePropagation();
-        	setQuestion(jQ(this).attr('data-sound'));
-		});
+        addButtonListeners();
 
         jQ('#playerListBtn').click(function () {
         	jQ('#playerList').addClass('open');
@@ -132,17 +130,28 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 		socket.on(Events.QUESTION_FAILED, questionFailed);
 	}
 
+	function addButtonListeners() {
+		soundGridHolder.find('button').click(function (e) {
+			e.stopImmediatePropagation();
+			setQuestion(jQ(this).attr('data-sound'));
+		});
+	}
+
 
 	function setQuestion (questionSound) {
 		soundGridHolder.addClass('locked');
 		currentQuestion = questionSound;
 		let vowelLabels = getVowelLabels();
+		let buttonOptions = {
+			randomizeVowelPositions: randomizeVowelPositions,
+			vowelLabels: vowelLabels
+		};
         if (disableMainSound) {
-            socket.emit(Events.SET_QUESTION, roomID, questionSound, studentsPlaySound, vowelLabels);
+            socket.emit(Events.SET_QUESTION, roomID, questionSound, buttonOptions, studentsPlaySound);
 		} else {
             let sound = new Audio(`/static/audio/${questionSound}.mp3`);
             jQ(sound).bind('ended', function () {
-                socket.emit(Events.SET_QUESTION, roomID, questionSound, studentsPlaySound, vowelLabels);
+                socket.emit(Events.SET_QUESTION, roomID, questionSound, buttonOptions, studentsPlaySound);
             });
             sound.play();
 		}
@@ -152,7 +161,10 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 		let labels = [];
         jQ.each(enabledVowelLabels, function (key, val) {
 			let idx = (randomizeVowelLabels) ? Math.floor(Math.random() * val.length) : 0;
-			labels.push(val[idx]);
+			labels.push({
+				sound: key,
+				label: val[idx]
+			});
 		});
 
 		return labels;
@@ -218,6 +230,10 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 		randomizeVowelLabels = val;
 	}
 
+	function setRandomizeVowelPositions(val) {
+		randomizeVowelPositions = val;
+	}
+
 
 	return {
 		start: start,
@@ -227,6 +243,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 		openVowelLabelsSelector: openVowelLabelsSelector,
 		toggleVowelLabel: toggleVowelLabel,
         setRandomizeVowelLabels: setRandomizeVowelLabels,
+		setRandomizeVowelPositions: setRandomizeVowelPositions,
 		VOWEL_LABELS: vowelLabels
 	};
 	

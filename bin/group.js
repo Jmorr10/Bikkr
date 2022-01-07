@@ -95,6 +95,7 @@ class Group {
 
     // noinspection JSUnusedGlobalSymbols
     // This function is used in a template
+    // FIXME: this can't be accessed the current version of handlebars.
     get playerScores() {
         let playerScores = [];
         for (const [k,v] of Object.entries(this.players)) {
