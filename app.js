@@ -3,6 +3,8 @@ let express = require('express');
 let path = require('path');
 let cookieParser = require('cookie-parser');
 let logger = require('morgan');
+const Handlebars = require('handlebars')
+const {allowInsecurePrototypeAccess} = require('@handlebars/allow-prototype-access')
 
 let indexRouter = require('./routes/index');
 let teacherRouter = require('./routes/teacher');
@@ -12,6 +14,7 @@ let app = express();
 
 // view engine setup
 let handlebars = require('express-handlebars').create({
+    handlebars: allowInsecurePrototypeAccess(Handlebars),
     layoutsDir: path.join(__dirname, "views/layouts"),
     partialsDir: path.join(__dirname, "views/partials"),
     defaultLayout: 'main'

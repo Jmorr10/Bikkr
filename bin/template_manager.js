@@ -37,16 +37,19 @@
 const ConnectionManager = require('./connection_manager');
 const Events = require('./event_types');
 const path = require('path');
+const Handlebars = require('handlebars')
+const {allowInsecurePrototypeAccess} = require('@handlebars/allow-prototype-access')
 
 const helpers = require('handlebars-helpers')();
 
-const handlebars = require('express-handlebars').create({
+let handlebars = require('express-handlebars').create({
+    handlebars: allowInsecurePrototypeAccess(Handlebars),
     layoutsDir: path.join(__dirname, "../views/layouts"),
     partialsDir: path.join(__dirname, "../views/partials"),
     defaultLayout: 'main',
-    helpers: {
+    helpers: Object.assign({
         for: forHelper
-    }
+    }, helpers)
 });
 
 let io = ConnectionManager.getIO();
