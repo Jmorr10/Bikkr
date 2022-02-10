@@ -190,6 +190,7 @@ function setupRoom(socket, roomID, roomType, options) {
     let room = RoomList.getRoomByID(roomID);
 
     if (player && player.isTeacher) {
+        room.usernamesAssigned = (options.hasOwnProperty(RoomModule.KEY_ASSIGN_USERNAMES)) ? options.assignUsernames : false;
         if (roomType === RoomTypes.TYPE_INDIVIDUAL) {
             room.type = RoomTypes.TYPE_INDIVIDUAL;
         } else if (roomType === RoomTypes.TYPE_GROUP) {
@@ -230,17 +231,20 @@ function createGroups(room, numStudents) {
 function joinRoom(socket, roomID) {
     let player = PlayerList.getPlayerBySocketID(socket.id);
     if (player && !player.isTeacher) {
-            let room = RoomList.getRoomByID(roomID);
-            if (room && !room.setUp) {
-                TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: 'The teacher has not finished setting up the room!'});
-            } else if (room) {
-                room.addPlayer(player);
+        let room = RoomList.getRoomByID(roomID);
+        if (room && !room.setUp) {
+            TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: 'The teacher has not finished setting up the room!'});
+        } else if (room) {
+            room.addPlayer(player);
+            if (room.usernamesAssigned) {
+                setUsername(socket, roomID, getRandomUsername());
+            } else {
                 debug(`Sent username selection`);
                 TemplateManager.emitWithTemplate(socket.id, 'username', {roomID: room.id}, Events.ROOM_JOINED, room.id);
-            } else {
-                TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: 'Incorrect room name!'});
             }
-
+        } else {
+            TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: 'Incorrect room name!'});
+        }
     }
 }
 
@@ -265,7 +269,7 @@ function joinGroup(socket, roomID, groupID) {
             debug(`${player.name} joined ${group.id}`);
 
             // Student sound grid should be locked initially
-            TemplateManager.emitWithTemplate(socket.id, 'sound_grid_student', {
+            TemplateManager.sendPrecompiledTemplate(socket.id, 'sound_grid_student', {
                 roomID: room.id,
                 locked: true,
                 buttons: DEFAULT_VOWELS,
@@ -273,7 +277,7 @@ function joinGroup(socket, roomID, groupID) {
                 groupID: groupID,
                 player: player,
                 roomType: room.type,
-                groupType: room.groupType}, Events.GROUP_JOINED, roomID);
+                groupType: room.groupType});
 
             TemplateManager.emitWithTemplateArray(
                 roomID,
@@ -317,6 +321,30 @@ function isUserNameValid(name) {
 }
 
 /**
+ * Generates a random username for use when "Auto-assign Usernames" is active.
+ *
+ * @returns {string} A valid, randomly generated username
+ */
+function getRandomUsername() {
+    const ADJ = ["Funny", "Hairy", "Lazy", "Cool", "Amazing", "Bored", "Big", "Little", "Crazy", "Happy", "Hungry", "Sleepy", "Noisy", "Strong", "Wild", "Beautiful"]
+    const COLORS = ["Red", "Orange", "Yellow", "Green", "Purple", "Magenta", "Pink", "Blue", "Violet", "Scarlet", "Orange", "Vermilion", "Gray", "Gold", "Silver", "Bronze"];
+    const ANIMALS = ["Turtle", "Chicken", "Cow", "Goat", "Gorilla", "Giraffe", "Monkey", "Bear", "Mouse", "Buffalo", "Duck", "Sheep", "Deer", "Fish", "Octopus", "Snake"];
+    let rand = [];
+    for (let i = 0; i < 3; i++) {
+        rand.push(Math.floor(Math.random() * 16))
+    }
+
+    let name = ADJ[rand[0]] + COLORS[rand[1]] + ANIMALS[rand[2]];
+
+    if (isUserNameValid(name)) {
+        return name;
+    } else {
+        return getRandomUsername();
+    }
+
+}
+
+/**
  * Set a player's username (after validation) and sends them to the room upon validation.
  *
  * @param socket The socket of the player that is logging in
@@ -342,7 +370,7 @@ function setUsername(socket, roomID, username) {
                 }
 
                 // Student sound grid should be locked initially
-                TemplateManager.emitWithTemplate(socket.id, template, {
+                TemplateManager.sendPrecompiledTemplate(socket.id, template, {
                     roomID: room.id,
                     locked: true,
                     buttons: DEFAULT_VOWELS,
@@ -350,7 +378,7 @@ function setUsername(socket, roomID, username) {
                     groupID: groupID,
                     player: player,
                     roomType: room.type,
-                    groupType: room.groupType}, Events.USERNAME_OK, player.name, roomID, groupID);
+                    groupType: room.groupType});
 
                 TemplateManager.sendPrecompiledTemplate(
                     roomID,

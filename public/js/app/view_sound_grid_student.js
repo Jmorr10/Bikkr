@@ -92,6 +92,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
             socket.on(Events.QUESTION_ALREADY_ANSWERED, alreadyAnswered);
             socket.on(Events.QUESTION_FAILED, questionFailed);
             socket.on(Events.PLAY_SOUND, playSound);
+            socket.on(Events.GAME_OVER_STUDENT, gameOver);
         }
 
         function addButtonListeners() {
@@ -143,13 +144,18 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
         }
 
         function questionFailed(template, correctAnswer) {
-            //Play class-failure animation here
+            // TODO: Play class-failure animation here
             processResults(template, correctAnswer);
         }
 
         function playSound(questionSound) {
             let sound = new Audio(`/static/audio/${questionSound}.mp3`);
             sound.play();
+        }
+
+        function gameOver(template) {
+            soundGridHolder.addClass('locked');
+            render_manager.renderResponse(template);
         }
 
         return {

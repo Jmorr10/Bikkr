@@ -1,15 +1,24 @@
 <div id="groupPlayers">
-	{{#each groups}}
-		<div class="group-row">
-			<h4 class="group-name">{{id}}</h4>
-			{{#each playerScores}}
-				<div class="player-row">
-					<div class="player-name">{{name}}</div>
-					<button class="player-value icon-cancel kick-btn" data-user="{{id}}"></button>
-				</div>
-			{{/each}}
-		</div>
-	{{/each}}
+    {{#if groups}}
+        {{#each groups}}
+            <div class="group-row">
+                <h4 class="group-name">{{id}}</h4>
+                {{#each playerScores}}
+                    <div class="player-row">
+                        <div class="player-name">{{name}}</div>
+                        <button class="player-value icon-cancel kick-btn" data-user="{{id}}"></button>
+                    </div>
+                {{/each}}
+            </div>
+        {{/each}}
+    {{else}}
+        <!-- FIXME: rename these CSS classes... -->
+        <div class="no-scores-container">
+            <span class="no-scores-title">No players!</span>
+            <div class="place-img no-scores"></div>
+        </div>
+    {{/if}}
+
 	<script>
 		require(['jquery', 'app/view_sound_grid'], function (jQ, view_sound_grid) {
 

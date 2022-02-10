@@ -95,14 +95,13 @@ class Group {
 
     // noinspection JSUnusedGlobalSymbols
     // This function is used in a template
-    // FIXME: this can't be accessed the current version of handlebars.
     get playerScores() {
         let playerScores = [];
         for (const [k,v] of Object.entries(this.players)) {
             playerScores.push({name: v.name, points: v.points, id: v.id});
         }
 
-        return playerScores.sort(function (a, b) { return a.points < b.points; });
+        return playerScores.sort((a, b) => b.points - a.points);
     }
 
     /**

@@ -187,12 +187,12 @@ function processStudentResponseRWRT(socket, roomID, studentResponse) {
             groupsAnswered = {};
             ffaWinners = {};
             let groups = (!isAllForOneMode) ?
-                room.groups : room.groups.sort(function (a,b) { return a.points < b.points; });
+                room.groups : room.groups.sort((a,b) => b.points - a.points);
             TemplateManager.emitWithTemplate(
                 roomID,
                 'partials/leaderboard_content',
                 {
-                    players: room.players.sort(function (a,b) { return a.points < b.points; }),
+                    players: room.players.sort((a,b) => b.points - a.points),
                     roomType: room.type,
                     groupType: room.groupType,
                     groups: groups
@@ -211,7 +211,7 @@ function processIndividualResponse(room, player, currentQuestionTmp, isCorrect) 
             room.id,
             'partials/leaderboard_content',
             {
-                players: room.players.sort(function (a,b) { return a.points < b.points; }),
+                players: room.players.sort((a,b) => b.points - a.points),
                 roomType: room.type,
                 groupType: room.groupType,
                 winner: player
@@ -251,10 +251,10 @@ function processAllForOneResponse(room, player, currentQuestionTmp, studentRespo
             TemplateManager.emitWithTemplate(
                 room.id,
                 'partials/leaderboard_content',
-                {players: room.players.sort(function (a,b) { return a.points < b.points; }),
+                {players: room.players.sort((a,b) => b.points - a.points),
                     roomType: room.type,
                     groupType: room.groupType,
-                    groups: room.groups.sort(function (a,b) { return a.points < b.points; })
+                    groups: room.groups.sort((a,b) => b.points - a.points)
                 },
                 Events.QUESTION_FINISHED,
                 currentQuestionTmp,
@@ -293,7 +293,7 @@ function processFreeForAllResponse(room, player, currentQuestionTmp, isCorrect) 
             TemplateManager.emitWithTemplate(
                 room.id,
                 'partials/leaderboard_content',
-                {players: room.players.sort(function (a,b) { return a.points < b.points; }),
+                {players: room.players.sort((a,b) => b.points - a.points),
                     roomType: room.type,
                     groupType: room.groupType,
                     groups: room.groups,
@@ -327,7 +327,7 @@ function skipQuestion(socket, roomID, correctAnswer) {
             roomID,
             'partials/leaderboard_content',
             {
-                players: room.players.sort(function (a,b) { return a.points < b.points; }),
+                players: room.players.sort((a,b) => b.points - a.points),
                 roomType: room.type,
                 groupType: room.groupType,
                 groups: room.groups
@@ -342,11 +342,53 @@ function playSound(socket, roomID, questionSound) {
     socket.to(roomID).emit(Events.PLAY_SOUND, questionSound);
 }
 
+function endGame(socket, roomID) {
+    let room = RoomList.getRoomByID(roomID);
+    let contexts = [];
+    let podiumList;
+
+    if (room) {
+
+        let sockets = room.players.map((x)=> x.id);
+        podiumList = room.getRankings();
+
+        if (podiumList.length !== 0) {
+            if (room.groupType === GroupTypes.TYPE_FREE_FOR_ALL) {
+                contexts = sockets.map(function (x) {
+                    let player = PlayerList.getPlayerBySocketID(x);
+                    let group = player.getGroups()[roomID];
+                    let ranking = podiumList[group.id].find((y) => y.id === player.id || y.id === group.id)?.ranking;
+                    return {ranking: ranking};
+                }, this);
+
+            } else {
+                contexts = sockets.map(function (x) {
+                    let player = PlayerList.getPlayerBySocketID(x);
+                    let group = player.getGroups()[roomID];
+                    let ranking = podiumList.find((y) => y.id === player.id || y.id === group?.id)?.ranking;
+                    return {ranking: ranking};
+                });
+            }
+
+            TemplateManager.emitWithIndividualizedTemplate(sockets, 'partials/game_over_students',
+                contexts, Events.GAME_OVER_STUDENT);
+        }
+
+        TemplateManager.emitWithTemplate(socket.id, 'partials/game_over_teacher',
+            {
+                podiumList: podiumList,
+                roomType: room.type,
+                groupType: room.groupType
+            }, Events.GAME_OVER);
+    }
+}
+
 module.exports = {
     setQuestion: setQuestion,
     processStudentResponse: processStudentResponseRWRT,
     skipQuestion: skipQuestion,
     playSound: playSound,
+    endGame: endGame,
     DEFAULT_VOWELS: DEFAULT_VOWELS,
     VOWEL_LABELS: VOWEL_LABELS
 };

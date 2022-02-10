@@ -123,6 +123,32 @@ function emitWithTemplate(socketID, templateName, context, eventType, ...args) {
 }
 
 /**
+ * Provides a convenient method for sending the same template with individualized contexts.
+ *
+ * @param socketArray The socket.io ids to send the template
+ * @param templateName The name of the template to send
+ * @param contextArray The contexts to use for each socket id
+ * @param eventType A member of the Events enum
+ * @param args Any additional arguments to be passed into the client's listening function
+ */
+function emitWithIndividualizedTemplate(socketArray, templateName, contextArray, eventType, ...args) {
+    if (!io) {
+        io = ConnectionManager.getIO();
+        if (!io) {
+            return;
+        }
+    }
+
+    if (Array.isArray(socketArray) && Array.isArray(contextArray) && socketArray.length === contextArray.length) {
+        for (let i = 0; i < socketArray.length; i++) {
+            emitWithTemplate(socketArray[i], templateName, contextArray[i], eventType, ...args);
+        }
+    } else {
+        throw Error("socketArray and contextArray must be populated arrays of equal length!");
+    }
+}
+
+/**
  * Provides a convenience method for sending multiple templates at the same time.
  * Each template can have its own context, or a single context can be used for all templates.
  *
@@ -179,9 +205,10 @@ function forHelper (from, to, incr, block) {
 }
 
 module.exports = {
-  sendPrecompiledTemplate: sendPrecompiledTemplate,
-  emitWithTemplate: emitWithTemplate,
-  emitWithTemplateArray: emitWithTemplateArray
+    sendPrecompiledTemplate: sendPrecompiledTemplate,
+    emitWithTemplate: emitWithTemplate,
+    emitWithIndividualizedTemplate: emitWithIndividualizedTemplate,
+    emitWithTemplateArray: emitWithTemplateArray
 };
 
 

@@ -33,7 +33,6 @@
  * @since 1.0
  */
 
-// FIXME: If all vowel labels are disabled, then remove that button.
 // TODO: Should be able to press a stop button to end the game and show the winner
 // TODO: Should be able to display the round's winner AND ANSWER on the score pop-up, and then update scoreboard.
 

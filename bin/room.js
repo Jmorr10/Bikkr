@@ -33,6 +33,7 @@ const Events = require('./event_types');
 const Group = require('./group');
 const TYPE_GROUP = "group";
 const TYPE_INDIVIDUAL = "individual";
+const KEY_ASSIGN_USERNAMES = "assignUsernames";
 
 /**
  * Represents a room and its state.
@@ -58,6 +59,7 @@ class Room {
         this.groups = [];
         this.groupType = Group.TYPE_ALL_FOR_ONE;
         this.groupsAssigned = false;
+        this.usernamesAssigned = false;
         this.setUp = false;
     }
 
@@ -67,6 +69,15 @@ class Room {
 
     get groupCount() {
         return this.groups.length;
+    }
+
+    get playerScores() {
+        let playerScores = [];
+        this.players.forEach(function (v) {
+            playerScores.push({name: v.name, points: v.points, id: v.id});
+        });
+
+        return playerScores.sort((a, b) => b.points - a.points);
     }
 
     addPlayer(player, isTeacher) {
@@ -169,14 +180,7 @@ class Room {
     assignPlayerToGroup(player, exceedBase) {
 
         if (exceedBase) {
-            let group = this.groups.slice(0).sort(
-                function (a, b) {
-                    if (a.playerCount === b.playerCount) {
-                        return a.id > b.id;
-                    }
-
-                    return a.playerCount > b.playerCount;
-                })[0];
+            let group = this.groups.slice(0).sort((a, b) => a.playerCount - b.playerCount)[0];
             group.addPlayer(this, player);
             debug(`Added ${player.name} to ${group.id}`);
             return group;
@@ -194,10 +198,47 @@ class Room {
         return this.assignPlayerToGroup(player, true);
     }
 
+    getRankings () {
+        if (this.type === TYPE_INDIVIDUAL || (this.type === TYPE_GROUP && this.groupType === Group.TYPE_ALL_FOR_ONE)) {
+            // Create a shallow copy using the spread operator
+            let source = (this.type === TYPE_INDIVIDUAL) ? this.players : this.groups;
+            let sorted = [...source].sort((a, b) => b.points - a.points);
+            return this._generateRanks(sorted);
+
+        } else {
+            let ranksPerGroup = {};
+            let that = this._generateRanks;
+            let zeroCount = 0;
+            this.groups.forEach(function (group) {
+                if (group.playerScores.length === 0 || group.playerScores[0].points === 0) {
+                    zeroCount++;
+                }
+                ranksPerGroup[group.id] = that(group.playerScores);
+            });
+
+            return (zeroCount === this.groups.length) ? [] : ranksPerGroup;
+        }
+
+    }
+
+    _generateRanks(playersSortedByScore) {
+        let ranks = [];
+        if (playersSortedByScore.length !== 0  && playersSortedByScore[0].points !== 0) {
+            let lastRank = 0;
+            for (let i = 0; i < playersSortedByScore.length; i++) {
+                let current = playersSortedByScore[i];
+                lastRank += (i > 0 && current.points === playersSortedByScore[i - 1].points) ? 0 : 1;
+                ranks.push({id: current.id, ranking: lastRank, name: current.name});
+            }
+        }
+
+        return ranks;
+    }
 }
 
 module.exports = {
     Room: Room,
     TYPE_GROUP: TYPE_GROUP,
-    TYPE_INDIVIDUAL: TYPE_INDIVIDUAL
+    TYPE_INDIVIDUAL: TYPE_INDIVIDUAL,
+    KEY_ASSIGN_USERNAMES: KEY_ASSIGN_USERNAMES
 };

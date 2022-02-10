@@ -17,8 +17,11 @@
 	</div>
 
 	<script>
-		require(['app/view_sound_grid_student'], function (view_sound_grid_student) {
-			view_sound_grid_student.start();
+		require(['app/view_sound_grid_student', 'app/player'], function (view_sound_grid_student, Player) {
+			let player = Player.getPlayer();
+			player.name = {{player.name}};
+            {{#if groupID}}player.group = {{groupID}};{{/if}}
+		    view_sound_grid_student.start();
 		});
 
 

@@ -48,6 +48,7 @@ function addSocketListeners (socket) {
     socket.on(Events.STUDENT_RESPONSE, GameManager.processStudentResponse.bind(null, socket));
     socket.on(Events.SKIP_QUESTION, GameManager.skipQuestion.bind(null, socket));
     socket.on(Events.PLAY_SOUND, GameManager.playSound.bind(null, socket));
+    socket.on(Events.END_GAME, GameManager.endGame.bind(null, socket));
 
 }
 

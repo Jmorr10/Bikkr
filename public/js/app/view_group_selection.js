@@ -54,16 +54,10 @@ define(['jquery', 'app/player', 'app/view_sound_grid_student', 'app/render_manag
                 socket.emit(Events.JOIN_GROUP, roomID, groupID);
             });
 
-            socket.on(Events.GROUP_JOINED, finish);
         }
 
         function setError (errorTxt) {
             errorLbl.text(errorTxt);
-        }
-
-        function finish (template, roomID) {
-            render_manager.renderResponse(template);
-            player.group = groupID;
         }
 
         return {

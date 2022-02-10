@@ -61,6 +61,9 @@ const KICKED = "kicked";
 const HOST_DISCONNECTED = 'host_disconnected';
 const RECONNECT = "reconnect";
 const PLAY_SOUND = 'play_sound';
+const END_GAME = 'end_game';
+const GAME_OVER = 'game_over';
+const GAME_OVER_STUDENT = 'game_over_student';
 
 // GUI
 const RENDER_TEMPLATE = "render_template";
@@ -91,5 +94,8 @@ module.exports = {
     HOST_DISCONNECTED: HOST_DISCONNECTED,
     RECONNECT: RECONNECT,
     PLAY_SOUND: PLAY_SOUND,
+    END_GAME: END_GAME,
+    GAME_OVER: GAME_OVER,
+    GAME_OVER_STUDENT: GAME_OVER_STUDENT,
     RENDER_TEMPLATE: RENDER_TEMPLATE,
 };

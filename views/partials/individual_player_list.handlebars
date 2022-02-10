@@ -1,9 +1,19 @@
-{{#each players}}
-	<div class="player-row">
-		<div class="player-name">{{name}}</div>
-		<button class="player-value icon-cancel kick-btn" data-user="{{id}}"></button>
-	</div>
-{{/each}}
+{{#if players}}
+    {{#each players}}
+        <div class="player-row">
+            <div class="player-name">{{name}}</div>
+            <button class="player-value icon-cancel kick-btn" data-user="{{id}}"></button>
+        </div>
+    {{/each}}
+{{else}}
+    <!-- FIXME: rename these CSS classes... -->
+    <div class="no-scores-container">
+        <span class="no-scores-title">No players!</span>
+        <div class="place-img no-scores"></div>
+    </div>
+{{/if}}
+
+
 <script>
 	require(['jquery', 'app/view_sound_grid'], function (jQ, view_sound_grid) {
 

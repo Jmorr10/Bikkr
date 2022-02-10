@@ -2,7 +2,9 @@
 	<div class="modal-black"></div>
 	<div id="playerListContentHolder" class="modal-popup-content">
 		<h1>Current Players</h1>
-		{{> player_list_content}}
+        <div class="modal-scroll-container">
+            {{> player_list_content}}
+        </div>
 		<button id="closePlayerListBtn" class="modal-close-btn icon-cancel"></button>
 	</div>
 </div>

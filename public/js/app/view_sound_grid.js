@@ -33,6 +33,7 @@
  * @version 1.0
  * @since 1.0
  */
+//FIXME: Disable pressing the "play" button if there are no players in the room
 define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 	function (jQ, Player, render_manager, Events) {
 
@@ -40,6 +41,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 	let player;
 
 	let startBtn;
+	let endBtn;
 	let soundGridHolder;
 	let errorLbl;
 	let roomID;
@@ -67,6 +69,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 
 		player = Player.getPlayer();
         startBtn = jQ('#startBtn');
+        endBtn = jQ('#endBtn');
         soundGridHolder = jQ('#T_soundGridHolder');
         errorLbl = jQ('.error-lbl');
         roomID = jQ('#roomIDVal').val();
@@ -75,7 +78,15 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
         startBtn.click(function () {
             soundGridHolder.removeClass('locked');
             startBtn.attr('disabled', true).hide();
+            endBtn.attr('disabled', false).show();
         });
+
+        endBtn.click(function () {
+        	soundGridHolder.addClass('locked');
+        	startBtn.attr('disabled', false).show();
+        	endBtn.attr('disabled', true).hide();
+        	endGame();
+		});
 
         addButtonListeners();
 
@@ -99,12 +110,16 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
         	if (currentQuestion && currentQuestion !== "") {
                 socket.emit(Events.SKIP_QUESTION, roomID, currentQuestion);
                 currentQuestion = "";
+			} else {
+        		shake(this);
 			}
 		});
 
         jQ('#replayBtn').click(function () {
         	if (currentQuestion && currentQuestion !== "") {
                 playSound(currentQuestion);
+			} else {
+        		shake(this);
 			}
 		});
 
@@ -161,9 +176,11 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 		let labels = [];
         jQ.each(enabledVowelLabels, function (key, val) {
 			let idx = (randomizeVowelLabels) ? Math.floor(Math.random() * val.length) : 0;
+			let label = val[idx];
+			if (label)
 			labels.push({
 				sound: key,
-				label: val[idx]
+				label: label
 			});
 		});
 
@@ -223,6 +240,10 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 			} else if (idx !== -1 && !enabled) {
 				vowelList.splice(idx, 1);
 			}
+
+			let buttonVisible = (vowelList.length !== 0);
+			jQ(`button[data-sound=${listID}`).toggle(buttonVisible);
+
 		}
 	}
 
@@ -232,6 +253,24 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 
 	function setRandomizeVowelPositions(val) {
 		randomizeVowelPositions = val;
+	}
+
+	function endGame() {
+		socket.emit(Events.END_GAME, roomID);
+		socket.once(Events.GAME_OVER, gameOver);
+	}
+
+	function gameOver(template) {
+		render_manager.renderResponse(template);
+	}
+
+	// Courtesy of StackOverflow's @phpslightly - https://stackoverflow.com/a/17381205
+	function shake(div, interval=60, distance=5, times=4){
+		jQ(div).css('position','relative');
+		for(let iter=0;iter<(times+1);iter++){
+			jQ(div).animate({ left: ((iter%2===0 ? distance : distance*-1))}, interval);
+		}//for
+		jQ(div).animate({ left: 0},interval);
 	}
 
 

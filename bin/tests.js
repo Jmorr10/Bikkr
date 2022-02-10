@@ -339,6 +339,142 @@ describe('loading express', function () {
         createGroupAFORoom(setQuestion);
     });
 
+    it('sends FFA scores at the end of a game', function (done) {
+
+        let clients = [];
+
+        function testFunc() {
+            for (let i = 0; i < 41; i++) {
+                let client = io.connect(socketURL, options);
+                clients.push(client);
+                if (i === 40) {
+                    client.on(Events.USERNAME_OK, next1);
+                }
+                client.emit(Events.CLIENT_CONNECTED, false);
+                client.emit(Events.JOIN_ROOM, TEST_ROOM);
+                client.emit(Events.SET_USERNAME, TEST_ROOM, `USER ${i}`);
+            }
+        }
+
+        function next1() {
+            clients[0].once(Events.GAME_OVER_STUDENT, finish);
+            testClient.once(Events.GAME_OVER, finish);
+            testClient.on(Events.QUESTION_READY, answerQuestion);
+            testClient.emit(Events.SET_QUESTION, TEST_ROOM, 'LONG_I');
+        }
+
+        let groupsResponded = {};
+        function answerQuestion() {
+
+            let groups = RoomList.getRoomByID(TEST_ROOM).groups
+            let debugPlayer = clients.find((x) => x.id === groups[0].players[Object.keys(groups[0].players)[0]].id);
+            debugPlayer.on(Events.QUESTION_FINISHED, next2);
+
+            for (let i = 0; i < 41; i++) {
+                let player = PlayerList.getPlayerBySocketID(clients[i].id);
+                let group = player.getGroups()[TEST_ROOM];
+                if (!groupsResponded.hasOwnProperty(group.id)) {
+                    clients[i].emit(Events.STUDENT_RESPONSE, TEST_ROOM, 'LONG_I');
+                    groupsResponded[group.id] = player.name;
+                } else {
+                    clients[i].emit(Events.STUDENT_RESPONSE, TEST_ROOM, 'LONG_A');
+                }
+            }
+        }
+
+        function next2() {
+            testClient.emit(Events.END_GAME, TEST_ROOM);
+        }
+
+        let runCount = 0;
+        let noDashes = false;
+        let teacherTemplateValid = false;
+        let studentTemplateValid = false;
+        function finish(template) {
+            runCount++;
+            if (template.indexOf("student-podium") === -1) {
+                noDashes = (template.indexOf("---") === -1);
+                for (let [k,v] of Object.entries(groupsResponded)) {
+                    teacherTemplateValid = (template.indexOf(k) !== -1 && template.indexOf(v) !== -1);
+                }
+            } else {
+                noDashes = (template.indexOf("---") === -1);
+                studentTemplateValid = (template.indexOf("1st place") !== -1);
+            }
+            if (runCount === 2 && noDashes && teacherTemplateValid && studentTemplateValid) {
+                cleanup();
+            } else if (runCount === 2) {
+                throw Error("Passing conditions were not met.");
+            }
+        }
+
+        function cleanup() {
+            for (let i = 0; i < clients.length; i++) {
+                clients[i].close();
+            }
+
+            done();
+        }
+
+        createGroupFFARoom(testFunc);
+    });
+
+    it('sends no-scores to TEACHER ONLY at end of an FFA game', function (done) {
+
+        let clients = [];
+        let studentEventCalled = false;
+
+        function testFunc() {
+            for (let i = 0; i < 41; i++) {
+                let client = io.connect(socketURL, options);
+                clients.push(client);
+                if (i === 40) {
+                    client.on(Events.USERNAME_OK, next1);
+                }
+                client.emit(Events.CLIENT_CONNECTED, false);
+                client.emit(Events.JOIN_ROOM, TEST_ROOM);
+                client.emit(Events.SET_USERNAME, TEST_ROOM, `USER ${i}`);
+            }
+        }
+
+        function next1() {
+            clients[0].once(Events.GAME_OVER_STUDENT, trap);
+            testClient.once(Events.GAME_OVER, trap);
+            testClient.emit(Events.END_GAME, TEST_ROOM);
+        }
+
+        let trapTriggerCount = 0;
+        function trap(template) {
+            if (trapTriggerCount >= 1) {
+                studentEventCalled = true;
+            } else {
+                trapTriggerCount++;
+                finish(template)
+            }
+        }
+
+        let teacherTemplateValid = false;
+        function finish(template) {
+            console.log(template);
+            teacherTemplateValid = (template.indexOf("no-scores-title") !== -1);
+            if (!studentEventCalled && trapTriggerCount === 1 && teacherTemplateValid) {
+                cleanup();
+            } else {
+                throw Error("Passing conditions not met.");
+            }
+        }
+
+        function cleanup() {
+            for (let i = 0; i < clients.length; i++) {
+                clients[i].close();
+            }
+
+            done();
+        }
+
+        createGroupFFARoom(testFunc);
+    });
+
     function connectClient(testFunc) {
         testClient = io.connect(socketURL, options);
         testClient.on('connect', testFunc);
@@ -364,6 +500,19 @@ describe('loading express', function () {
 
             testClient.on(Events.ROOM_JOINED, function () {
                 testClient.emit(Events.ROOM_SETUP, TEST_ROOM, Room.TYPE_GROUP, {groupType: Group.TYPE_ALL_FOR_ONE, numStudents: 41, assignGroups: true});
+                testFunc();
+            });
+        });
+    }
+
+    function createGroupFFARoom(testFunc) {
+        connectClient(function () {
+            testClient.emit(Events.CLIENT_CONNECTED, true);
+
+            testClient.emit(Events.NEW_ROOM, TEST_ROOM);
+
+            testClient.on(Events.ROOM_JOINED, function () {
+                testClient.emit(Events.ROOM_SETUP, TEST_ROOM, Room.TYPE_GROUP, {groupType: Group.TYPE_FREE_FOR_ALL, numStudents: 41, assignGroups: true});
                 testFunc();
             });
         });

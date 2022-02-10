@@ -45,9 +45,9 @@ define(['jquery'], function(jQ) {
      *      * data-mode="update" will update/replace the render target itself.
      *      * data-mode="append-update" will append the element to the render target if it doesn't exist or update the element
      *        within the target if it does. (Note: must specify child ID)
-     *
-     *      4. If data-add attribute is found, the render target's contents will be replaced by the root-level element. If not, the render will be
-     *      emptied, and the root-level element's children will be added to the render target.
+     *      // FIXME: This documentation doesn't seem to reflect what the code does...
+     *      4. If data-add attribute is found, the render target's contents will be replaced by the root-level element. If not, the render
+     *      target will be emptied, and the root-level element's children will be added to the render target.
      *
      *      Note: if an element doesn't have either a data-target attribute or an id attribute, it will not be rendered.
      *

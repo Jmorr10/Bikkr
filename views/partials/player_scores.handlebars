@@ -1,18 +1,28 @@
 <div id="playerScores">
 	<h1>Player Scores</h1>
-	<div class="score-holder">
-		{{#each players}}
-			{{#with this}}
-				<div class="score-row" {{#if ../winner}}{{#eq ../winner.name name}}style="order:-1 !important;"{{/eq}}{{/if}}>
-					<div class="score-name">{{name}}</div>
-					{{#if ../winner}}
-						{{#eq ../winner.name name}}
-							<i class="icon-crown round-winner"></i>
-						{{/eq}}
-					{{/if}}
-					<div class="score-value">{{points}}</div>
-				</div>
-			{{/with}}
-		{{/each}}
-	</div>
+    <div class="modal-scroll-container">
+        <div class="score-holder well meh2">
+            {{#if players}}
+                {{#each players}}
+                    {{#with this}}
+                        <div class="score-row" {{#if ../winner}}{{#eq ../winner.name name}}style="order:-1 !important;"{{/eq}}{{/if}}>
+                            <div class="score-name">{{name}}</div>
+                            {{#if ../winner}}
+                                {{#eq ../winner.name name}}
+                                    <i class="icon-crown round-winner"></i>
+                                {{/eq}}
+                            {{/if}}
+                            <div class="score-value">{{points}}</div>
+
+                        </div>
+                    {{/with}}
+                {{/each}}
+            {{else}}
+                <div class="no-scores-container">
+                    <span class="no-scores-title">No scores!</span>
+                    <div class="place-img no-scores"></div>
+                </div>
+            {{/if}}
+        </div>
+    </div>
 </div>

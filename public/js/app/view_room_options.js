@@ -61,19 +61,27 @@ define(['jquery', 'app/player', 'app/view_sound_grid', 'app/render_manager', 'ev
 
 	}
 
-
+	// FIXME: User should be allowed to set the number of groups
+	// FIXME: User should be able to set the desire # of players per group for auto-assign
+	// TODO: User should be able to set AFO response mode (1st group to respond OR allow all groups to response - score-based)
+	// TODO: User should be able to set auto-assigned usernames
 	function submitOptions () {
-		let options = {};
+		let options;
 		roomTypeField = jQ('input[name="roomType"]:checked').val();
 		let fieldValid = roomTypeField && roomTypeField !== "";
+		let assignUsernames = jQ('#assignUsernames').prop('checked');
+
+		options = {assignUsernames: assignUsernames};
 
 		if (fieldValid && roomTypeField === TYPE_GROUP) {
 			let numStudents = jQ('#numStudents').val();
 			let groupType = jQ('input[name="groupType"]:checked').val();
 			let assignGroups = jQ('#assignGroups').prop('checked');
 
+
 			if (groupType && groupType !== "" && numStudents) {
-				options = {groupType: groupType, numStudents: numStudents, assignGroups: assignGroups};
+				options = {groupType: groupType, numStudents: numStudents,
+					assignGroups: assignGroups, assignUsernames: assignUsernames};
 			} else if (numStudents && numStudents < 4) {
 				setError(ERR_TOO_FEW_STUDENTS);
 			} else {

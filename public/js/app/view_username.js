@@ -59,8 +59,6 @@ define(['jquery', 'app/view_group_selection', 'app/view_sound_grid_student', 'ap
                 signIn();
             }
         });
-		
-		socket.on(Events.USERNAME_OK, finish);
 
 		usernameField.focus();
 	}
@@ -77,11 +75,6 @@ define(['jquery', 'app/view_group_selection', 'app/view_sound_grid_student', 'ap
 
 	function setError (errorTxt) {
 		errorLbl.text(errorTxt);
-	}
-
-	function finish (template, playerName) {
-        render_manager.renderResponse(template);
-        player.name = playerName;
 	}
 
 	return {
