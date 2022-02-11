@@ -42,6 +42,9 @@ define(['jquery', 'app/player', 'app/view_room_options', 'app/view_username', 'a
 	let submitBtn;
 	let roomNameField;
 	let errorLbl;
+	// This is a fix for iPhone not allowing JS to play sounds.
+	const soundContainer = new Audio();
+	soundContainer.autoplay = true;
 
 	const ERR_NO_ROOMNAME = 'Please enter a room name to begin!';
 	
@@ -68,6 +71,8 @@ define(['jquery', 'app/player', 'app/view_room_options', 'app/view_username', 'a
 
 
 	function signIn () {
+		soundContainer.src = "data:audio/mpeg;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaWdTb3VuZEJhbmsuY29tIC8gTGFTb25vdGhlcXVlLm9yZwBURU5DAAAAHQAAA1N3aXRjaCBQbHVzIMKpIE5DSCBTb2Z0d2FyZQBUSVQyAAAABgAAAzIyMzUAVFNTRQAAAA8AAANMYXZmNTcuODMuMTAwAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV";
+		Player.setSoundElement(soundContainer);
 		let roomname = roomNameField.val();
 		if (roomname && roomname !== '') {
 			let event = (player.isTeacher) ? Events.NEW_ROOM : Events.JOIN_ROOM;

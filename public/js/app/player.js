@@ -37,6 +37,7 @@ define(['event_types'], function (Events) {
 	let socket;
 	let selfPlayer;
     let SERVER_PATH;
+    let soundElement;
 
     require(['app/game'], function (game) {
         SERVER_PATH = game.SERVER_PATH;
@@ -145,12 +146,22 @@ define(['event_types'], function (Events) {
 		return socket;
 	}
 
+	function setSoundElement(el) {
+	    soundElement = el;
+    }
+
+    function getSoundElement() {
+	    return soundElement;
+    }
+
 	connect();
 
 	return {
 		getPlayer: getPlayer,
 		initializePlayer: initializePlayer,
-		getConnection: getConnection
+		getConnection: getConnection,
+        setSoundElement: setSoundElement,
+        getSoundElement: getSoundElement
 	}
 
 });

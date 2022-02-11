@@ -50,6 +50,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
         let roomID;
         let myAnswer = "";
 
+
         function start() {
 
             player  = Player.getPlayer();
@@ -149,8 +150,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
         }
 
         function playSound(questionSound) {
-            let sound = new Audio(`/static/audio/${questionSound}.mp3`);
-            sound.play();
+            Player.getSoundElement().src = `/static/audio/${questionSound}.mp3`;
         }
 
         function gameOver(template) {
