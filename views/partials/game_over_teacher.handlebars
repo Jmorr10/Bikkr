@@ -2,47 +2,48 @@
     <div class="modal-black"></div>
     <div id="gameoverContent" class="modal-popup-content" style="justify-content: center; align-items: center;">
         <h1>Final Scores</h1>
-        {{#or (eq roomType "individual") (and (eq roomType "group") (eq groupType "allForOne")) }}
-
-            {{#equalsLength podiumList 0}}
-                <div class="no-scores-container">
-                    <span class="no-scores-title">No scores!</span>
-                    <div class="place-img no-scores"></div>
-                </div>
+        <div class="modal-scroll-container">
+            {{#or (eq roomType "individual") (and (eq roomType "group") (eq groupType "allForOne")) }}
+                {{#equalsLength podiumList 0}}
+                    <div class="no-data-container well">
+                        <span class="no-data-title">No scores!</span>
+                        <div class="place-img no-data"></div>
+                    </div>
+                {{else}}
+                    <div class="modal-scroll-container">
+                        <div id="podium" class="well">
+                            {{#each podiumList }}
+                                {{#lte this.ranking 3}}
+                                    <div class="podium-box p{{this.ranking}} hidden">
+                                        <div class="place-img"></div>
+                                        <span class="podium-name">{{default this.name this.id "---"}}</span>
+                                    </div>
+                                {{/lte}}
+                            {{/each}}
+                        </div>
+                    </div>
+                {{/equalsLength}}
             {{else}}
-                <div class="modal-scroll-container">
-                    <div id="podium" class="well">
-                        {{#each podiumList }}
-                            {{#lte this.ranking 3}}
-                                <div class="podium-box p{{this.ranking}} hidden">
-                                    <div class="place-img"></div>
-                                    <span class="podium-name">{{default this.name this.id "---"}}</span>
+                {{#and (isArray podiumList) (equalsLength podiumList 0) }}
+                        <div class="no-data-container">
+                            <span class="no-data-title">No scores!</span>
+                            <div class="place-img no-data"></div>
+                        </div>
+                {{else}}
+                    <div class="modal-scroll-container">
+                        <div id="podium" class="well">
+                            {{#each podiumList}}
+                                <div class="podium-box ffa flex-column">
+                                    <span class="podium-name">{{default @key "---"}}</span>
+                                    <span class="group-winner">{{default this.[0].name "---"}}</span>
                                 </div>
-                            {{/lte}}
-                        {{/each}}
+                            {{/each}}
+                        </div>
                     </div>
-                </div>
-            {{/equalsLength}}
-        {{else}}
-            {{#and (isArray podiumList) (equalsLength podiumList 0) }}
-                    <div class="no-scores-container">
-                        <span class="no-scores-title">No scores!</span>
-                        <div class="place-img no-scores"></div>
-                    </div>
-            {{else}}
-                <div class="modal-scroll-container">
-                    <div id="podium" class="well">
-                        {{#each podiumList}}
-                            <div class="podium-box ffa flex-column">
-                                <span class="podium-name">{{default @key "---"}}</span>
-                                <span class="group-winner">{{default this.[0].name "---"}}</span>
-                            </div>
-                        {{/each}}
-                    </div>
-                </div>
-            {{/and}}
-        {{/or}}
-        <button id="closeGameOverBtn" class="modal-close-btn icon-cancel"></button>
+                {{/and}}
+            {{/or}}
+            <button id="closeGameOverBtn" class="modal-close-btn icon-cancel"></button>
+        </div>
     </div>
 
     <script>

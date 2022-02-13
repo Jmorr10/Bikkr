@@ -123,7 +123,8 @@ function clientDisconnected(socket) {
                     players: room.players,
                     roomType: room.type,
                     groupType: room.groupType,
-                    groups: room.groups
+                    groups: room.groups,
+                    playerCount: room.playerCount
                 }],
                 Events.RENDER_TEMPLATE
             );
@@ -214,7 +215,7 @@ function setupRoom(socket, roomID, roomType, options) {
 
     // Teacher sound grid should be locked until start is pressed.
     TemplateManager.emitWithTemplate(player.id, 'sound_grid',
-        {players: room.players, roomType: room.type, groupType: room.groupType, roomID: room.id, locked: true, vowels: VOWEL_LABELS}, Events.ROOM_SET_UP);
+        {players: room.players, roomType: room.type, groupType: room.groupType, roomID: room.id, playerCount: room.playerCount, locked: true, vowels: VOWEL_LABELS}, Events.ROOM_SET_UP);
 
 }
 
@@ -277,7 +278,9 @@ function joinGroup(socket, roomID, groupID) {
                 groupID: groupID,
                 player: player,
                 roomType: room.type,
-                groupType: room.groupType});
+                groupType: room.groupType,
+                playerCount: room.playerCount
+            });
 
             TemplateManager.emitWithTemplateArray(
                 roomID,
@@ -285,7 +288,8 @@ function joinGroup(socket, roomID, groupID) {
                 [{players: room.players,
                     roomType: room.type,
                     groupType: room.groupType,
-                    groups: room.groups
+                    groups: room.groups,
+                    playerCount: room.playerCount
                 }],
                 Events.RENDER_TEMPLATE
             );
@@ -358,7 +362,7 @@ function setUsername(socket, roomID, username) {
             let room = RoomList.getRoomByID(roomID);
             if (room) {
                 player.name = username;
-                TemplateManager.sendPrecompiledTemplate(roomID, 'partials/player_list_content', {players: room.players, roomType: room.type, groupType: room.groupType, groups: room.groups});
+                TemplateManager.sendPrecompiledTemplate(roomID, 'partials/player_list_content', {players: room.players, roomType: room.type, groupType: room.groupType, groups: room.groups, playerCount: room.playerCount});
                 let template = (room.type === RoomTypes.TYPE_GROUP && !room.groupsAssigned) ? 'group_selection' : 'sound_grid_student';
 
                 let group;
@@ -378,7 +382,9 @@ function setUsername(socket, roomID, username) {
                     groupID: groupID,
                     player: player,
                     roomType: room.type,
-                    groupType: room.groupType});
+                    groupType: room.groupType,
+                    playerCount: room.playerCount
+                });
 
                 TemplateManager.sendPrecompiledTemplate(
                     roomID,
@@ -434,7 +440,9 @@ function reconnectPlayer(socket, playerState) {
         groupID: group.id,
         player: new_player,
         roomType: room.type,
-        groupType: room.groupType});
+        groupType: room.groupType,
+        playerCount: room.playerCount
+    });
 
     TemplateManager.sendPrecompiledTemplate(
         room.id,

@@ -33,7 +33,6 @@
  * @version 1.0
  * @since 1.0
  */
-//FIXME: Disable pressing the "play" button if there are no players in the room
 define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 	function (jQ, Player, render_manager, Events) {
 
@@ -47,6 +46,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 	let roomID;
 	let currentQuestion = "";
 	let modalBlack;
+	let playerCount;
 	let studentsPlaySound = false;
 	let disableMainSound = false;
 	let randomizeVowelLabels = false;
@@ -76,6 +76,10 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
         modalBlack = jQ('.modal-black');
 
         startBtn.click(function () {
+        	if (playerCount === 0) {
+        		shake(startBtn);
+        		return false;
+			}
             soundGridHolder.removeClass('locked');
             startBtn.attr('disabled', true).hide();
             endBtn.attr('disabled', false).show();
@@ -264,6 +268,10 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 		render_manager.renderResponse(template);
 	}
 
+	function updatePlayerCount(count) {
+		playerCount = count;
+	}
+
 	// Courtesy of StackOverflow's @phpslightly - https://stackoverflow.com/a/17381205
 	function shake(div, interval=60, distance=5, times=4){
 		jQ(div).css('position','relative');
@@ -283,6 +291,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 		toggleVowelLabel: toggleVowelLabel,
         setRandomizeVowelLabels: setRandomizeVowelLabels,
 		setRandomizeVowelPositions: setRandomizeVowelPositions,
+		updatePlayerCount: updatePlayerCount,
 		VOWEL_LABELS: vowelLabels
 	};
 	

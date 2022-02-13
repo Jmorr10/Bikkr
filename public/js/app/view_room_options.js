@@ -64,7 +64,6 @@ define(['jquery', 'app/player', 'app/view_sound_grid', 'app/render_manager', 'ev
 	// FIXME: User should be allowed to set the number of groups
 	// FIXME: User should be able to set the desire # of players per group for auto-assign
 	// TODO: User should be able to set AFO response mode (1st group to respond OR allow all groups to response - score-based)
-	// TODO: User should be able to set auto-assigned usernames
 	function submitOptions () {
 		let options;
 		roomTypeField = jQ('input[name="roomType"]:checked').val();

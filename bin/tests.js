@@ -419,7 +419,7 @@ describe('loading express', function () {
         createGroupFFARoom(testFunc);
     });
 
-    it('sends no-scores to TEACHER ONLY at end of an FFA game', function (done) {
+    it('sends no-data to TEACHER ONLY at end of an FFA game', function (done) {
 
         let clients = [];
         let studentEventCalled = false;
@@ -456,7 +456,7 @@ describe('loading express', function () {
         let teacherTemplateValid = false;
         function finish(template) {
             console.log(template);
-            teacherTemplateValid = (template.indexOf("no-scores-title") !== -1);
+            teacherTemplateValid = (template.indexOf("no-data-title") !== -1);
             if (!studentEventCalled && trapTriggerCount === 1 && teacherTemplateValid) {
                 cleanup();
             } else {

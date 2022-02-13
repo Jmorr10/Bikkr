@@ -581,21 +581,22 @@ input:checked + .radio-label:after {
     font-size: 4rem;
 }
 
-.no-scores-container {
+.no-data-container {
     flex: 1;
     display: flex;
     justify-content: center;
     flex-direction: column;
     align-items: center;
+    min-height: 100% !important;
 }
 
-.no-scores {
+.no-data {
     background-image: url("../img/no_scores.png");
     height: 9.375rem;
     width: 9.375rem;
 }
 
-.no-scores-title {
+.no-data-title {
     font-size: 2.5rem;
     font-weight: bold;
 }

@@ -12,10 +12,9 @@
             </div>
         {{/each}}
     {{else}}
-        <!-- FIXME: rename these CSS classes... -->
-        <div class="no-scores-container">
-            <span class="no-scores-title">No players!</span>
-            <div class="place-img no-scores"></div>
+        <div class="no-data-container">
+            <span class="no-data-title">No players!</span>
+            <div class="place-img no-data"></div>
         </div>
     {{/if}}
 
@@ -25,6 +24,8 @@
 			jQ('#playerListContent .kick-btn').click(function () {
 				view_sound_grid.kickPlayer(jQ(this).attr('data-user'));
 			});
+
+            view_sound_grid.updatePlayerCount({{playerCount}});
 
 		});
 	</script>
