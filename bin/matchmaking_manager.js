@@ -196,11 +196,12 @@ function setupRoom(socket, roomID, roomType, options) {
             room.type = RoomTypes.TYPE_INDIVIDUAL;
         } else if (roomType === RoomTypes.TYPE_GROUP) {
             room.type = RoomTypes.TYPE_GROUP;
-            if (options && options.hasOwnProperty(GroupModule.KEY_NUM_STUDENTS)) {
+            if (options && options.hasOwnProperty(GroupModule.KEY_NUM_STUDENTS) ||
+                (options.hasOwnProperty(GroupModule.KEY_NUM_GROUPS) && options.hasOwnProperty(GroupModule.KEY_NUM_PER_GROUP))) {
                 room.groupType = (
                     options.hasOwnProperty(GroupModule.KEY_GROUP_TYPE) && options.groupType === GroupTypes.TYPE_FREE_FOR_ALL)
                     ? GroupTypes.TYPE_FREE_FOR_ALL : GroupTypes.TYPE_ALL_FOR_ONE;
-                createGroups(room, options.numStudents);
+                createGroups(socket, room, options);
                 room.groupsAssigned = (options.hasOwnProperty(GroupModule.KEY_ASSIGN_GROUPS)) ? options.assignGroups : false;
             } else {
                 TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: ERR_INVALID_ROOM_OPTIONS});
@@ -219,12 +220,22 @@ function setupRoom(socket, roomID, roomType, options) {
 
 }
 
-function createGroups(room, numStudents) {
-    // This ugly piece of code means that base should be 2 for 10 students or less, 4 for 11 <= x < 25, and 5 for x >= 25
-    let base = (numStudents < 25) ? (numStudents < 16) ? 2 : 4 : GroupModule.BASE_STUDENTS_PER_GROUP;
-    let numGroups = Math.floor(numStudents / base);
+function createGroups(socket, room, options) {
+
+    let numStudents = options[GroupModule.KEY_NUM_STUDENTS];
+    let numGroups = options[GroupModule.KEY_NUM_GROUPS];
+    let numPerGroup = options[GroupModule.KEY_NUM_PER_GROUP];
+
+    if (numStudents) {
+        // This ugly piece of code means that base should be 2 for 10 students or less, 4 for 11 <= x < 25, and 5 for x >= 25
+        numPerGroup = (numStudents < 25) ? (numStudents < 10) ? 2 : 4 : GroupModule.BASE_STUDENTS_PER_GROUP;
+        numGroups = Math.floor(numStudents / numPerGroup);
+    } else if (!numGroups || !numPerGroup) {
+        TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: ERR_INVALID_ROOM_OPTIONS});
+    }
+
     for (let i = 1; i <= numGroups; i++) {
-        room.addGroup(new Group(`Group ${i}`, base));
+        room.addGroup(new Group(`Group ${i}`, numPerGroup));
     }
 }
 
@@ -294,7 +305,7 @@ function joinGroup(socket, roomID, groupID) {
                 Events.RENDER_TEMPLATE
             );
 
-
+            socket.emit(Events.GROUP_JOINED);
 
         } else {
             TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: 'Incorrect room name!'});
@@ -395,6 +406,8 @@ function setUsername(socket, roomID, username) {
                         groups: room.groups
                     }
                 );
+
+                socket.emit(Events.USERNAME_OK);
             }
         } else {
             TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: 'No matching user'});

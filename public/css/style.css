@@ -264,7 +264,7 @@ body {
     order: -999 !important;
 }
 
-#freeForAllScores, #groupScores, #playerScores {
+.modal-inner-content {
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -526,7 +526,7 @@ input:checked + .radio-label:after {
     border-radius: 0.5rem;
 }
 
-.podium-box.hidden {
+.hidden {
     height: 0;
     opacity: 0;
     visibility: hidden;
@@ -596,6 +596,12 @@ input:checked + .radio-label:after {
     width: 9.375rem;
 }
 
+.failed {
+    background-image: url("../img/fail.png");
+    height: 9.375rem;
+    width: 9.375rem;
+}
+
 .no-data-title {
     font-size: 2.5rem;
     font-weight: bold;
@@ -646,6 +652,13 @@ input:checked + .radio-label:after {
     padding: 0.5rem;
 }
 
+#typeCustom:checked ~ .default-group-options {
+    display: none;
+}
+
+#typeCustom:not(:checked) ~ .custom-group-options {
+    display: none;
+}
 
 /* The switch - the box around the slider */
 .switch {

@@ -31,21 +31,71 @@
 </head>
 
 <body class="scoreboard">
-	{{{body}}}
+	<div id="volatile"></div>
+    <div id="questionFailed" class="modal-popup-content">
+        <div class="modal-inner-content">
+            <div class="modal-scroll-container">
+                <div class="score-holder well">
+                    <div class="no-data-container">
+                        <span class="no-data-title">Question Failed!</span>
+                        <div class="place-img failed"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="correctAnswer" class="modal-popup-content">
+        <h1>Correct Answer:</h1>
+        <div class="modal-inner-content">
+            <div class="modal-scroll-container">
+                <div class="score-holder well" style="justify-content: center;">
+                    <div class="podium-box">
+                        <span class="podium-name" id="correctAnswerTxt"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
-
 <script>
-	require(['jquery', 'event_types'], function (jQ, Events) {
+	require(['jquery', 'event_types', 'app/view_sound_grid'], function (jQ, Events, soundGrid) {
 		let content = jQ('#leaderboardContent', opener.document);
 		let socket = opener.getSocket();
+		let failNotification = jQ('#questionFailed');
+		failNotification.hide();
+		let answerNotification = jQ('#correctAnswer');
+		let answerTxt= jQ('#correctAnswerTxt');
+		answerNotification.hide();
+		let updateArea = jQ('#volatile');
 		let update = function () {
-			jQ('body').empty().append(content[0].outerHTML);
+			updateArea.empty().append(content[0].outerHTML);
 		};
 
+		let questionFailed = function () {
+		    updateArea.fadeOut();
+            failNotification.fadeIn();
+		    setTimeout(function () {
+		        failNotification.fadeOut();
+		        updateArea.fadeIn();
+                update();
+            }, 4000);
+        };
+
+		let showAnswer = function (template, correctAnswer) {
+		    updateArea.fadeOut();
+		    answerTxt.text(soundGrid.VOWEL_LABELS[correctAnswer][0]);
+		    answerNotification.fadeIn();
+            setTimeout(function () {
+                answerNotification.fadeOut();
+                updateArea.fadeIn();
+                update();
+            }, 4000);
+        }
+
 		socket.on(Events.RENDER_TEMPLATE, update);
-		socket.on(Events.QUESTION_FAILED, update);
-		socket.on(Events.QUESTION_FINISHED, update);
+		socket.on(Events.QUESTION_FAILED, questionFailed);
+		socket.on(Events.QUESTION_FINISHED, showAnswer);
 
 		update();
 	});

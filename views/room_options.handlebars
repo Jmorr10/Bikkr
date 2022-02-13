@@ -10,13 +10,24 @@
             <input type="checkbox" class="checkbox" name="assignUsernames" id="assignUsernames" checked="" />
             <label for="assignUsernames">Auto-Assign Usernames</label>
 			<div class="group-sub-options">
-				<input type="number" name="numStudents" min="4" placeholder="Number of Students" id="numStudents"
-					   style="margin: 0.5rem 0;text-align: center;" />
+                <input type="radio" class="radio" name="groupSetup" value="auto" id="typeAuto" checked="" />
+                <label for="typeAuto" class="radio-label">Auto</label>
+                <input type="radio" class="radio" name="groupSetup" value="custom" id="typeCustom" />
+                <label for="typeCustom" class="radio-label">Custom</label>
+                <div class="default-group-options">
+                    <input type="number" name="numStudents" min="4" placeholder="Number of Students" id="numStudents"
+                           style="margin: 0.5rem 0;text-align: center;" />
+                </div>
+                <div class="custom-group-options">
+                    <input type="number" name="numGroups" min="2" placeholder="Number of Groups" id="numGroups"
+                           style="margin: 0.5rem 0;text-align: center;" />
+                    <input type="number" name="numPerGroup" min="2" placeholder="Group Size" id="numPerGroup"/>
+                </div>
 				<div>
-					<input type="radio" class="radio" name="groupType" value="freeForAll" id="groupFreeForAll" />
+                    <input type="radio" class="radio" name="groupType" value="allForOne" id="groupAllForOne" checked="" />
+                    <label for="groupAllForOne" style="margin-bottom: 0;">All-for-one</label>
+                    <input type="radio" class="radio" name="groupType" value="freeForAll" id="groupFreeForAll" />
 					<label for="groupFreeForAll" style="margin-right: 1rem;margin-bottom: 0;">Free-for-all</label>
-					<input type="radio" class="radio" name="groupType" value="allForOne" id="groupAllForOne" />
-					<label for="groupAllForOne" style="margin-bottom: 0;">All-for-one</label>
 				</div>
 				<input type="checkbox" class="checkbox" name="assignGroups" id="assignGroups" checked="" />
 				<label for="assignGroups">Auto-Assign Groups</label>

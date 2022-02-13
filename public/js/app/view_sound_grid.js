@@ -47,21 +47,22 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 	let currentQuestion = "";
 	let modalBlack;
 	let playerCount;
+	let scoreboard;
 	let studentsPlaySound = false;
 	let disableMainSound = false;
 	let randomizeVowelLabels = false;
 	let randomizeVowelPositions = false;
 	let vowelLabels = {
-        "SHORT_A": ["A", "/æ/"],
-        "LONG_A": ["AI", "AY", "EY", "EIGH", "/eɪ/"],
-        "SHORT_E": ["E", "/ɛ/"],
-        "LONG_E": ["EE", "EA", "IE", "/i/"],
-        "SHORT_I": ["I", "/I/"],
-        "LONG_I": ["IE", "IGH", "/aɪ/"],
-        "SHORT_O": ["O", "/ɑ/"],
-        "LONG_O": ["OA", "/oʊ/"],
-        "SHORT_U": ["U", "/ʊ/"],
-		"LONG_U": ["UE", "OO", "EW", "/u/"]
+		"SHORT_A": ["/æ/", "A"],
+		"LONG_A": ["/eɪ/", "AI", "AY", "EY", "EIGH"],
+		"SHORT_E": ["/ɛ/", "E"],
+		"LONG_E": ["/i/", "EE", "EA", "IE"],
+		"SHORT_I": ["/I/", "I"],
+		"LONG_I": ["/aɪ/", "IE", "IGH"],
+		"SHORT_O": ["/ɑ/", "O"],
+		"LONG_O": ["/oʊ/", "OA"],
+		"SHORT_U": ["/ʊ/", "U"],
+		"LONG_U": ["/u/", "UE", "OO", "EW"]
 	};
 	let enabledVowelLabels = jQ.extend(true, {}, vowelLabels);
 
@@ -216,7 +217,6 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 
 	function questionFailed(template) {
 		updateState(template);
-		alert('Lol... failed.');
 	}
 
 	function setError (errorTxt) {
@@ -272,6 +272,10 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 		playerCount = count;
 	}
 
+	function setScoreboard(windowRef) {
+		scoreboard = windowRef;
+	}
+
 	// Courtesy of StackOverflow's @phpslightly - https://stackoverflow.com/a/17381205
 	function shake(div, interval=60, distance=5, times=4){
 		jQ(div).css('position','relative');
@@ -292,6 +296,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
         setRandomizeVowelLabels: setRandomizeVowelLabels,
 		setRandomizeVowelPositions: setRandomizeVowelPositions,
 		updatePlayerCount: updatePlayerCount,
+		setScoreboard: setScoreboard,
 		VOWEL_LABELS: vowelLabels
 	};
 	

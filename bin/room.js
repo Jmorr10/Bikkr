@@ -179,14 +179,25 @@ class Room {
 
     assignPlayerToGroup(player, exceedBase) {
 
+        function sortGroups (a,b) {
+            if (a.playerCount === b.playerCount) {
+                return a.id - b.id;
+            } else {
+                return a.playerCount - b.playerCount;
+            }
+        }
+
+
         if (exceedBase) {
-            let group = this.groups.slice(0).sort((a, b) => a.playerCount - b.playerCount)[0];
+            let group = [...this.groups].sort(sortGroups)[0];
             group.addPlayer(this, player);
             debug(`Added ${player.name} to ${group.id}`);
             return group;
         }
 
-        for (const group of this.groups) {
+        let groupList = [...this.groups].sort(sortGroups);
+
+        for (const group of groupList) {
             if (group.playerCount < group.baseNumber) {
                 group.addPlayer(this, player);
                 debug(`Added ${player.name} to ${group.id}`);

@@ -46,8 +46,8 @@ define(['jquery', 'app/player', 'app/view_sound_grid', 'app/render_manager', 'ev
 
 	const TYPE_GROUP = "group";
 	const ERR_CHOOSE_GROUP_TYPE = "Please choose a group type!";
-	const ERR_TOO_FEW_STUDENTS= "You must have at least four students for groups!";
-
+	const ERR_TOO_FEW_STUDENTS = "You must have at least four students for groups!";
+	const ERR_INVALID_GROUP_OPTIONS = "The custom group options you specified are invalid.";
 	function start(rID) {
 
 		roomID = rID;
@@ -61,8 +61,6 @@ define(['jquery', 'app/player', 'app/view_sound_grid', 'app/render_manager', 'ev
 
 	}
 
-	// FIXME: User should be allowed to set the number of groups
-	// FIXME: User should be able to set the desire # of players per group for auto-assign
 	// TODO: User should be able to set AFO response mode (1st group to respond OR allow all groups to response - score-based)
 	function submitOptions () {
 		let options;
@@ -76,15 +74,27 @@ define(['jquery', 'app/player', 'app/view_sound_grid', 'app/render_manager', 'ev
 			let numStudents = jQ('#numStudents').val();
 			let groupType = jQ('input[name="groupType"]:checked').val();
 			let assignGroups = jQ('#assignGroups').prop('checked');
+			let customGroups = jQ('#typeCustom').prop('checked');
 
+			if (groupType && groupType !== "") {
+				options = {groupType: groupType, assignGroups: assignGroups, assignUsernames: assignUsernames};
 
-			if (groupType && groupType !== "" && numStudents) {
-				options = {groupType: groupType, numStudents: numStudents,
-					assignGroups: assignGroups, assignUsernames: assignUsernames};
-			} else if (numStudents && numStudents < 4) {
-				setError(ERR_TOO_FEW_STUDENTS);
-			} else {
-                setError(ERR_CHOOSE_GROUP_TYPE);
+				if (customGroups) {
+					let numGroups = jQ('#numGroups').val();
+					let numPerGroup = jQ('#numPerGroup').val();
+					if (!numGroups || !numPerGroup) {
+						setError(ERR_INVALID_GROUP_OPTIONS);
+						return false;
+					}
+					options['numGroups'] = numGroups
+					options['numPerGroup'] = numPerGroup;
+				} else if (numStudents) {
+					options['numStudents'] = numStudents;
+				} else if (numStudents && numStudents < 4) {
+					setError(ERR_TOO_FEW_STUDENTS);
+				} else {
+					setError(ERR_CHOOSE_GROUP_TYPE);
+				}
 			}
 		}
 

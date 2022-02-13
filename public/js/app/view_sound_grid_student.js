@@ -145,7 +145,6 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
         }
 
         function questionFailed(template, correctAnswer) {
-            // TODO: Play class-failure animation here
             processResults(template, correctAnswer);
         }
 

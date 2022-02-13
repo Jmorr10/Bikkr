@@ -33,8 +33,6 @@
  * @since 1.0
  */
 
-// TODO: Should be able to display the round's winner AND ANSWER on the score pop-up, and then update scoreboard.
-
 define(['jquery', 'app/render_manager', 'app/player', 'event_types'],
 	function (jQ, render_manager, Player, Events) {
 
