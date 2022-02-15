@@ -171,7 +171,8 @@ function processStudentResponseRWRT(socket, roomID, studentResponse) {
         }
 
 
-        if (isCorrect && !isFreeForAllMode) {
+        if (isCorrect && !isFreeForAllMode &&
+            (isAllForOneMode && room.afoType === GroupModule.AFO_TYPE_SCORE && Util.getLen(groupsAnswered) === room.groupCount)) {
             questionActive = false;
             currentQuestion = "";
             individualCounter = 0;
@@ -246,25 +247,32 @@ function processAllForOneResponse(room, player, currentQuestionTmp, studentRespo
             return false;
         }
 
+        groupsAnswered[group.id] = player.name;
+        let responseCount = Util.getLen(groupsAnswered);
+
         if (isCorrect) {
             group.addPoints(1);
-            TemplateManager.emitWithTemplate(
-                room.id,
-                'partials/leaderboard_content',
-                {players: room.players.sort((a,b) => b.points - a.points),
-                    roomType: room.type,
-                    groupType: room.groupType,
-                    groups: room.groups.sort((a,b) => b.points - a.points)
-                },
-                Events.QUESTION_FINISHED,
-                currentQuestionTmp,
-                player.points
-            );
-            debug('Question answered and finished!');
+            if (room.afoType === GroupModule.AFO_TYPE_SPEED ||
+                (room.afoType === GroupModule.AFO_TYPE_SCORE && responseCount === room.groupCount)
+            ) {
+                TemplateManager.emitWithTemplate(
+                    room.id,
+                    'partials/leaderboard_content',
+                    {players: room.players.sort((a,b) => b.points - a.points),
+                        roomType: room.type,
+                        groupType: room.groupType,
+                        groups: room.groups.sort((a,b) => b.points - a.points)
+                    },
+                    Events.QUESTION_FINISHED,
+                    currentQuestionTmp,
+                    player.points
+                );
+                debug('Question answered and finished!');
+            }
+
             return false;
 
         } else {
-            groupsAnswered[group.id] = player.name;
             return Util.getLen(groupsAnswered) === room.groupCount;
         }
 }

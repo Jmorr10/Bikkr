@@ -59,6 +59,7 @@ class Room {
         this.groups = [];
         this.groupType = Group.TYPE_ALL_FOR_ONE;
         this.groupsAssigned = false;
+        this.afoType = Group.AFO_TYPE_SPEED;
         this.usernamesAssigned = false;
         this.setUp = false;
     }

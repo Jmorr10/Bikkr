@@ -61,6 +61,7 @@ define(['jquery', 'app/player', 'app/view_sound_grid', 'app/render_manager', 'ev
 
 	}
 
+	// TODO: Need to fix the GUI for room setup. It's a mess...
 	// TODO: User should be able to set AFO response mode (1st group to respond OR allow all groups to response - score-based)
 	function submitOptions () {
 		let options;
@@ -75,9 +76,14 @@ define(['jquery', 'app/player', 'app/view_sound_grid', 'app/render_manager', 'ev
 			let groupType = jQ('input[name="groupType"]:checked').val();
 			let assignGroups = jQ('#assignGroups').prop('checked');
 			let customGroups = jQ('#typeCustom').prop('checked');
+			let isAFO = (groupType === 'allForOne');
 
 			if (groupType && groupType !== "") {
 				options = {groupType: groupType, assignGroups: assignGroups, assignUsernames: assignUsernames};
+
+				if (isAFO) {
+					options['afoType'] = jQ('input[name="afoType"]:checked').val();
+				}
 
 				if (customGroups) {
 					let numGroups = jQ('#numGroups').val();

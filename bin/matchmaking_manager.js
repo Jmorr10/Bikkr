@@ -203,6 +203,10 @@ function setupRoom(socket, roomID, roomType, options) {
                     ? GroupTypes.TYPE_FREE_FOR_ALL : GroupTypes.TYPE_ALL_FOR_ONE;
                 createGroups(socket, room, options);
                 room.groupsAssigned = (options.hasOwnProperty(GroupModule.KEY_ASSIGN_GROUPS)) ? options.assignGroups : false;
+                if (room.groupType === GroupTypes.TYPE_ALL_FOR_ONE) {
+                    room.afoType = options.hasOwnProperty(GroupModule.KEY_AFO_TYPE) ?
+                        options[GroupModule.KEY_AFO_TYPE] : GroupModule.AFO_TYPE_SPEED;
+                }
             } else {
                 TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: ERR_INVALID_ROOM_OPTIONS});
                 return;
