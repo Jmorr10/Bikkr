@@ -21,6 +21,19 @@
 					<span class="slider round"></span>
 				</label>
 			</div>
+            <hr>
+            <div>
+                <label>Enable Word Search Mode</label>
+                <label class="switch">
+                    <input id="enableWordSearchMode" name="enableWordSearchMode" type="checkbox">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <div>
+                <label>Edit Word Lists</label>
+                <button id="showWordListsEditorBtn" class="btn btn-primary icon-cog" disabled=""></button>
+            </div>
+            <hr>
 			<div>
 				<label>Choose Vowel Labels</label>
 				<button id="showVowelLabelsBtn" class="btn btn-primary icon-cog"></button>
@@ -39,17 +52,7 @@
                     <span class="slider round"></span>
                 </label>
             </div>
-            <div>
-                <label>Enable Word Search Mode</label>
-                <label class="switch">
-                    <input id="enableWordSearchMode" name="enableWordSearchMode" type="checkbox">
-                    <span class="slider round"></span>
-                </label>
-            </div>
-            <div>
-                <label>Edit Word Lists</label>
-                <button id="showWordListsEditorBtn" class="btn btn-primary icon-cog" disabled=""></button>
-            </div>
+
 		</div>
 		<button id="closeSettingsBtn" class="modal-close-btn icon-cancel"></button>
 	</div>
@@ -64,7 +67,7 @@
 			});
 
 			jQ('#showScoreboardBtn').click(function () {
-			    soundGrid.setScoreboard(window.open(SERVER_PATH + '/scoreboard/', '_blank', 'Scoreboard'));
+			    soundGrid.setScoreboard(window.open('/scoreboard/', '_blank', 'Scoreboard'));
 			});
 
 			jQ('#studentsPlaySound').click(function () {
@@ -91,6 +94,7 @@
                 let enabled = jQ('#enableWordSearchMode').prop('checked')
                 soundGrid.toggleWordSearchMode(enabled);
                 jQ('#showWordListsEditorBtn').prop('disabled', !enabled);
+                jQ('#showVowelLabelsBtn, #randomizeVowelLabels, #randomizeVowelPositions').prop('disabled', enabled);
             })
 
             jQ('#showWordListsEditorBtn').click(function () {

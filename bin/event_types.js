@@ -68,6 +68,7 @@ const ADD_WORD_TO_LIST = "add_word";
 const REMOVE_WORD_FROM_LIST = "remove_word";
 const CLEAR_WORD_LISTS = "clear_lists";
 const TOGGLE_WORD_SEARCH_MODE = "toggle_word_search";
+const UPDATE_LEADERBOARD = "update_leaderboard";
 
 // GUI
 const RENDER_TEMPLATE = "render_template";
@@ -105,5 +106,6 @@ module.exports = {
     REMOVE_WORD_FROM_LIST: REMOVE_WORD_FROM_LIST,
     CLEAR_WORD_LISTS: CLEAR_WORD_LISTS,
     TOGGLE_WORD_SEARCH_MODE: TOGGLE_WORD_SEARCH_MODE,
+    UPDATE_LEADERBOARD: UPDATE_LEADERBOARD,
     RENDER_TEMPLATE: RENDER_TEMPLATE,
 };

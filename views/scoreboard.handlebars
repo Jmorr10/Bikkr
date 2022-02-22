@@ -93,9 +93,15 @@
             }, 4000);
         }
 
+        let showPodium = function (template) {
+		    let temp = jQ(template);
+            updateArea.empty().append(temp.children().not('.modal-black'));
+        }
+
 		socket.on(Events.RENDER_TEMPLATE, update);
 		socket.on(Events.QUESTION_FAILED, questionFailed);
 		socket.on(Events.QUESTION_FINISHED, showAnswer);
+		socket.on(Events.GAME_OVER, showPodium);
 
 		update();
 	});

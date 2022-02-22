@@ -71,29 +71,29 @@ const SOUNDS = {
 };
 
 const DEFAULT_VOWELS = [
-    {sound: "SHORT_A", label:"A"},
-    {sound: "LONG_A", label:"AI"},
-    {sound: "SHORT_E", label:"E"},
-    {sound: "LONG_E", label:"EE"},
-    {sound: "SHORT_I", label:"I"},
-    {sound: "LONG_I", label:"IE"},
-    {sound: "SHORT_O", label:"O"},
-    {sound: "LONG_O", label:"OA"},
-    {sound: "SHORT_U", label:"U"},
-    {sound: "LONG_U", label:"UE"}
+    {sound: "SHORT_A", label:"a"},
+    {sound: "LONG_A", label:"ai"},
+    {sound: "SHORT_E", label:"e"},
+    {sound: "LONG_E", label:"ee"},
+    {sound: "SHORT_I", label:"i"},
+    {sound: "LONG_I", label:"ie"},
+    {sound: "SHORT_O", label:"o"},
+    {sound: "LONG_O", label:"oa"},
+    {sound: "SHORT_U", label:"u"},
+    {sound: "LONG_U", label:"ue"}
 ];
 
 const VOWEL_LABELS = {
-    "SHORT_A": ["/æ/", "A"],
-    "LONG_A": ["/eɪ/", "AI", "AY", "EY", "EIGH"],
-    "SHORT_E": ["/ɛ/", "E"],
-    "LONG_E": ["/i/", "EE", "EA", "IE"],
-    "SHORT_I": ["/I/", "I"],
-    "LONG_I": ["/aɪ/", "IE", "IGH"],
-    "SHORT_O": ["/ɑ/", "O"],
-    "LONG_O": ["/oʊ/", "OA"],
-    "SHORT_U": ["/ʊ/", "U"],
-    "LONG_U": ["/u/", "UE", "OO", "EW"]
+    "SHORT_A": ["/æ/", "a"],
+    "LONG_A": ["/eɪ/", "ai", "ay", "ey", "eigh"],
+    "SHORT_E": ["/ɛ/", "e"],
+    "LONG_E": ["/i/", "ee", "ea", "ie"],
+    "SHORT_I": ["/I/", "i"],
+    "LONG_I": ["/aɪ/", "ie", "igh"],
+    "SHORT_O": ["/ɑ/", "o"],
+    "LONG_O": ["/oʊ/", "oa"],
+    "SHORT_U": ["/ʊ/", "u"],
+    "LONG_U": ["/u/", "ue", "oo", "ew"]
 };
 
 let currentQuestion = "";
@@ -176,9 +176,10 @@ function processStudentResponseRWRT(socket, roomID, studentResponse) {
         }
 
 
-        if (isCorrect && !isFreeForAllMode ||
+        if (isCorrect && isIndividualMode ||
             isCorrect && (isAllForOneMode && room.afoType === GroupModule.AFO_TYPE_SCORE && Util.getLen(groupsAnswered) === room.groupCount) ||
-            isCorrect && (isAllForOneMode && room.afoType === GroupModule.AFO_TYPE_SPEED)) {
+            isCorrect && (isAllForOneMode && room.afoType === GroupModule.AFO_TYPE_SPEED) ||
+            !failed && isFreeForAllMode && individualCounter === room.playerCount) {
             questionActive = false;
             currentQuestion = "";
             individualCounter = 0;
@@ -390,6 +391,21 @@ function toggleWordSearchMode(socket, roomID, enabled) {
     }
 }
 
+function sendLeaderboard(socket, roomID) {
+    let room = RoomList.getRoomByID(roomID);
+    if (room) {
+        TemplateManager.sendPrecompiledTemplate(
+            room.id,
+            'partials/leaderboard_content',
+            {players: room.players,
+                roomType: room.type,
+                groupType: room.groupType,
+                groups: room.groups
+            }
+        );
+    }
+}
+
 
 function endGame(socket, roomID) {
     let room = RoomList.getRoomByID(roomID);
@@ -429,6 +445,8 @@ function endGame(socket, roomID) {
                 roomType: room.type,
                 groupType: room.groupType
             }, Events.GAME_OVER);
+
+        room.resetScores();
     }
 }
 
@@ -441,6 +459,7 @@ module.exports = {
     removeWordFromList: removeWordFromList,
     clearWordLists: clearWordLists,
     toggleWordSearchMode: toggleWordSearchMode,
+    sendLeaderboard: sendLeaderboard,
     endGame: endGame,
     DEFAULT_VOWELS: DEFAULT_VOWELS,
     VOWEL_LABELS: VOWEL_LABELS

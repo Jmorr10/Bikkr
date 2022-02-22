@@ -6,6 +6,14 @@ body {
     padding: 76px 16px 16px 16px;
 }
 
+button {
+    cursor: pointer;
+}
+
+button:disabled {
+    cursor: default;
+}
+
 #header, #teacherBar {
     align-items: center;
     background-color: #003c8f;
@@ -117,7 +125,7 @@ body {
 }
 
 .vowel-grid-holder button {
-    background-color: #1565c0;
+    background-color: #003c8f;
     border: none;
     box-shadow: 0 3px 6px rgb(0 0 0 / 16%), 0 3px 6px rgb(0 0 0 / 23%);
     color: white;
@@ -346,7 +354,7 @@ body {
 }
 
 .group-btn-holder button {
-    background-color: #1565c0;
+    background-color: #003c8f;
     border: none;
     border-radius: 30px;
     color: white;
@@ -357,7 +365,7 @@ body {
 }
 
 .login-holder input[type="submit"], .word-list-toolbar > * {
-    background-color: #1565c0;
+    background-color: #003c8f;
     border: none;
     border-radius: 30px;
     color: white;
@@ -430,7 +438,7 @@ input#typeIndividual + .radio-label:after {
 }
 
 input:checked + .radio-label:after {
-    background-color: #1565c0;
+    background-color: #003c8f;
 }
 
 .inner-form {
@@ -446,7 +454,24 @@ input:checked + .radio-label:after {
     left: -1.9rem;
     position: relative;
     bottom: -0.1rem;
+    cursor: pointer;
 }
+
+.radio, .radio-label, .radio + label, .checkbox + label {
+    cursor: pointer;
+}
+
+input:disabled + .radio-label, input:disabled + label {
+    cursor: default;
+}
+
+input:disabled {
+    cursor: default;
+}
+
+
+
+
 
 
 .score-row .icon-crown {
@@ -482,7 +507,7 @@ input:checked + .radio-label:after {
 
 
 #vowelSelectorContent ul {
-    font-size: 1.5rem;
+    font-size: 2rem;
     font-weight: bold;
 }
 
@@ -491,6 +516,7 @@ input:checked + .radio-label:after {
     margin-left: -16px;
     margin-right: 16px;
     padding-left: 32px;
+    font-size: 1.5rem;
 }
 
 #vowelSelectorContent ul li label:first-child {
@@ -520,7 +546,7 @@ input:checked + .radio-label:after {
 
 .podium-box {
     align-items: center;
-    background-color: #0c5460;
+    background-color: #003c8f;
     display: flex;
     margin-bottom: 1rem;
     height: 9.375rem;
@@ -792,6 +818,15 @@ input:checked + .slider:before {
 
 .slider.round:before {
     border-radius: 50%;
+}
+
+input:disabled + .slider {
+    background-color: #4a4a4a;
+    cursor: default;
+}
+
+hr {
+    width: 100%;
 }
 
 .lds-default {

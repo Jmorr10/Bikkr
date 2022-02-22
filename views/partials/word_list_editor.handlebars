@@ -11,7 +11,7 @@
         </div>
 		<div class="modal-scroll-container">
 			{{#each wordLists}}
-                <h3 {{#not @first}}style="margin-top:2rem;"{{/not}}>{{titleize (replace @key "_" " ")}}</h3>
+                <h3 {{#not @first}}style="margin-top:2rem;"{{/not}}>{{titleize (lowercase (replace @key "_" " "))}}</h3>
                 <input type="text" id="{{@key}}" data-wl-key="{{@key}}" value="{{this}}" data-role="tagsinput" placeholder="Add new..."/>
 			{{/each}}
 

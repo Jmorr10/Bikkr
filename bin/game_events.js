@@ -52,6 +52,7 @@ function addSocketListeners (socket) {
     socket.on(Events.REMOVE_WORD_FROM_LIST, GameManager.removeWordFromList.bind(null, socket));
     socket.on(Events.CLEAR_WORD_LISTS, GameManager.clearWordLists.bind(null, socket));
     socket.on(Events.TOGGLE_WORD_SEARCH_MODE, GameManager.toggleWordSearchMode.bind(null, socket));
+    socket.on(Events.UPDATE_LEADERBOARD, GameManager.sendLeaderboard.bind(null, socket));
     socket.on(Events.END_GAME, GameManager.endGame.bind(null, socket));
 
 }

@@ -53,16 +53,16 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 	let randomizeVowelLabels = false;
 	let randomizeVowelPositions = false;
 	let vowelLabels = {
-		"SHORT_A": ["/æ/", "A"],
-		"LONG_A": ["/eɪ/", "AI", "AY", "EY", "EIGH"],
-		"SHORT_E": ["/ɛ/", "E"],
-		"LONG_E": ["/i/", "EE", "EA", "IE"],
-		"SHORT_I": ["/I/", "I"],
-		"LONG_I": ["/aɪ/", "IE", "IGH"],
-		"SHORT_O": ["/ɑ/", "O"],
-		"LONG_O": ["/oʊ/", "OA"],
-		"SHORT_U": ["/ʊ/", "U"],
-		"LONG_U": ["/u/", "UE", "OO", "EW"]
+		"SHORT_A": ["/æ/", "a"],
+		"LONG_A": ["/eɪ/", "ai", "ay", "ey", "eigh"],
+		"SHORT_E": ["/ɛ/", "e"],
+		"LONG_E": ["/i/", "ee", "ea", "ie"],
+		"SHORT_I": ["/I/", "i"],
+		"LONG_I": ["/aɪ/", "ie", "igh"],
+		"SHORT_O": ["/ɑ/", "o"],
+		"LONG_O": ["/oʊ/", "oa"],
+		"SHORT_U": ["/ʊ/", "u"],
+		"LONG_U": ["/u/", "ue", "oo", "ew"]
 	};
 	let enabledVowelLabels = jQ.extend(true, {}, vowelLabels);
 
@@ -81,6 +81,9 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
         		shake(startBtn);
         		return false;
 			}
+
+        	socket.emit(Events.UPDATE_LEADERBOARD, roomID);
+
             soundGridHolder.removeClass('locked');
             startBtn.attr('disabled', true).hide();
             endBtn.attr('disabled', false).show();

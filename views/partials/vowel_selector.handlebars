@@ -4,7 +4,7 @@
 		<h1>Select Enabled Vowels</h1>
 		<div class="options-holder">
 			{{#each vowels}}
-                <ul data-key="{{@key}}">{{this.[0]}}
+                <ul data-key="{{@key}}">{{titleize (lowercase (replace @key "_" " "))}} - {{this.[0]}}
 
                     {{#each this}}
                         <li>

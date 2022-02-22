@@ -302,6 +302,15 @@ class Room {
         return labels;
     }
 
+    resetScores() {
+        this.players.forEach(function (v) {
+            v.resetPoints();
+        });
+        this.groups.forEach(function (v) {
+            v.resetPoints();
+        })
+    }
+
 }
 
 module.exports = {
