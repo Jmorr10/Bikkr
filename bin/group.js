@@ -39,6 +39,7 @@ const KEY_AFO_TYPE = "afoType";
 const AFO_TYPE_SPEED = "speedBased";
 const AFO_TYPE_SCORE = "scoreBased";
 const BASE_STUDENTS_PER_GROUP = 5;
+const BASE_SCORE = 3000;
 
 /**
  * Represents a group and its state.
@@ -71,9 +72,13 @@ class Group {
     /**
      * Adds a value to the points state member.
      *
-     * @param val The value that will be added
+     * @param startTimer Timestamp of when the question was set by the teacher
+     * @param endTimer Timestamp of when the question was answered correctly
      */
-    addPoints(val) {
+    addPoints(startTimer, endTimer) {
+        let val = 100;
+        let timeElapsed = endTimer - startTimer;
+        val = Math.ceil(Math.max(BASE_SCORE - timeElapsed, val));
         this._points += val;
     }
 

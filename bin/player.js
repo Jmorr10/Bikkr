@@ -29,7 +29,7 @@
 const debug = require('debug')('BoinKikuRenshuu:player');
 const PlayerList = require('./player_list');
 const RoomList = require('./room_list');
-const Util = require('./util');
+const BASE_SCORE = 3000;
 
 /**
  * Represents a player and its state.
@@ -81,7 +81,10 @@ class Player {
      *
      * @param val The value that will be added
      */
-    addPoints(val) {
+    addPoints(startTimer, endTimer) {
+        let val = 100;
+        let timeElapsed = endTimer - startTimer;
+        val = Math.ceil(Math.max(BASE_SCORE - timeElapsed, val));
         this._points += val;
     }
 

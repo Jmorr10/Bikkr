@@ -40,6 +40,7 @@ const RoomList = require('./room_list');
 const PlayerList = require('./player_list');
 const ConnectionManager = require('./connection_manager');
 const Util = require('./util');
+const performance = require('perf_hooks').performance;
 
 const TemplateManager = require('./template_manager');
 
@@ -101,12 +102,22 @@ let questionActive = false;
 let individualCounter = 0;
 let groupsAnswered = {};
 let ffaWinners = {};
+let answerTimer = performance.now();
 
 class Button {
     constructor(sound, label) {
         this.sound = sound;
         this.label = label;
     }
+}
+
+function resetTrackingVariables() {
+    currentQuestion = "";
+    questionActive = false;
+    individualCounter = 0;
+    groupsAnswered = {};
+    ffaWinners = {};
+    answerTimer = null;
 }
 
 
@@ -123,6 +134,7 @@ function setQuestion(socket, roomID, questionSound, buttonOptions, studentsPlayS
         if (studentsPlaySound) {
             socket.to(roomID).emit(Events.PLAY_SOUND, questionSound);
         }
+        answerTimer = performance.now();
         debug('Question set!');
     }
 }
@@ -180,20 +192,12 @@ function processStudentResponseRWRT(socket, roomID, studentResponse) {
             isCorrect && (isAllForOneMode && room.afoType === GroupModule.AFO_TYPE_SCORE && Util.getLen(groupsAnswered) === room.groupCount) ||
             isCorrect && (isAllForOneMode && room.afoType === GroupModule.AFO_TYPE_SPEED) ||
             !failed && isFreeForAllMode && individualCounter === room.playerCount) {
-            questionActive = false;
-            currentQuestion = "";
-            individualCounter = 0;
-            groupsAnswered = {};
-            ffaWinners = {};
+            resetTrackingVariables();
         }
 
         if (failed) {
             debug('Question failed! Resetting...');
-            questionActive = false;
-            currentQuestion = "";
-            individualCounter = 0;
-            groupsAnswered = {};
-            ffaWinners = {};
+            resetTrackingVariables();
             let groups = (!isAllForOneMode) ?
                 room.groups : room.groups.sort((a,b) => b.points - a.points);
             TemplateManager.emitWithTemplate(
@@ -214,7 +218,7 @@ function processStudentResponseRWRT(socket, roomID, studentResponse) {
 
 function processIndividualResponse(room, player, currentQuestionTmp, isCorrect) {
     if (isCorrect) {
-        player.addPoints(1);
+        player.addPoints(answerTimer, performance.now());
         TemplateManager.emitWithTemplate(
             room.id,
             'partials/leaderboard_content',
@@ -258,7 +262,7 @@ function processAllForOneResponse(room, player, currentQuestionTmp, studentRespo
         let responseCount = Util.getLen(groupsAnswered);
 
         if (isCorrect) {
-            group.addPoints(1);
+            group.addPoints(answerTimer, performance.now());
             if (room.afoType === GroupModule.AFO_TYPE_SPEED ||
                 (room.afoType === GroupModule.AFO_TYPE_SCORE && responseCount === room.groupCount)
             ) {
@@ -288,7 +292,7 @@ function processFreeForAllResponse(room, player, currentQuestionTmp, isCorrect) 
     let group = room.findGroupByPlayer(player);
 
     if (isCorrect) {
-        player.addPoints(1);
+        player.addPoints(answerTimer, performance.now());
 
         if (!ffaWinners.hasOwnProperty(group.id)) {
             // Make note of the fastest player to answer correctly for each group
@@ -300,10 +304,7 @@ function processFreeForAllResponse(room, player, currentQuestionTmp, isCorrect) 
         if (Util.getLen(ffaWinners) === 0) {
             return true;
         } else {
-            questionActive = false;
-            currentQuestion = "";
-            individualCounter = 0;
-            groupsAnswered = {};
+            resetTrackingVariables();
 
             TemplateManager.emitWithTemplate(
                 room.id,
@@ -333,11 +334,7 @@ function skipQuestion(socket, roomID, correctAnswer) {
     let room = RoomList.getRoomByID(roomID);
     if (room) {
         debug('Question skipped! Resetting...');
-        questionActive = false;
-        currentQuestion = "";
-        individualCounter = 0;
-        groupsAnswered = {};
-        ffaWinners = {};
+        resetTrackingVariables();
         TemplateManager.emitWithTemplate(
             roomID,
             'partials/leaderboard_content',
