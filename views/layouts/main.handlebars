@@ -1,4 +1,8 @@
 <!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
 <html lang="en" translate="no">
 	<head>
 		<meta charset="UTF-8">
@@ -7,6 +11,23 @@
         <meta name="google" content="notranslate">
 
 		<title>{{title}}</title>
+
+        <noscript>
+            <meta http-equiv="refresh" content="0; URL=nojs"/>
+        </noscript>
+
+        <script>
+            var html = document.querySelector('html');
+
+            // Test to see if the user is using IE. If so, then redirect them.
+            if (window.document.documentMode) {
+                document.write('<meta http-equiv="refresh" content="0; URL=/outdated/">');
+                html.setAttribute("class", "outdated");
+            }
+        </script>
+
+
+
 		<script src="/socket.io/socket.io.js"></script>
 		<script src="/static/js/lib/require.js"></script>
 		<script>
@@ -17,7 +38,9 @@
 		<link rel='stylesheet' href='/static/css/style.css' />
 		<link rel='stylesheet' href='/static/css/boinkikurenshuu.css'/>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
-	</head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.css" integrity="sha512-xmGTNt20S0t62wHLmQec2DauG9T+owP9e6VU8GigI0anN7OXLip9i7IwEhelasml2osdxX71XcYm6BQunTQeQg=="
+              crossorigin="anonymous" referrerpolicy="no-referrer" />
+    </head>
 
 	<body>
 		{{{body}}}

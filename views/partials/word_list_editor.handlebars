@@ -1,0 +1,43 @@
+<div id="wordListEditor" class="modal-popup">
+	<div class="modal-black"></div>
+	<div id="wordListEditorContent" class="modal-popup-content">
+		<h1>Word Lists</h1>
+        <div class="word-list-toolbar">
+            <button id="saveWordListsBtn" style="margin-right: 2rem;">Save</button>
+            <label class="custom-file-upload">
+                <input id="loadWordListsBtn" type="file" accept="text/text" name="files[]" style="display: none;">
+                Load
+            </label>
+        </div>
+		<div class="modal-scroll-container">
+			{{#each wordLists}}
+                <h3 {{#not @first}}style="margin-top:2rem;"{{/not}}>{{titleize (replace @key "_" " ")}}</h3>
+                <input type="text" id="{{@key}}" data-wl-key="{{@key}}" value="{{this}}" data-role="tagsinput" placeholder="Add new..."/>
+			{{/each}}
+
+		</div>
+		<button id="closeWordListEditorBtn" class="modal-close-btn icon-cancel"></button>
+	</div>
+
+	<script>
+		require(['jquery', 'app/view_sound_grid'], function (jQ, soundGrid) {
+
+			jQ('#wordListEditor input').on('itemAdded', function (e) {
+			    let el = jQ(this);
+			    soundGrid.addWordListItem(el.attr('data-wl-key'), e.item);
+			});
+
+            jQ('#wordListEditor input').on('itemRemoved', function (e) {
+                let el = jQ(this);
+                let listCount = el.val().length;
+                soundGrid.deleteWordListItem(el.attr('data-wl-key'), e.item, listCount);
+            });
+
+            jQ('#saveWordListsBtn').click(soundGrid.saveWordLists);
+
+            jQ('#loadWordListsBtn').change(soundGrid.loadWordLists);
+
+		});
+	</script>
+
+</div>

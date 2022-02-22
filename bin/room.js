@@ -35,6 +35,19 @@ const TYPE_GROUP = "group";
 const TYPE_INDIVIDUAL = "individual";
 const KEY_ASSIGN_USERNAMES = "assignUsernames";
 
+const DEFAULT_WORD_LISTS= {
+    "SHORT_A": ["man","ran","pan","can","fat","hat","rat","mat","sat","lack","sack","tack","back","rack","cap","tap","gap","answer","add","ask","bad","apple","and","task","trash","last","math","class","example","practical","handsome","angry","anxiety","national","salad","plan","expansive"],
+    "LONG_A": ["mane","rain","pain","cane","fate","hate","rate","mate","lake","take","bake","rake","cape","tape","gape","late","save","wait","weight","they","eight","same","stay","base","neigh","break","brake","crazy","lady","basic","paper","table","radio","potato","tomato","came","space"],
+    "SHORT_E": ["bet","set","pet","met","tell","sell","fell","well","men","bed","red","led","wed","pep","peck","beg","web","said","says","get","heavy","measure","again","against","any","many","next","better","friend","extra","effort","metal","breath","lend","bend","send","rent"],
+    "LONG_E": ["beat","seat","meet","teal","seal","feel","mean","bean","bead","need","peek","see","sea","receive","these","team","teach","ability","deep","cheese","extremely","breathe","thief","steal","green","leaves","unique","me","tree","field","believe","honey","ceiling","beef","teeth","knee","peel"],
+    "SHORT_I": ["bit","sit","kit","fit","lit","hid","rid","rip","dim","pin","fin","win","shin","pill","quit","wit","lick","pick","give","build","quick","system","gym","women","busy","big","still","milk","fish","trip","Italy","children","sister","fit","middle"," dinner","visit"],
+    "LONG_I": ["bite","site","kite","fight","light","hide","ride","pipe","ripe","dime","time","pine","fine","dine","wine","shine","pile","quite","white","like","sky","kind","sight","lie","try","bright","lime","nine","line","price","design","wide","tired","drive","apply","night","diner"],
+    "SHORT_O": ["cot","dot","got","not","rot","cop","mop","hop","rod","cod","nod","sock","father","stop","hot","modern","job","watch","common","problem","possible","hospital","top","dollar","want","car","army","farm","pocket","lock","odd","office","box","mom","fox","hog","pop"],
+    "LONG_O": ["boat","coat","goat","note","wrote","cope","mope","soap","hope","road","code","toad","joke","poke","vote","home","slow","though","phone","smoke","window","woke","low","chose","moment","remote","cold","soda","told","broke","piano","goal","float","drove","total","focus","loan"],
+    "SHORT_U": ["cut","cub","rub","tub","us","duck","luck","hug","run","good","childhood","push","sugar","would","book","woman","cooked","wool","wooden","butcher","understood","took","shook","hook","cookie","should","could","full","stood","umbrella","gum","drum","hum","shut","jump","nut","scrub"],
+    "LONG_U": ["cute","cube","mute","tube","use","huge","super","rule","new","blue","true","suitcase","shoes","value","statue","beautiful","fool","pool","school","few","university","student","prove","avenue","soup","proof","food","broom","group","rescue","music","flute","duty","due","glue","crew","flew"]
+};
+
 /**
  * Represents a room and its state.
  *
@@ -61,7 +74,10 @@ class Room {
         this.groupsAssigned = false;
         this.afoType = Group.AFO_TYPE_SPEED;
         this.usernamesAssigned = false;
+        this.wordSearchModeEnabled = false;
         this.setUp = false;
+
+        this.wordLists = JSON.parse(JSON.stringify(DEFAULT_WORD_LISTS));
     }
 
     get playerCount() {
@@ -246,6 +262,46 @@ class Room {
 
         return ranks;
     }
+
+    addWord(listKey, item) {
+        this.wordLists[listKey].push(item);
+    }
+
+    removeWord(listKey, item) {
+        let deletionIndex = this.wordLists[listKey].indexOf(item);
+        if (deletionIndex !== -1) {
+            this.wordLists[listKey].splice(deletionIndex, 1);
+        }
+    }
+
+    hasWord(listKey, item) {
+        return this.wordLists[listKey].indexOf(item) !== -1;
+    }
+
+    getWordLists() {
+        let lists = {};
+        for (const [k,v] of Object.entries(this.wordLists)) {
+            lists[k] = v.join(',');
+        }
+
+        return lists;
+    }
+
+    getWordSearchLabels() {
+        let labels = [];
+        for (const [k,v] of Object.entries(this.wordLists)) {
+            if (v.length > 0) {
+                let randIndex = Math.floor(Math.random()*v.length);
+                labels.push({sound:k, label:this.wordLists[k][randIndex]});
+            }
+
+        }
+
+        Util.shuffle(labels);
+
+        return labels;
+    }
+
 }
 
 module.exports = {

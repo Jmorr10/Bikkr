@@ -1,11 +1,11 @@
 <div id="groupPlayers">
     {{#if groups}}
         {{#each groups}}
-            <div class="group-row">
+            <div class="group-row" {{#not @last}}style="margin-bottom: 2rem;"{{/not}}  >
                 <h4 class="group-name">{{id}}</h4>
                 {{#each playerScores}}
                     <div class="player-row">
-                        <div class="player-name">{{name}}</div>
+                        <div class="player-name" style="padding-left:1rem;">{{name}}</div>
                         <button class="player-value icon-cancel kick-btn" data-user="{{id}}"></button>
                     </div>
                 {{/each}}

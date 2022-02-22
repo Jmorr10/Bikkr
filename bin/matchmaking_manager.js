@@ -220,7 +220,9 @@ function setupRoom(socket, roomID, roomType, options) {
 
     // Teacher sound grid should be locked until start is pressed.
     TemplateManager.emitWithTemplate(player.id, 'sound_grid',
-        {players: room.players, roomType: room.type, groupType: room.groupType, roomID: room.id, playerCount: room.playerCount, locked: true, vowels: VOWEL_LABELS}, Events.ROOM_SET_UP);
+        {players: room.players, roomType: room.type,
+            groupType: room.groupType, roomID: room.id, playerCount: room.playerCount,
+            locked: true, vowels: VOWEL_LABELS, wordLists: room.getWordLists()}, Events.ROOM_SET_UP);
 
 }
 

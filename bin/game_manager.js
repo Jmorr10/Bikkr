@@ -114,7 +114,8 @@ function setQuestion(socket, roomID, questionSound, buttonOptions, studentsPlayS
     if (SOUNDS.hasOwnProperty(questionSound)) {
         currentQuestion = questionSound;
         questionActive = true;
-        let buttons = getButtons(buttonOptions);
+        let room = RoomList.getRoomByID(roomID);
+        let buttons = getButtons(room, buttonOptions);
         TemplateManager.sendPrecompiledTemplate(roomID, 'partials/vowel_grid',
             {locked: false, buttons: buttons});
         let io = ConnectionManager.getIO();
@@ -126,10 +127,14 @@ function setQuestion(socket, roomID, questionSound, buttonOptions, studentsPlayS
     }
 }
 
-function getButtons(buttonOptions) {
+function getButtons(room, buttonOptions) {
 
     if (!buttonOptions) {
         return DEFAULT_VOWELS;
+    }
+
+    if (room && room.wordSearchModeEnabled) {
+        return room.getWordSearchLabels();
     }
 
     let vowelLabels = buttonOptions.vowelLabels;
@@ -171,8 +176,9 @@ function processStudentResponseRWRT(socket, roomID, studentResponse) {
         }
 
 
-        if (isCorrect && !isFreeForAllMode &&
-            (isAllForOneMode && room.afoType === GroupModule.AFO_TYPE_SCORE && Util.getLen(groupsAnswered) === room.groupCount)) {
+        if (isCorrect && !isFreeForAllMode ||
+            isCorrect && (isAllForOneMode && room.afoType === GroupModule.AFO_TYPE_SCORE && Util.getLen(groupsAnswered) === room.groupCount) ||
+            isCorrect && (isAllForOneMode && room.afoType === GroupModule.AFO_TYPE_SPEED)) {
             questionActive = false;
             currentQuestion = "";
             individualCounter = 0;
@@ -350,6 +356,41 @@ function playSound(socket, roomID, questionSound) {
     socket.to(roomID).emit(Events.PLAY_SOUND, questionSound);
 }
 
+function addWordToList(socket, roomID, listKey, item) {
+    let room = RoomList.getRoomByID(roomID);
+    let player = PlayerList.getPlayerBySocketID(socket.id);
+    if (room && player.isTeacher) {
+        room.addWord(listKey, item);
+    }
+}
+
+function removeWordFromList(socket, roomID, listKey, item) {
+    let room = RoomList.getRoomByID(roomID);
+    let player = PlayerList.getPlayerBySocketID(socket.id);
+    if (room && player.isTeacher) {
+        room.removeWord(listKey, item);
+    }
+}
+
+function clearWordLists(socket, roomID) {
+    let room = RoomList.getRoomByID(roomID);
+    let player = PlayerList.getPlayerBySocketID(socket.id);
+    if (room && player.isTeacher) {
+        for (let k in room.wordLists) {
+            room.wordLists[k] = [];
+        }
+    }
+}
+
+function toggleWordSearchMode(socket, roomID, enabled) {
+    let room = RoomList.getRoomByID(roomID);
+    let player = PlayerList.getPlayerBySocketID(socket.id);
+    if (room && player.isTeacher) {
+        room.wordSearchModeEnabled = enabled;
+    }
+}
+
+
 function endGame(socket, roomID) {
     let room = RoomList.getRoomByID(roomID);
     let contexts = [];
@@ -396,6 +437,10 @@ module.exports = {
     processStudentResponse: processStudentResponseRWRT,
     skipQuestion: skipQuestion,
     playSound: playSound,
+    addWordToList: addWordToList,
+    removeWordFromList: removeWordFromList,
+    clearWordLists: clearWordLists,
+    toggleWordSearchMode: toggleWordSearchMode,
     endGame: endGame,
     DEFAULT_VOWELS: DEFAULT_VOWELS,
     VOWEL_LABELS: VOWEL_LABELS

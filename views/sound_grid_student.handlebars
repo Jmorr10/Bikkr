@@ -1,4 +1,4 @@
-<div id="sound-grid" data-target="body" data-add="self">
+<div id="sound-grid" class="student" data-target="body" data-add="self">
 	<input type="hidden" value="{{roomID}}" id="roomIDVal"/>
 	<div id="header">
 		<div id="header-text">
@@ -19,8 +19,8 @@
 	<script>
 		require(['app/view_sound_grid_student', 'app/player'], function (view_sound_grid_student, Player) {
 			let player = Player.getPlayer();
-			player.name = {{player.name}};
-            {{#if groupID}}player.group = {{groupID}};{{/if}}
+			player.name = "{{player.name}}";
+            {{#if groupID}}player.group = "{{groupID}}";{{/if}}
 		    view_sound_grid_student.start();
 		});
 	</script>

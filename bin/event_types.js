@@ -64,6 +64,10 @@ const PLAY_SOUND = 'play_sound';
 const END_GAME = 'end_game';
 const GAME_OVER = 'game_over';
 const GAME_OVER_STUDENT = 'game_over_student';
+const ADD_WORD_TO_LIST = "add_word";
+const REMOVE_WORD_FROM_LIST = "remove_word";
+const CLEAR_WORD_LISTS = "clear_lists";
+const TOGGLE_WORD_SEARCH_MODE = "toggle_word_search";
 
 // GUI
 const RENDER_TEMPLATE = "render_template";
@@ -97,5 +101,9 @@ module.exports = {
     END_GAME: END_GAME,
     GAME_OVER: GAME_OVER,
     GAME_OVER_STUDENT: GAME_OVER_STUDENT,
+    ADD_WORD_TO_LIST: ADD_WORD_TO_LIST,
+    REMOVE_WORD_FROM_LIST: REMOVE_WORD_FROM_LIST,
+    CLEAR_WORD_LISTS: CLEAR_WORD_LISTS,
+    TOGGLE_WORD_SEARCH_MODE: TOGGLE_WORD_SEARCH_MODE,
     RENDER_TEMPLATE: RENDER_TEMPLATE,
 };

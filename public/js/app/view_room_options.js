@@ -61,8 +61,6 @@ define(['jquery', 'app/player', 'app/view_sound_grid', 'app/render_manager', 'ev
 
 	}
 
-	// TODO: Need to fix the GUI for room setup. It's a mess...
-	// TODO: User should be able to set AFO response mode (1st group to respond OR allow all groups to response - score-based)
 	function submitOptions () {
 		let options;
 		roomTypeField = jQ('input[name="roomType"]:checked').val();

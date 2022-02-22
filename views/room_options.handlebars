@@ -1,42 +1,49 @@
 <div id="roomOptionsForm" data-target="#content" data-add="self" class="theme default" style="text-align: left;">
 	<div class="form-content">
-		<div class="login-img"></div>
 		<div class="inner-form">
 			<p style="margin-bottom: 0;">Select a room type - Individual or Group</p>
 			<input type="radio" class="radio" name="roomType" value="individual" id="typeIndividual" checked="" />
 			<label for="typeIndividual" class="radio-label"></label>
 			<input type="radio" class="radio" name="roomType" value="group" id="typeGroup" />
 			<label for="typeGroup" class="radio-label"></label>
-            <input type="checkbox" class="checkbox" name="assignUsernames" id="assignUsernames" checked="" />
-            <label for="assignUsernames">Auto-Assign Usernames</label>
-			<div class="group-sub-options">
+            <div style="margin-top: 0.5rem;">
+                <input type="checkbox" class="checkbox" name="assignUsernames" id="assignUsernames" checked="" />
+                <label for="assignUsernames">Auto-Assign Usernames</label>
+            </div>
+            <div class="group-sub-options">
+                <input type="checkbox" class="checkbox" name="assignGroups" id="assignGroups" checked="" />
+                <label for="assignGroups">Auto-Assign Groups</label>
+                <h6 style="margin-top:0.5rem">Group Setup:</h6>
                 <input type="radio" class="radio" name="groupSetup" value="auto" id="typeAuto" checked="" />
-                <label for="typeAuto" class="radio-label">Auto</label>
-                <input type="radio" class="radio" name="groupSetup" value="custom" id="typeCustom" />
-                <label for="typeCustom" class="radio-label">Custom</label>
+                <label for="typeAuto">Auto</label>
+                <input type="radio" class="radio" name="groupSetup" value="custom" id="typeCustom" style="margin-left:1.5rem;" />
+                <label for="typeCustom">Custom</label>
                 <div class="default-group-options">
                     <input type="number" name="numStudents" min="4" placeholder="Number of Students" id="numStudents"
-                           style="margin: 0.5rem 0;text-align: center;" />
+                           style="margin: 0.5rem 0;text-align: center;border-radius: 0.5rem;padding-bottom: 0.2rem;" />
                 </div>
                 <div class="custom-group-options">
-                    <input type="number" name="numGroups" min="2" placeholder="Number of Groups" id="numGroups"
-                           style="margin: 0.5rem 0;text-align: center;" />
-                    <input type="number" name="numPerGroup" min="2" placeholder="Group Size" id="numPerGroup"/>
+                    <input type="number" name="numGroups" min="2" placeholder="Num. of Groups" id="numGroups"
+                           style="margin: 0.5rem 0.5rem 0.5rem 0;text-align: center;" />
+                    <input type="number" name="numPerGroup" min="2" placeholder="Group Size" id="numPerGroup"
+                           style="margin: 0.5rem 0 0.5rem 0.5rem;text-align: center;"/>
                 </div>
+                <h6 style="margin-top: 0.5rem;">Group Game Mode:</h6>
 				<div>
                     <input type="radio" class="radio" name="groupType" value="allForOne" id="groupAllForOne" checked="" />
                     <label for="groupAllForOne" style="margin-bottom: 0;">All-for-one</label>
-                    <input type="radio" class="radio" name="groupType" value="freeForAll" id="groupFreeForAll" />
-					<label for="groupFreeForAll" style="margin-right: 1rem;margin-bottom: 0;">Free-for-all</label>
+                    <input type="radio" class="radio" name="groupType" value="freeForAll" id="groupFreeForAll"
+                           style="margin-left:1.5rem;" />
+					<label for="groupFreeForAll" style="margin-bottom: 0;">Free-for-all</label>
                     <div class="afo-options">
+                        <h6 style="margin-top: 1rem;">All-For-One Game Type:</h6>
                         <input type="radio" class="radio" name="afoType" value="speedBased" id="speedBased" checked="" />
-                        <lsabel for="speedBased" style="margin-bottom: 0;">Speed Based</lsabel>
-                        <input type="radio" class="radio" name="afoType" value="scoreBased" id="scoreBased" />
+                        <label   for="speedBased" style="margin-bottom: 0;">Speed Based</label>
+                        <input type="radio" class="radio" name="afoType" value="scoreBased" id="scoreBased"
+                               style="margin-left:1.5rem;" />
                         <label for="scoreBased" style="margin-right: 1rem;margin-bottom: 0;">Score Based</label>
                     </div>
                 </div>
-				<input type="checkbox" class="checkbox" name="assignGroups" id="assignGroups" checked="" />
-				<label for="assignGroups">Auto-Assign Groups</label>
 			</div>
 			<p class="error-lbl">{{errorTxt}}</p>
 		</div>

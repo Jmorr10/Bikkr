@@ -48,6 +48,10 @@ function addSocketListeners (socket) {
     socket.on(Events.STUDENT_RESPONSE, GameManager.processStudentResponse.bind(null, socket));
     socket.on(Events.SKIP_QUESTION, GameManager.skipQuestion.bind(null, socket));
     socket.on(Events.PLAY_SOUND, GameManager.playSound.bind(null, socket));
+    socket.on(Events.ADD_WORD_TO_LIST, GameManager.addWordToList.bind(null, socket));
+    socket.on(Events.REMOVE_WORD_FROM_LIST, GameManager.removeWordFromList.bind(null, socket));
+    socket.on(Events.CLEAR_WORD_LISTS, GameManager.clearWordLists.bind(null, socket));
+    socket.on(Events.TOGGLE_WORD_SEARCH_MODE, GameManager.toggleWordSearchMode.bind(null, socket));
     socket.on(Events.END_GAME, GameManager.endGame.bind(null, socket));
 
 }

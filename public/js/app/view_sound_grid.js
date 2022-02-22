@@ -259,6 +259,74 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 		randomizeVowelPositions = val;
 	}
 
+	function openWordListEditor() {
+		jQ('#wordListEditor').addClass('open');
+	}
+
+	function toggleWordSearchMode(enabled) {
+		socket.emit(Events.TOGGLE_WORD_SEARCH_MODE, roomID, enabled);
+	}
+
+	function addWordListItem(listKey, item) {
+		socket.emit(Events.ADD_WORD_TO_LIST, roomID, listKey, item);
+		jQ(`button[data-sound=${listKey}`).toggle(true);
+	}
+
+	function deleteWordListItem(listKey, item, listCount) {
+		socket.emit(Events.REMOVE_WORD_FROM_LIST, roomID, listKey, item);
+		let buttonVisible = (listCount !== 0);
+		jQ(`button[data-sound=${listKey}`).toggle(buttonVisible);
+	}
+
+	function saveWordLists() {
+		let lists = {}
+		jQ('#wordListEditor .modal-scroll-container input').each(function () {
+			let el = jQ(this);
+			if (el.attr('id')) {
+				lists[el.attr('id')] = el.val();
+			}
+		});
+		let saveName = prompt("Please enter a name for this save file:");
+		if(saveName) {
+			downloadTxt(saveName, JSON.stringify(lists));
+		}
+	}
+
+	function loadWordLists(evt) {
+		let btns = jQ('#saveWordListsBtn, #loadWordListsBtn');
+		btns.prop('disabled', true);
+
+		try {
+			let files = evt.target.files; // FileList object
+
+			// use the 1st file from the list
+			let f = files[0];
+
+			let reader = new FileReader();
+
+			// Closure to capture the file information.
+			reader.onload = (function(theFile) {
+				return function(e) {
+					let lists = JSON.parse(e.target.result);
+					socket.emit(Events.CLEAR_WORD_LISTS, roomID);
+					for (const [k,v] of Object.entries(lists)) {
+						let tagHolder = jQ(`input[data-wl-key="${k}"]`);
+						tagHolder.tagsinput('removeAll');
+						tagHolder.tagsinput('input').val(v).trigger("blur");
+						jQ(`button[data-sound=${k}`).toggle(v !== '');
+					}
+					btns.prop('disabled', false);
+				};
+			})(f);
+
+			// Read in the image file as a data URL.
+			reader.readAsText(f);
+		} catch (e) {
+			alert('An error occurred.')
+			btns.prop('disabled', false);
+		}
+	}
+
 	function endGame() {
 		socket.emit(Events.END_GAME, roomID);
 		socket.once(Events.GAME_OVER, gameOver);
@@ -285,6 +353,41 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 		jQ(div).animate({ left: 0},interval);
 	}
 
+	function downloadTxt(saveName, content) {
+		if ('Blob' in window) {
+			if (saveName) {
+				saveName += ".txt";
+				let textToWrite = content.replace(/\n/g, "\r\n");
+				let textFileAsBlob = new Blob([textToWrite], { type: 'text/plain' });
+
+				if ('msSaveOrOpenBlob' in navigator) {
+					navigator.msSaveOrOpenBlob(textFileAsBlob, saveName);
+				} else {
+					let downloadLink = document.createElement('a');
+					downloadLink.download = saveName;
+					downloadLink.innerHTML = 'Download File';
+
+					if ('webkitURL' in window) {
+						// Chrome allows the link to be clicked without actually adding it to the DOM.
+						downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
+					} else {
+						// Firefox requires the link to be added to the DOM before it can be clicked.
+						downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
+						downloadLink.click(function(){
+							document.body.removeChild(event.target);
+						});
+
+						downloadLink.style.display = 'none';
+						document.body.appendChild(downloadLink);
+					}
+					downloadLink.click();
+				}
+			}
+		} else {
+			alert('Your browser does not support the HTML5 Blob.');
+		}
+	}
+
 
 	return {
 		start: start,
@@ -297,6 +400,12 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 		setRandomizeVowelPositions: setRandomizeVowelPositions,
 		updatePlayerCount: updatePlayerCount,
 		setScoreboard: setScoreboard,
+		toggleWordSearchMode: toggleWordSearchMode,
+		addWordListItem: addWordListItem,
+		deleteWordListItem: deleteWordListItem,
+		openWordListEditor: openWordListEditor,
+		saveWordLists: saveWordLists,
+		loadWordLists: loadWordLists,
 		VOWEL_LABELS: vowelLabels
 	};
 	

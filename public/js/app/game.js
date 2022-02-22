@@ -42,7 +42,7 @@ define(['jquery', 'app/render_manager', 'app/player', 'event_types'],
 	const LOCAL = "http://127.0.0.1:5000";
 	const HEROKU = 'https://dev-boinkikurenshuu.herokuapp.com';
 
-	const SERVER_PATH = LOCAL;
+	const SERVER_PATH = HEROKU;
 
 	let imageRoot = "/static/img/";
 

@@ -39,6 +39,17 @@
                     <span class="slider round"></span>
                 </label>
             </div>
+            <div>
+                <label>Enable Word Search Mode</label>
+                <label class="switch">
+                    <input id="enableWordSearchMode" name="enableWordSearchMode" type="checkbox">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <div>
+                <label>Edit Word Lists</label>
+                <button id="showWordListsEditorBtn" class="btn btn-primary icon-cog" disabled=""></button>
+            </div>
 		</div>
 		<button id="closeSettingsBtn" class="modal-close-btn icon-cancel"></button>
 	</div>
@@ -74,6 +85,16 @@
 
             jQ('#randomizeVowelPositions').click(function () {
                 soundGrid.setRandomizeVowelPositions(jQ('#randomizeVowelPositions').prop('checked'));
+            });
+
+            jQ('#enableWordSearchMode').click(function () {
+                let enabled = jQ('#enableWordSearchMode').prop('checked')
+                soundGrid.toggleWordSearchMode(enabled);
+                jQ('#showWordListsEditorBtn').prop('disabled', !enabled);
+            })
+
+            jQ('#showWordListsEditorBtn').click(function () {
+                soundGrid.openWordListEditor();
             });
 
 		});

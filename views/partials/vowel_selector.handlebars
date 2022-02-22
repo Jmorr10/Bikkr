@@ -4,13 +4,13 @@
 		<h1>Select Enabled Vowels</h1>
 		<div class="options-holder">
 			{{#each vowels}}
-                <ul id="{{@key}}">{{this.[0]}}
+                <ul data-key="{{@key}}">{{this.[0]}}
 
                     {{#each this}}
                         <li>
                             <label>{{this}}</label>
                             <label class="switch">
-                                <input id="{{this}}" name="{{this}}" type="checkbox" checked="checked">
+                                <input data-key="{{this}}" name="{{this}}" type="checkbox" checked="checked">
                                 <span class="slider round"></span>
                             </label>
                         </li>
@@ -30,7 +30,7 @@
 			    let el = jQ(this);
 			    let ul = el.closest('ul');
 			    if (!el || !ul) { return false; }
-			    soundGrid.toggleVowelLabel(ul.attr('id'), el.attr('id'), el.is(':checked'));
+			    soundGrid.toggleVowelLabel(ul.attr('data-key'), el.attr('data-key'), el.is(':checked'));
 			});
 
 		});

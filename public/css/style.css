@@ -3,7 +3,7 @@ body {
     flex-direction: column;
     height: 100%;
     overflow: hidden;
-    padding: 60px 16px 16px 16px;
+    padding: 76px 16px 16px 16px;
 }
 
 #header, #teacherBar {
@@ -23,9 +23,14 @@ body {
 
 #content {
     height: 100%;
+    position: relative;
 }
 
 #sound-grid {
+    height: calc(100% - 60px);
+}
+
+#sound-grid.student {
     height: 100%;
 }
 
@@ -38,6 +43,7 @@ body {
 #header-text {
     display: flex;
     flex-direction: column;
+    flex: 1;
 }
 
 #header-text h1 {
@@ -65,8 +71,6 @@ body {
     font-size: 1.8rem;
     outline: none !important;
     padding: 0.05em 0.15em;
-    position: absolute;
-    right: 11px;
 }
 
 
@@ -74,6 +78,7 @@ body {
     display: flex;
     flex-direction: column;
     height: 100%;
+    max-height: 100%;
 }
 
 #roomName {
@@ -86,6 +91,7 @@ body {
     flex: 1;
     flex-direction: column;
     text-align: center;
+    justify-content: center;
 }
 
 
@@ -104,15 +110,10 @@ body {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    height: calc(100% - 92px);
+    height: 100%;
     justify-content: space-evenly;
     padding: 0;
     position: relative;
-    top: 15px;
-}
-
-#teacherBar + .vowel-grid-holder {
-    height: calc(100% - 75px) !important;
 }
 
 .vowel-grid-holder button {
@@ -125,7 +126,7 @@ body {
     font-size: 1.5rem;
     font-weight: bold;
     margin: 1rem;
-    min-height: 45px;
+    min-height: 56px;
     outline: none !important;
     position: relative;
 }
@@ -317,7 +318,6 @@ body {
     display: flex;
     flex: 1;
     flex-direction: column;
-    padding-top: 16px;
 }
 
 .logo {
@@ -329,9 +329,10 @@ body {
     display: none;
 }
 
-.group-sub-options {
-    margin-top: 5px;
+.group-sub-options h6 {
+    text-align: left;
 }
+
 
 .group-btn-holder {
     display: flex;
@@ -355,7 +356,7 @@ body {
     padding: 0.5rem 0.5rem 0.7rem 0.5rem;
 }
 
-.login-holder input[type="submit"] {
+.login-holder input[type="submit"], .word-list-toolbar > * {
     background-color: #1565c0;
     border: none;
     border-radius: 30px;
@@ -365,6 +366,7 @@ body {
     outline: none !important;
     padding: 0.5rem;
     width: 50%;
+    cursor: pointer;
 }
 
 .login-img {
@@ -372,9 +374,9 @@ body {
     background-repeat: no-repeat !important;
     background-size: contain !important;
     /*flex: 0 0 70.752089136490250696378830083565vw;*/
-    flex: 0 0 45%;
     overflow: hidden;
     width: 90vw;
+    flex: 1 !important;
 }
 
 #roomNameForm .login-img {
@@ -433,16 +435,17 @@ input:checked + .radio-label:after {
 
 .inner-form {
     position: relative;
-    top: -1rem;
 }
 
 .login-holder .error-lbl {
     color: #d50000;
+    margin-top: 1rem;
 }
 
 .radio-label {
-    left: -2rem;
+    left: -1.9rem;
     position: relative;
+    bottom: -0.1rem;
 }
 
 
@@ -637,7 +640,6 @@ input:checked + .radio-label:after {
 .well {
     min-height: 20px;
     padding: 19px;
-    background-color: #f5f5f5;
     border: 1px solid #e3e3e3;
     border-radius: 4px;
     -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
@@ -660,9 +662,74 @@ input:checked + .radio-label:after {
     display: none;
 }
 
+.custom-group-options {
+    display: flex;
+}
+
+.custom-group-options input {
+    max-width: 9rem;
+    border-radius: 0.5rem;
+}
+
 #groupAllForOne:not(:checked) ~ .afo-options {
     display: none;
 }
+
+.label {
+    display: inline-flex;
+    padding: 0.5rem;
+    font-weight: 700;
+    line-height: 1;
+    border-radius: 0.25rem;
+    color: #fff;
+    background-color: #003c8f;
+    align-items: center;
+    justify-content: center;
+    margin: 0.3rem !important;
+}
+
+.bootstrap-tagsinput {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
+    display: flex;
+    padding: 4px 6px;
+    color: #555;
+    vertical-align: middle;
+    border-radius: 4px;
+    max-width: 100%;
+    line-height: 22px;
+    cursor: text;
+    flex-wrap: wrap;
+}
+
+.bootstrap-tagsinput .tag [data-role="remove"] {
+    margin-left: 8px;
+    cursor: pointer;
+    border-left: 1px solid white;
+    padding-left: 5px;
+}
+
+#wordListEditorContent input {
+    margin-top: 1rem;
+    align-self: flex-end;
+    display: block;
+}
+
+.word-list-toolbar {
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.custom-file-upload {
+    text-align: center;
+}
+
+#wordListEditor .bootstrap-tagsinput {
+    width: 100%;
+}
+
 
 /* The switch - the box around the slider */
 .switch {
