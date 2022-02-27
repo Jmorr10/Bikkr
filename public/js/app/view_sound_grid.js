@@ -101,22 +101,6 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 
         addButtonListeners();
 
-        jQ('#playerListBtn').click(function () {
-        	jQ('#playerList').addClass('open');
-		});
-
-        jQ('#closePlayerListBtn').click(function () {
-        	jQ('#playerList').removeClass('open');
-		});
-
-        jQ('#leaderboardBtn').click(function () {
-        	jQ('#leaderboard').addClass('open');
-		});
-
-        jQ('#closeLeaderboardBtn').click(function () {
-        	jQ('#leaderboard').removeClass('open');
-		});
-
         jQ('#skipBtn').click(function () {
         	if (currentQuestion && currentQuestion !== "") {
                 socket.emit(Events.SKIP_QUESTION, roomID, currentQuestion);
@@ -134,8 +118,9 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 			}
 		});
 
-        jQ('#settingsBtn').click(function () {
-            jQ('#settings').addClass('open');
+        jQ('button[data-open]').click(function () {
+			let target = jQ(this).attr('data-open');
+			jQ(target).addClass('open');
 		});
 
         jQ('.modal-close-btn').click(function () {

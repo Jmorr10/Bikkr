@@ -1,0 +1,64 @@
+<div id="helpScreen" class="modal-popup">
+    <div class="modal-black"></div>
+    <div id="helpScreenContentHolder" class="modal-popup-content">
+        <h1>Help</h1>
+        <div class="modal-scroll-container">
+            <h3>Button Bar:</h3>
+            <ul class="no-bullets">
+                <li><i class="icon-play"></i> - Starts the game. You can only start the game if there is at least one
+                    player connected.</li>
+                <li><i class="icon-stop"></i> - Ends the game. Once you click this, the game will end, and the winner
+                    podium will display.
+                Scores will be reset to zero.</li>
+                <li><i class="icon-users"></i> - Shows a list of connected users. You can kick a user out of the room
+                    from this screen.</li>
+                <li><i class="icon-award"></i> - Displays the current scoreboard. This is a scoreboard meant for
+                    teachers. To open a scoreboard to display on another screen,
+                go to settings and click 'Show Popup Scoreboard'.</li>
+                <li><i class="icon-volume-up"></i> - Replays the vowel sound for the current round. Useful if students
+                    need to hear the sound more than once before answering.</li>
+                <li><i class="icon-forward"></i> - Skips the current question. This is useful is no one knows the
+                    correct answer.</li>
+            </ul>
+            <h3>Settings:</h3>
+            <ul>
+                <li><b>Show Popup Scoreboard:</b> Displays a popup that can be used to show the students the current
+                    scores, correct answer for each round,
+                and the winners' podium. Make sure you allow the popup window!</li>
+                <li><b>Play sounds on the students' devices:</b> Enabling this setting will cause the vowel sounds to
+                    play on your students' devices. This is useful if you use
+                earphones in your classes.</li>
+
+                <li><b>Disable sound on teacher's device:</b> This setting is useful if you only want the students'
+                    devices to play the vowel sounds.</li>
+                <li><b>Enable Word Search Mode:</b> Turns word search mode on or off. Please read more about
+                    <a href="#wsm">word search mode</a> below.</li>
+                <li><b>Edit Word Lists:</b> You can use this button to edit the lists of words that are used in word
+                    search mode.</li>
+
+                <li><b>Choose Vowel Labels:</b> This allows you to set which spellings are enabled as labels for each
+                    vowel sound. If no
+                vowel labels are enabled for a vowel, that vowel's button will be removed from the screen.</li>
+                <li><b>Randomize Vowel Labels:</b> If this is enabled, the computer will randomly choose from the
+                    enabled vowel spellings
+                when setting the label for each vowel button. If this is not enabled, the default label will be IPA
+                    notation for each vowel sound.</li>
+                <li><b>Randomize Vowel Button Positions:</b> If this is enabled, the vowel buttons will appear in
+                    random order. This increases the difficulty
+                because the students must search the displayed spellings to find the right one.</li>
+            </ul>
+            <h3 id="wsm">Word Search Mode:</h3>
+            <p style="text-indent: 1rem;">In this mode, the teacher selects a vowel sound. The computer will then show students a random selection
+                of words. Students must select the word that
+            has the same vowel sound that the teacher chose. This is good for reviewing vocabulary and pronunciation.
+                The teacher can set the words for each vowel
+            sound by clicking the 'Edit Word Lists' button.</p>
+            <h3>Word Lists Editor:</h3>
+            <p style="text-indent: 1rem;">In the word lists editor, you can set the words available for each vowel sound. In addition, you can
+                conveniently save and load lists of words. When you
+            save a list of words, it will be downloaded as a text file. You can then load that text file later to
+                restore your word lists. The default word lists have words that span multiple reading levels.</p>
+        </div>
+        <button id="closeHelpScreenBtn" class="modal-close-btn icon-cancel"></button>
+    </div>
+</div>

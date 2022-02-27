@@ -71,7 +71,7 @@ button:disabled {
     margin-top: 8px;
 }
 
-#header #leaderboardBtn, #settingsBtn {
+.icon-btn {
     background: none;
     border: none;
     color: #FFFFFF;
@@ -753,6 +753,10 @@ input:disabled {
 
 #wordListEditor .bootstrap-tagsinput {
     width: 100%;
+}
+
+.no-bullets {
+    list-style: none;
 }
 
 

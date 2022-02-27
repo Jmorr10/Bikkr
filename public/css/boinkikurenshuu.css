@@ -1,11 +1,11 @@
 @font-face {
   font-family: 'boinkikurenshuu';
-  src: url('../font/boinkikurenshuu.eot?39238774');
-  src: url('../font/boinkikurenshuu.eot?39238774#iefix') format('embedded-opentype'),
-       url('../font/boinkikurenshuu.woff2?39238774') format('woff2'),
-       url('../font/boinkikurenshuu.woff?39238774') format('woff'),
-       url('../font/boinkikurenshuu.ttf?39238774') format('truetype'),
-       url('../font/boinkikurenshuu.svg?39238774#boinkikurenshuu') format('svg');
+  src: url('../font/boinkikurenshuu.eot?58191783');
+  src: url('../font/boinkikurenshuu.eot?58191783#iefix') format('embedded-opentype'),
+       url('../font/boinkikurenshuu.woff2?58191783') format('woff2'),
+       url('../font/boinkikurenshuu.woff?58191783') format('woff'),
+       url('../font/boinkikurenshuu.ttf?58191783') format('truetype'),
+       url('../font/boinkikurenshuu.svg?58191783#boinkikurenshuu') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -15,7 +15,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'boinkikurenshuu';
-    src: url('../font/boinkikurenshuu.svg?39238774#boinkikurenshuu') format('svg');
+    src: url('../font/boinkikurenshuu.svg?58191783#boinkikurenshuu') format('svg');
   }
 }
 */
@@ -63,5 +63,6 @@
 .icon-play:before { content: '\e806'; } /* '' */
 .icon-stop:before { content: '\e807'; } /* '' */
 .icon-user:before { content: '\e808'; } /* '' */
+.icon-help-circled:before { content: '\e809'; } /* '' */
 .icon-crown:before { content: '\e844'; } /* '' */
 .icon-circle-empty:before { content: '\f10c'; } /* '' */

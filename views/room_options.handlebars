@@ -49,8 +49,82 @@
 		</div>
 	</div>
 	<input type="submit" id="submitRoomOptions" value="OK">
+    <div id="roomOptionsHelp" class="modal-popup">
+        <div class="modal-black"></div>
+        <div id="roomOptionsHelpContentHolder" class="modal-popup-content">
+            <h1>Room Options</h1>
+            <div class="modal-scroll-container">
+                <h3>Game Modes:</h3>
+                <ul>
+                    <li><b>Individual Mode:</b> In this mode, all of the players battle against each other. The first person
+                    to answer correctly will be awarded points.</li>
+                    <li><b>Group Mode:</b> In group mode, players can either work together and battle against other groups, or they
+                    can battle the people within their own group.</li>
+                </ul>
+                <h3>Auto-Assign Options:</h3>
+                <ul>
+                    <li><b>Auto-Assign Usernames:</b> A school-friendly username will automatically be assigned to the student. Disable this
+                    option if you want to allow the students to type in their own usernames.</li>
+                    <li><b>Auto-Assign Groups:</b> Students will be automatically assigned to groups based on the order that they join the game.
+                    Disable this option to allow students to manually select their group number.</li>
+                </ul>
+                <h3>Group Options:</h3>
+                <ul>
+                    <li><h5>Group Setup:</h5>
+                        <span>You can let the computer automatically create/manage groups, or you can manually manage your groups.</span>
+                        <ul>
+                            <li><b>Auto</b> - The computer will make an appropriate number of groups based on the number of students
+                                you have in your class. A class of 41 students will typically create 8 groups.</li>
+                            <li><b>Custom</b> - You can choose the number of groups and the number of students per group.</li>
+                        </ul>
+                    </li>
+                    <li><h5>Group Game Mode:</h5>
+                        <ul>
+                            <li><b>All-For-One</b> - Students work together in groups to battle other groups. However, only the <b><em>first</em></b> answer
+                                from each group will be accepted.
+                                <ul>
+                                    <li><b>Speed Based Mode:</b> The first group to answer correctly wins that round and is awarded points.</li>
+                                    <li><b>Score Based Mode:</b> All groups are able to respond and are awarded points based on quickly they answered compared
+                                        to other groups.</li>
+                                </ul>
+                            </li>
+                            <li><b>Free-For-All</b> - Students will battle the other students in their group. In this mode, each student must submit an
+                                answer before the game will progress.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <button id="closeRoomOptionsHelpBtn" class="modal-close-btn icon-cancel"></button>
+        </div>
+    </div>
+    <script>
+        require(['jquery'], function (jQ) {
+            jQ('#roomOptionsHelp .modal-close-btn').click(function () {
+                jQ(this).parents('.modal-popup').removeClass('open');
+            });
+
+            jQ('#roomOptionsHelp .modal-black').click(function () {
+                jQ(this).parent().removeClass('open');
+            });
+
+            jQ('body').keypress(function (e) {
+                if (e.keyCode === 27) {
+                    jQ('#roomOptionsHelp .modal-black').parent().removeClass('open');
+                }
+            });
+
+            jQ('#roomOptionsOpenHelpBtn').click(function (e) {
+                jQ('#roomOptionsHelp').addClass('open');
+            });
+        });
+
+    </script>
 </div>
 
-<div id="header-text">
-	<h1>母音聞く練習 - Room Options</h1>
+<div id="header">
+    <div id="header-text">
+        <h1>母音聞く練習 - Room Options</h1>
+    </div>
+    <button id="roomOptionsOpenHelpBtn" class="icon-btn icon-help-circled"></button>
 </div>
+

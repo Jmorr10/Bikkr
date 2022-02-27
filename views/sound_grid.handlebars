@@ -4,14 +4,15 @@
 		<div id="header-text">
 			<h1>母音聞く練習 - Teacher</h1>
 		</div>
-		<button id="settingsBtn" class="icon-cog"></button>
+        <button id="helpBtn" class="icon-btn icon-help-circled" data-open="#helpScreen"></button>
+		<button id="settingsBtn" class="icon-btn icon-cog" data-open="#settings"></button>
 	</div>
 
 	<div id="teacherBar">
 		<button id="startBtn" class="icon-play"></button>
         <button id="endBtn" class="icon-stop" disabled="true"></button>
-		<button id="playerListBtn" class="icon-users"></button>
-		<button id="leaderboardBtn" class="icon-award"></button>
+		<button id="playerListBtn" class="icon-users" data-open="#playerList"></button>
+		<button id="leaderboardBtn" class="icon-award" data-open="#leaderboard"></button>
 		<button id="replayBtn" class="icon-volume-up"></button>
 		<button id="skipBtn" class="icon-forward"></button>
 	</div>
@@ -27,6 +28,8 @@
 	{{> vowel_selector}}
 
     {{> word_list_editor}}
+
+    {{> help_information}}
 
 
 	<div id="popup">
