@@ -175,7 +175,6 @@ button:disabled {
 
 .vowel-grid-holder.locked button {
     background-color: #888888;
-    pointer-events: none;
 }
 
 .modal-popup-content {

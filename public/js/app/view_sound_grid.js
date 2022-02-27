@@ -45,6 +45,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 	let errorLbl;
 	let roomID;
 	let currentQuestion = "";
+	let playing = false;
 	let modalBlack;
 	let playerCount;
 	let scoreboard;
@@ -85,12 +86,14 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
         	socket.emit(Events.UPDATE_LEADERBOARD, roomID);
 
             soundGridHolder.removeClass('locked');
+            playing = true;
             startBtn.attr('disabled', true).hide();
             endBtn.attr('disabled', false).show();
         });
 
         endBtn.click(function () {
         	soundGridHolder.addClass('locked');
+        	playing = false;
         	startBtn.attr('disabled', false).show();
         	endBtn.attr('disabled', true).hide();
         	endGame();
@@ -156,7 +159,12 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 	function addButtonListeners() {
 		soundGridHolder.find('button').click(function (e) {
 			e.stopImmediatePropagation();
-			setQuestion(jQ(this).attr('data-sound'));
+			let sound = jQ(this).attr('data-sound');
+			if (playing) {
+				setQuestion(sound);
+			} else {
+				playSound(sound);
+			}
 		});
 	}
 
