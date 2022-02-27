@@ -122,7 +122,8 @@ function resetTrackingVariables() {
 
 
 function setQuestion(socket, roomID, questionSound, buttonOptions, studentsPlaySound) {
-    if (SOUNDS.hasOwnProperty(questionSound)) {
+    let player = PlayerList.getPlayerBySocketID(socket.id);
+    if (SOUNDS.hasOwnProperty(questionSound) && player.isTeacher) {
         currentQuestion = questionSound;
         questionActive = true;
         let room = RoomList.getRoomByID(roomID);

@@ -50,8 +50,8 @@ button:disabled {
 
 #header-text {
     display: flex;
-    flex-direction: column;
     flex: 1;
+    flex-direction: column;
 }
 
 #header-text h1 {
@@ -82,7 +82,7 @@ button:disabled {
 }
 
 
-#roomNameForm, #usernameForm, #groupSelectionForm, #roomOptionsForm {
+.setup-form {
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -98,8 +98,8 @@ button:disabled {
     display: flex;
     flex: 1;
     flex-direction: column;
-    text-align: center;
     justify-content: center;
+    text-align: center;
 }
 
 
@@ -243,16 +243,16 @@ button:disabled {
 }
 
 .score-row, .player-row {
-    display: flex;
-    position: relative;
     align-items: center;
+    display: flex;
     min-height: 36px;
+    position: relative;
 }
 
 .score-name, .player-name {
-    flex: 1;
     align-items: center;
     display: flex;
+    flex: 1;
 }
 
 .modal-popup-content h1 {
@@ -282,9 +282,9 @@ button:disabled {
     display: flex;
     flex: 1;
     flex-direction: column;
+    min-height: 100% !important;
     overflow-x: hidden;
     overflow-y: auto;
-    min-height: 100% !important;
 }
 
 #teacherBar button {
@@ -308,9 +308,9 @@ button:disabled {
     color: #FFFFFF;
     display: inline-block;
     font-size: 1rem;
-    width: 2rem;
     height: 2rem;
     padding: 0 0.05rem 0.1875rem;
+    width: 2rem;
 }
 
 .player-row {
@@ -368,12 +368,12 @@ button:disabled {
     border: none;
     border-radius: 30px;
     color: white;
+    cursor: pointer;
     font-weight: bold;
     margin: auto auto 0 auto;
     outline: none !important;
     padding: 0.5rem;
     width: 50%;
-    cursor: pointer;
 }
 
 .login-img {
@@ -381,9 +381,9 @@ button:disabled {
     background-repeat: no-repeat !important;
     background-size: contain !important;
     /*flex: 0 0 70.752089136490250696378830083565vw;*/
+    flex: 1 !important;
     overflow: hidden;
     width: 90vw;
-    flex: 1 !important;
 }
 
 #roomNameForm .login-img {
@@ -450,10 +450,10 @@ input:checked + .radio-label:after {
 }
 
 .radio-label {
-    left: -1.9rem;
-    position: relative;
     bottom: -0.1rem;
     cursor: pointer;
+    left: -1.9rem;
+    position: relative;
 }
 
 .radio, .radio-label, .radio + label, .checkbox + label {
@@ -467,11 +467,6 @@ input:disabled + .radio-label, input:disabled + label {
 input:disabled {
     cursor: default;
 }
-
-
-
-
-
 
 .score-row .icon-crown {
     font-size: 1.4rem;
@@ -512,10 +507,10 @@ input:disabled {
 
 #vowelSelectorContent ul li {
     display: flex;
+    font-size: 1.5rem;
     margin-left: -16px;
     margin-right: 16px;
     padding-left: 32px;
-    font-size: 1.5rem;
 }
 
 #vowelSelectorContent ul li label:first-child {
@@ -527,7 +522,6 @@ input:disabled {
 }
 
 #vowelSelectorContent ul li:first-child {
-    border-top: 1px solid black;
     padding-top: 10px;
 }
 
@@ -537,21 +531,21 @@ input:disabled {
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
-    overflow: auto;
-    width: 100%;
-    padding: 1rem;
     min-height: 100%;
+    overflow: auto;
+    padding: 1rem;
+    width: 100%;
 }
 
 .podium-box {
     align-items: center;
     background-color: #003c8f;
+    border-radius: 0.5rem;
     display: flex;
-    margin-bottom: 1rem;
     height: 9.375rem;
+    margin-bottom: 1rem;
     transition: all 1s;
     width: 100%;
-    border-radius: 0.5rem;
 }
 
 .hidden {
@@ -610,11 +604,11 @@ input:disabled {
 }
 
 .no-data-container {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
     align-items: center;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
     min-height: 100% !important;
 }
 
@@ -663,20 +657,20 @@ input:disabled {
 }
 
 .well {
-    min-height: 20px;
-    padding: 19px;
     border: 1px solid #e3e3e3;
     border-radius: 4px;
     -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
     box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
+    min-height: 20px;
+    padding: 19px;
 }
 
 .modal-scroll-container {
-    width: 100%;
     flex: 1;
-    overflow: auto;
     height: 100%;
+    overflow: auto;
     padding: 0.5rem;
+    width: 100%;
 }
 
 #typeCustom:checked ~ .default-group-options {
@@ -692,8 +686,8 @@ input:disabled {
 }
 
 .custom-group-options input {
-    max-width: 9rem;
     border-radius: 0.5rem;
+    max-width: 9rem;
 }
 
 #groupAllForOne:not(:checked) ~ .afo-options {
@@ -701,50 +695,50 @@ input:disabled {
 }
 
 .label {
-    display: inline-flex;
-    padding: 0.5rem;
-    font-weight: 700;
-    line-height: 1;
+    align-items: center;
+    background-color: #003c8f;
     border-radius: 0.25rem;
     color: #fff;
-    background-color: #003c8f;
-    align-items: center;
+    display: inline-flex;
+    font-weight: 700;
     justify-content: center;
+    line-height: 1;
     margin: 0.3rem !important;
+    padding: 0.5rem;
 }
 
 .bootstrap-tagsinput {
     background-color: #fff;
     border: 1px solid #ccc;
-    box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
-    display: flex;
-    padding: 4px 6px;
-    color: #555;
-    vertical-align: middle;
     border-radius: 4px;
-    max-width: 100%;
-    line-height: 22px;
+    box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
+    color: #555;
     cursor: text;
+    display: flex;
     flex-wrap: wrap;
+    line-height: 22px;
+    max-width: 100%;
+    padding: 4px 6px;
+    vertical-align: middle;
 }
 
 .bootstrap-tagsinput .tag [data-role="remove"] {
-    margin-left: 8px;
-    cursor: pointer;
     border-left: 1px solid white;
+    cursor: pointer;
+    margin-left: 8px;
     padding-left: 5px;
 }
 
 #wordListEditorContent input {
-    margin-top: 1rem;
     align-self: flex-end;
     display: block;
+    margin-top: 1rem;
 }
 
 .word-list-toolbar {
-    margin-bottom: 1rem;
-    display: flex;
     align-items: center;
+    display: flex;
+    margin-bottom: 1rem;
 }
 
 .custom-file-upload {
@@ -990,8 +984,8 @@ hr {
 
 ::-webkit-scrollbar-thumb {
     background-color: rgba(204, 204, 204, 0.6);
-    border-radius: 25px;
     border: 3px solid white;
+    border-radius: 25px;
 }
 
 ::-webkit-scrollbar {
