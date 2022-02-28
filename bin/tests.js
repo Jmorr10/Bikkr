@@ -13,7 +13,7 @@ const TEST_GROUP = 'Group 1';
 const EVENT_MESSAGE_TEST = "message_test";
 
 const LOCAL = "JRMACER:5000";
-const HEROKU = 'https://dev-boinkikurenshuu.herokuapp.com';
+const HEROKU = 'https://bikkr.herokuapp.com';
 
 describe('loading express', function () {
     let server;
