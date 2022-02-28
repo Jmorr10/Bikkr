@@ -149,7 +149,6 @@ class Group {
     hasPlayer(player) {
         return player.hasOwnProperty('id') && Util.hasKey(this.players, player.id);
     }
-
 }
 
 module.exports = {

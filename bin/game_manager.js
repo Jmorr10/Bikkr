@@ -300,11 +300,11 @@ function processFreeForAllResponse(room, player, currentQuestionTmp, isCorrect) 
     let group = room.findGroupByPlayer(player);
 
     if (isCorrect) {
-        player.addPoints(answerTimer, performance.now());
-
+        let base = ffaWinners.hasOwnProperty(group.id) ? ffaWinners[group.id].points : null;
+        let pointsAdded = player.addPoints(answerTimer, performance.now(), base);
         if (!ffaWinners.hasOwnProperty(group.id)) {
             // Make note of the fastest player to answer correctly for each group
-            ffaWinners[group.id] = player.name;
+            ffaWinners[group.id] = {'name': player.name, 'points': pointsAdded};
         }
     }
 
@@ -312,7 +312,6 @@ function processFreeForAllResponse(room, player, currentQuestionTmp, isCorrect) 
         if (Util.getLen(ffaWinners) === 0) {
             return true;
         } else {
-            resetTrackingVariables();
 
             TemplateManager.emitWithTemplate(
                 room.id,
@@ -328,8 +327,6 @@ function processFreeForAllResponse(room, player, currentQuestionTmp, isCorrect) 
                 player.points,
                 (room.wordSearchModeEnabled) ? currentWSQuestion : ""
             );
-
-            ffaWinners = {};
 
             debug('Question answered and finished!');
             return false;
