@@ -98,6 +98,7 @@ const VOWEL_LABELS = {
 };
 
 let currentQuestion = "";
+let currentWSQuestion = "";
 let questionActive = false;
 let individualCounter = 0;
 let groupsAnswered = {};
@@ -113,6 +114,7 @@ class Button {
 
 function resetTrackingVariables() {
     currentQuestion = "";
+    currentWSQuestion = "";
     questionActive = false;
     individualCounter = 0;
     groupsAnswered = {};
@@ -128,6 +130,9 @@ function setQuestion(socket, roomID, questionSound, buttonOptions, studentsPlayS
         questionActive = true;
         let room = RoomList.getRoomByID(roomID);
         let buttons = getButtons(room, buttonOptions);
+        if (room.wordSearchModeEnabled) {
+            currentWSQuestion = buttons.filter((x) => x.sound === questionSound)[0].label || "";
+        }
         TemplateManager.sendPrecompiledTemplate(roomID, 'partials/vowel_grid',
             {locked: false, buttons: buttons});
         let io = ConnectionManager.getIO();
@@ -231,7 +236,8 @@ function processIndividualResponse(room, player, currentQuestionTmp, isCorrect) 
             },
             Events.QUESTION_FINISHED,
             currentQuestionTmp,
-            player.points
+            player.points,
+            (room.wordSearchModeEnabled) ? currentWSQuestion : ""
         );
         debug('Question answered and finished!');
         return false;
@@ -277,7 +283,8 @@ function processAllForOneResponse(room, player, currentQuestionTmp, studentRespo
                     },
                     Events.QUESTION_FINISHED,
                     currentQuestionTmp,
-                    player.points
+                    player.points,
+                    (room.wordSearchModeEnabled) ? currentWSQuestion : ""
                 );
                 debug('Question answered and finished!');
             }
@@ -318,7 +325,8 @@ function processFreeForAllResponse(room, player, currentQuestionTmp, isCorrect) 
                 },
                 Events.QUESTION_FINISHED,
                 currentQuestionTmp,
-                player.points
+                player.points,
+                (room.wordSearchModeEnabled) ? currentWSQuestion : ""
             );
 
             ffaWinners = {};

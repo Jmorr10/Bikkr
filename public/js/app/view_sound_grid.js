@@ -53,6 +53,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 	let disableMainSound = false;
 	let randomizeVowelLabels = false;
 	let randomizeVowelPositions = false;
+	let wordSearchModeEnabled = false;
 	let vowelLabels = {
 		"SHORT_A": ["/æ/", "a"],
 		"LONG_A": ["/eɪ/", "ai", "ay", "ey", "eigh"],
@@ -260,7 +261,12 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 	}
 
 	function toggleWordSearchMode(enabled) {
+		wordSearchModeEnabled = enabled;
 		socket.emit(Events.TOGGLE_WORD_SEARCH_MODE, roomID, enabled);
+	}
+
+	function isWordSearchModeEnabled() {
+		return wordSearchModeEnabled;
 	}
 
 	function addWordListItem(listKey, item) {
@@ -397,6 +403,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 		updatePlayerCount: updatePlayerCount,
 		setScoreboard: setScoreboard,
 		toggleWordSearchMode: toggleWordSearchMode,
+		isWordSearchModeEnabled: isWordSearchModeEnabled,
 		addWordListItem: addWordListItem,
 		deleteWordListItem: deleteWordListItem,
 		openWordListEditor: openWordListEditor,

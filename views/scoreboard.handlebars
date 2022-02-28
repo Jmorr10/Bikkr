@@ -82,9 +82,11 @@
             }, 4000);
         };
 
-		let showAnswer = function (template, correctAnswer) {
+		let showAnswer = function (template, correctAnswer, points, wordSearchWord) {
 		    updateArea.fadeOut();
-		    answerTxt.text(soundGrid.VOWEL_LABELS[correctAnswer][0]);
+		    let vowel_sound = soundGrid.VOWEL_LABELS[correctAnswer][0];
+            let answerText = (wordSearchWord) ? `${vowel_sound} - ${wordSearchWord}` : vowel_sound;
+		    answerTxt.text(answerText);
 		    answerNotification.fadeIn();
             setTimeout(function () {
                 answerNotification.fadeOut();
