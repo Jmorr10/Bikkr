@@ -61,8 +61,10 @@ define(['jquery', 'app/player', 'app/view_room_options', 'app/view_username', 'a
                 signIn();
             }
         });
-		
+
+		// Only called if users must manually choose their username
 		socket.on(Events.ROOM_JOINED, finish);
+		socket.once(Events.USERNAME_OK, setRoomName);
 
 		player = Player.getPlayer();
 
@@ -90,12 +92,15 @@ define(['jquery', 'app/player', 'app/view_room_options', 'app/view_username', 'a
 
 	function finish (template, roomID) {
         render_manager.renderResponse(template);
-        player.room = roomID;
 		if (player.isTeacher) {
 			roomOptions.start(roomID);
 		} else {
 			username.start(roomID);
 		}
+	}
+
+	function setRoomName(roomID) {
+		player.room = roomID;
 	}
 
 	return {

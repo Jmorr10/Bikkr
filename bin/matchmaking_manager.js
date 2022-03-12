@@ -88,7 +88,7 @@ function clientConnected(socket, isTeacher) {
 
 /**
  * Upon disconnect, removes a player from the player list and
- * sends their opponent back to the player, if applicable.
+ * sends their opponent back to the player lobby, if applicable.
  *
  * @param socket The socket of the disconnecting client
  */
@@ -413,7 +413,7 @@ function setUsername(socket, roomID, username) {
                     }
                 );
 
-                socket.emit(Events.USERNAME_OK);
+                socket.emit(Events.USERNAME_OK, roomID);
             }
         } else {
             TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: 'No matching user'});
@@ -450,29 +450,39 @@ function reconnectPlayer(socket, playerState) {
         group.addPlayer(room, new_player);
     }
 
+    if (room && room.type === RoomTypes.TYPE_GROUP && room.groupType === GroupTypes.TYPE_ALL_FOR_ONE) {
+        group.points = playerState.points;
+    } else {
+        new_player.points = playerState.points;
+    }
+
     // Student sound grid should be locked initially
     TemplateManager.sendPrecompiledTemplate(socket.id, 'sound_grid_student', {
         roomID: room.id,
         locked: true,
         buttons: DEFAULT_VOWELS,
         groups: room.groups,
-        groupID: group.id,
+        groupID: group?.id,
         player: new_player,
         roomType: room.type,
         groupType: room.groupType,
         playerCount: room.playerCount
     });
 
-    TemplateManager.sendPrecompiledTemplate(
+    TemplateManager.emitWithTemplateArray(
         room.id,
-        'partials/leaderboard_content',
-        {players: room.players,
+        ['partials/player_list_content', 'partials/leaderboard_content'],
+        [{
+            players: room.players,
             roomType: room.type,
             groupType: room.groupType,
-            groups: room.groups
-        }
+            groups: room.groups,
+            playerCount: room.playerCount
+        }],
+        Events.RENDER_TEMPLATE
     );
 
+    debug(`User ${new_player.name} - Reconnected: ${room.type} - ${room.groupType}`);
 }
 
 module.exports = {

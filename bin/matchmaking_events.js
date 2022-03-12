@@ -36,6 +36,7 @@
 
 const Events = require('./event_types');
 const MatchmakingManager = require('./matchmaking_manager');
+const debug = require('debug')('BoinKikuRenshuu:matchmaking');
 
 /**
  * Adds listeners to the socket
@@ -52,8 +53,8 @@ function addSocketListeners (socket) {
     socket.on(Events.ROOM_SETUP, MatchmakingManager.setupRoom.bind(null, socket));
     socket.on(Events.JOIN_GROUP, MatchmakingManager.joinGroup.bind(null, socket));
     socket.on(Events.KICK_PLAYER, MatchmakingManager.kickPlayer.bind(null, socket));
-    socket.on(Events.RECONNECT, MatchmakingManager.reconnectPlayer.bind(null, socket));
-
+    socket.on(Events.CONNECT_AGAIN, MatchmakingManager.reconnectPlayer.bind(null, socket));
 }
+
 
 module.exports = addSocketListeners;

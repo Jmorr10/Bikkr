@@ -72,6 +72,10 @@ class Player {
         return (this._socket) ? this._socket : PlayerList.getPlayerBySocketID(this.id);
     }
 
+    set points(val) {
+        this._points = val;
+    }
+
     get points() {
         return this._points;
     }
@@ -84,11 +88,19 @@ class Player {
      * @param base The maximum number of points to award
      */
     addPoints(startTimer, endTimer, base=null) {
-        let val = (base) ? 50 : 100;
-        let timeElapsed = endTimer - startTimer;
-        let point_base = (base) ? base : BASE_SCORE;
-        val = Math.ceil(Math.max(point_base - timeElapsed, val));
-        this._points += val;
+        let val;
+        // noinspection JSIncompatibleTypesComparison
+        if (base && base === 1) {
+            this._points += 1;
+            val = 1;
+        } else {
+            val = (base) ? 50 : 100;
+            let timeElapsed = endTimer - startTimer;
+            let point_base = (base) ? base : BASE_SCORE;
+            val = Math.ceil(Math.max(point_base - timeElapsed, val));
+            this._points += val;
+        }
+
         return val;
     }
 

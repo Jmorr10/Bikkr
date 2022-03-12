@@ -65,6 +65,10 @@ class Group {
         this.baseNumber = baseNumber;
     }
 
+    set points(val) {
+        this._points = val;
+    }
+
     get points() {
         return this._points;
     }
@@ -75,11 +79,13 @@ class Group {
      * @param startTimer Timestamp of when the question was set by the teacher
      * @param endTimer Timestamp of when the question was answered correctly
      */
-    addPoints(startTimer, endTimer) {
-        let val = 100;
+    addPoints(startTimer, endTimer, base=null) {
+        let val = (base) ? 50 : 100;
         let timeElapsed = endTimer - startTimer;
-        val = Math.ceil(Math.max(BASE_SCORE - timeElapsed, val));
+        let point_base = (base) ? base : BASE_SCORE;
+        val = Math.ceil(Math.max(point_base - timeElapsed, val));
         this._points += val;
+        return val;
     }
 
     /**

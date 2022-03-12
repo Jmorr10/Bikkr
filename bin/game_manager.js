@@ -102,6 +102,7 @@ let currentWSQuestion = "";
 let questionActive = false;
 let individualCounter = 0;
 let groupsAnswered = {};
+let groupScores = {};
 let ffaWinners = {};
 let answerTimer = performance.now();
 
@@ -118,6 +119,7 @@ function resetTrackingVariables() {
     questionActive = false;
     individualCounter = 0;
     groupsAnswered = {};
+    groupScores = {};
     ffaWinners = {};
     answerTimer = null;
 }
@@ -224,7 +226,7 @@ function processStudentResponseRWRT(socket, roomID, studentResponse) {
 
 function processIndividualResponse(room, player, currentQuestionTmp, isCorrect) {
     if (isCorrect) {
-        player.addPoints(answerTimer, performance.now());
+        player.addPoints(answerTimer, performance.now(), 1);
         TemplateManager.emitWithTemplate(
             room.id,
             'partials/leaderboard_content',
@@ -269,7 +271,9 @@ function processAllForOneResponse(room, player, currentQuestionTmp, studentRespo
         let responseCount = Util.getLen(groupsAnswered);
 
         if (isCorrect) {
-            group.addPoints(answerTimer, performance.now());
+            let baseScore = (Util.getLen(groupScores) > 0) ?
+                Object.values(groupScores).reduce((a, b) => a > b ? a : b) : null;
+            groupScores[group.id] = group.addPoints(answerTimer, performance.now(), baseScore);
             if (room.afoType === GroupModule.AFO_TYPE_SPEED ||
                 (room.afoType === GroupModule.AFO_TYPE_SCORE && responseCount === room.groupCount)
             ) {
@@ -283,7 +287,7 @@ function processAllForOneResponse(room, player, currentQuestionTmp, studentRespo
                     },
                     Events.QUESTION_FINISHED,
                     currentQuestionTmp,
-                    player.points,
+                    group.points,
                     (room.wordSearchModeEnabled) ? currentWSQuestion : ""
                 );
                 debug('Question answered and finished!');

@@ -39,10 +39,10 @@ define(['jquery', 'app/render_manager', 'app/player', 'event_types'],
 	require(['bootstrap'], function() {});
 
 
-	const LOCAL = "http://127.0.0.1:5000";
+	const LOCAL = "http://10.153.7.131:5000";
 	const HEROKU = 'https://bikkr.herokuapp.com';
 
-	const SERVER_PATH = HEROKU;
+	const SERVER_PATH = LOCAL;
 
 	let imageRoot = "/static/img/";
 

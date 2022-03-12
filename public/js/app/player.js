@@ -57,6 +57,8 @@ define(['event_types'], function (Events) {
 		constructor(socketID, isTeacher) {
 			this.id = socketID;
 			this.isTeacher = (isTeacher === true);
+			this._group = null;
+			this._points = 0;
 		}
 		
 		set name(name) {
@@ -99,14 +101,6 @@ define(['event_types'], function (Events) {
 
     function connect() {
 
-        let wasConnected = false;
-
-        if (socket) {
-            socket.destroy();
-            socket = null;
-            wasConnected = true;
-        }
-
         socket = io.connect(
             SERVER_PATH,
             {
@@ -117,18 +111,19 @@ define(['event_types'], function (Events) {
             }
         );
 
-        socket.on('disconnect', function () {
-            window.setTimeout(connect, 5000);
+        socket.once("connect_error", (err) => {
+            alert("サーバーに接続できませんでした。ページを再読み込みしてください。");
         });
 
-        socket.on('connect', function () {
+        socket.on('reconnect', function () {
             let player = getPlayer();
-            if (wasConnected && !player.isTeacher) {
-                socket.emit(Events.RECONNECT, {
+            if (!player.isTeacher) {
+                alert('再接中...');
+                socket.emit(Events.DEBUG, {
                     name: player.name,
                     room: player.room,
+                    points: player.points,
                     group: player.group,
-                    points: player.points
                 });
             }
         });

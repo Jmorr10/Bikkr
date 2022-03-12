@@ -1,9 +1,13 @@
+html {
+    position: relative !important;
+}
+
 body {
     display: flex;
     flex-direction: column;
-    height: 100%;
     overflow: hidden;
     padding: 76px 16px 16px 16px;
+    height: 100% !important;
 }
 
 button {
@@ -32,6 +36,8 @@ button:disabled {
 #content {
     height: 100%;
     position: relative;
+    flex: 1;
+    display: flex;
 }
 
 #sound-grid {
@@ -85,8 +91,8 @@ button:disabled {
 .setup-form {
     display: flex;
     flex-direction: column;
-    height: 100%;
     max-height: 100%;
+    flex: 1;
 }
 
 #roomName {
@@ -380,10 +386,9 @@ button:disabled {
     background-position: center !important;
     background-repeat: no-repeat !important;
     background-size: contain !important;
-    /*flex: 0 0 70.752089136490250696378830083565vw;*/
-    flex: 1 !important;
+    flex: 0 0 45% !important;
     overflow: hidden;
-    width: 90vw;
+    width: 90%;
 }
 
 #roomNameForm .login-img {
@@ -974,17 +979,16 @@ hr {
 
 }
 
-
 @media only screen and (min-width: 700px) {
     body {
-        height: 100vh !important;
+        height: 100% !important;
+        overflow: hidden !important;
     }
 }
 
-
 ::-webkit-scrollbar-thumb {
     background-color: rgba(204, 204, 204, 0.6);
-    border: 3px solid white;
+    border: 3px solid #303030;
     border-radius: 25px;
 }
 

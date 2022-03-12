@@ -42,7 +42,10 @@ const LOGIN_SUCCESS = "login_success";
 const CLIENT_CONNECTED = 'client_connected';
 const NEW_ROOM = 'new_room';
 const JOIN_ROOM = 'join_room';
+
+// WARNING: This event is only fired when students must manually enter their username
 const ROOM_JOINED = "room_joined";
+
 const ROOM_SETUP = "room_setup";
 const ROOM_SET_UP = "room_set_up";
 const JOIN_GROUP = "join_group";
@@ -59,7 +62,7 @@ const STUDENT_RESPONSE = 'student_response';
 const KICK_PLAYER = 'kick_player';
 const KICKED = "kicked";
 const HOST_DISCONNECTED = 'host_disconnected';
-const RECONNECT = "reconnect";
+const CONNECT_AGAIN = "connect_again";
 const PLAY_SOUND = 'play_sound';
 const END_GAME = 'end_game';
 const GAME_OVER = 'game_over';
@@ -72,6 +75,8 @@ const UPDATE_LEADERBOARD = "update_leaderboard";
 
 // GUI
 const RENDER_TEMPLATE = "render_template";
+
+const DEBUG = "debug";
 
 module.exports = {
     CONNECTION: CONNECTION,
@@ -97,7 +102,7 @@ module.exports = {
     KICK_PLAYER: KICK_PLAYER,
     KICKED: KICKED,
     HOST_DISCONNECTED: HOST_DISCONNECTED,
-    RECONNECT: RECONNECT,
+    CONNECT_AGAIN: CONNECT_AGAIN,
     PLAY_SOUND: PLAY_SOUND,
     END_GAME: END_GAME,
     GAME_OVER: GAME_OVER,
@@ -107,5 +112,5 @@ module.exports = {
     CLEAR_WORD_LISTS: CLEAR_WORD_LISTS,
     TOGGLE_WORD_SEARCH_MODE: TOGGLE_WORD_SEARCH_MODE,
     UPDATE_LEADERBOARD: UPDATE_LEADERBOARD,
-    RENDER_TEMPLATE: RENDER_TEMPLATE,
+    RENDER_TEMPLATE: RENDER_TEMPLATE
 };
