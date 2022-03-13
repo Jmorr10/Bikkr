@@ -31,8 +31,8 @@ const io = socketIO(server, {
  */
 
 //server.listen(port, "10.153.7.131");
-server.listen(port, "192.168.1.116");
-//server.listen(port);
+//server.listen(port, "192.168.1.116");
+server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 

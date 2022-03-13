@@ -60,7 +60,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
             closeLeaderboardBtn = jQ('#closeLeaderboardBtn');
             popup = jQ('#popupContent');
             closePopupBtn = jQ('#closePopupBtn');
-            modalBlack = jQ('.modal-black');
+            modalBlack = jQ('.modal-black').not('#reconnecting > .modal-black');
             errorLbl = jQ('.error-lbl');
             roomID = jQ('#roomIDVal').val();
 

@@ -42,7 +42,7 @@ define(['jquery', 'app/render_manager', 'app/player', 'event_types'],
 	const LOCAL = "http://10.153.7.131:5000";
 	const HEROKU = 'https://bikkr.herokuapp.com';
 
-	const SERVER_PATH = LOCAL;
+	const SERVER_PATH = HEROKU;
 
 	let imageRoot = "/static/img/";
 
@@ -74,6 +74,14 @@ define(['jquery', 'app/render_manager', 'app/player', 'event_types'],
 		});
 	}
 
+	function toggleReconnectingMessage(show) {
+		if (show) {
+			jQ("#reconnecting").addClass('open');
+		} else {
+			jQ("#reconnecting").removeClass('open');
+		}
+	}
+
 	function preload(imageArray, callbk, index) {
 		index = index || 0;
 		if (imageArray && imageArray.length > index) {
@@ -89,6 +97,7 @@ define(['jquery', 'app/render_manager', 'app/player', 'event_types'],
 
 	return {
 		init : init,
+		toggleReconnectingMessage: toggleReconnectingMessage,
 		SERVER_PATH: SERVER_PATH
 	};
 

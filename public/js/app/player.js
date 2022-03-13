@@ -38,8 +38,10 @@ define(['event_types'], function (Events) {
 	let selfPlayer;
     let SERVER_PATH;
     let soundElement;
+    let gameRef;
 
-    require(['app/game'], function (game) {
+    require(['app/game',], function (game) {
+        gameRef = game;
         SERVER_PATH = game.SERVER_PATH;
     });
 
@@ -115,16 +117,23 @@ define(['event_types'], function (Events) {
             alert("サーバーに接続できませんでした。ページを再読み込みしてください。");
         });
 
+        socket.on('reconnect_attempt', function () {
+            let player = getPlayer();
+            if (!player.isTeacher) {
+                gameRef.toggleReconnectingMessage(true);
+            }
+        });
+
         socket.on('reconnect', function () {
             let player = getPlayer();
             if (!player.isTeacher) {
-                alert('再接中...');
-                socket.emit(Events.DEBUG, {
+                socket.emit(Events.CONNECT_AGAIN, {
                     name: player.name,
                     room: player.room,
                     points: player.points,
                     group: player.group,
                 });
+                gameRef.toggleReconnectingMessage(false);
             }
         });
 
