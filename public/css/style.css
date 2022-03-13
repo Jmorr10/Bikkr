@@ -758,6 +758,16 @@ input:disabled {
     list-style: none;
 }
 
+#reconnectingContent {
+    text-align: center;
+    top: 0;
+    bottom: 0;
+    height: 5.5rem;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+}
+
 
 /* The switch - the box around the slider */
 .switch {

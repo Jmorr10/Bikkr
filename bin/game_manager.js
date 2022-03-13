@@ -72,16 +72,16 @@ const SOUNDS = {
 };
 
 const DEFAULT_VOWELS = [
-    {sound: "SHORT_A", label:"a"},
-    {sound: "LONG_A", label:"ai"},
-    {sound: "SHORT_E", label:"e"},
-    {sound: "LONG_E", label:"ee"},
-    {sound: "SHORT_I", label:"i"},
-    {sound: "LONG_I", label:"ie"},
-    {sound: "SHORT_O", label:"o"},
-    {sound: "LONG_O", label:"oa"},
-    {sound: "SHORT_U", label:"u"},
-    {sound: "LONG_U", label:"ue"}
+    {sound: "SHORT_A", label:"/æ/"},
+    {sound: "LONG_A", label:"/eɪ/"},
+    {sound: "SHORT_E", label:"/ɛ/"},
+    {sound: "LONG_E", label:"/i/"},
+    {sound: "SHORT_I", label:"/I/"},
+    {sound: "LONG_I", label:"/aɪ/"},
+    {sound: "SHORT_O", label:"/ɑ/"},
+    {sound: "LONG_O", label:"/oʊ/"},
+    {sound: "SHORT_U", label:"/ʊ/"},
+    {sound: "LONG_U", label:"/u/"}
 ];
 
 const VOWEL_LABELS = {

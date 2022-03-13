@@ -114,7 +114,7 @@ define(['event_types'], function (Events) {
         );
 
         socket.once("connect_error", (err) => {
-            alert("サーバーに接続できませんでした。ページを再読み込みしてください。");
+            alert("Could not connect to the server. Please reload the page. サーバーに接続できませんでした。ページを再読み込みしてください。");
         });
 
         socket.on('reconnect_attempt', function () {
