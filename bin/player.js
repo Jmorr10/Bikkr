@@ -88,6 +88,7 @@ class Player {
      * @param base The maximum number of points to award
      */
     addPoints(startTimer, endTimer, base=null) {
+        /*
         let val;
         // noinspection JSIncompatibleTypesComparison
         if (base && base === 1) {
@@ -100,7 +101,9 @@ class Player {
             val = Math.ceil(Math.max(point_base - timeElapsed, val));
             this._points += val;
         }
-
+        */
+        let val = 1;
+        this._points += val;
         return val;
     }
 

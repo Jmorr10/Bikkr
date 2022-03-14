@@ -411,6 +411,10 @@ button:disabled {
     display: none !important;
 }
 
+.scoreboard {
+    zoom: 1.5;
+}
+
 #typeGroup, #typeIndividual {
     height: 4.375rem;
     left: 2.7rem;
@@ -1004,4 +1008,8 @@ hr {
 
 ::-webkit-scrollbar {
     width: 10px;
+}
+
+.modal-popup-content ::-webkit-scrollbar-thumb {
+    border-color: white;
 }

@@ -80,10 +80,15 @@ class Group {
      * @param endTimer Timestamp of when the question was answered correctly
      */
     addPoints(startTimer, endTimer, base=null) {
+        /*
         let val = (base) ? 50 : 100;
         let timeElapsed = endTimer - startTimer;
         let point_base = (base) ? base : BASE_SCORE;
         val = Math.ceil(Math.max(point_base - timeElapsed, val));
+        this._points += val;
+        return val;
+         */
+        let val = 1;
         this._points += val;
         return val;
     }
