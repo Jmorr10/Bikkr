@@ -113,6 +113,9 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types', 'app/util']
             render_manager.renderResponse(template);
             player.points = points;
             soundGridHolder.addClass('locked');
+
+            jQ(`#leaderboardContent .score-name[data-name=${player.name}]`).parent().addClass('highlighted-row');
+
             let correctBtn = soundGridHolder.find(`button[data-sound=${correctAnswer}]`);
             let incorrectBtn;
             if (myAnswer !== "" && myAnswer !== correctAnswer) {

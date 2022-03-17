@@ -129,7 +129,7 @@ describe('loading express', function () {
 
         function sendOptions() {
             testClient.on(Events.ROOM_SET_UP, testFunc);
-            testClient.emit(Events.ROOM_SETUP, TEST_ROOM, Room.TYPE_GROUP, {groupType: Group.TYPE_ALL_FOR_ONE, numStudents: 41});
+            testClient.emit(Events.ROOM_SETUP, TEST_ROOM, Room.TYPE_GROUP, {groupType: Group.TYPE_ONE_FOR_ALL, numStudents: 41});
         }
 
         function testFunc() {
@@ -184,7 +184,7 @@ describe('loading express', function () {
 
         function testFunc() {
               testClient.emit(Events.ROOM_SETUP, TEST_ROOM, Room.TYPE_GROUP,
-                  {groupType: Group.TYPE_ALL_FOR_ONE, numStudents: 41, assignGroups: true});
+                  {groupType: Group.TYPE_ONE_FOR_ALL, numStudents: 41, assignGroups: true});
 
               for (let i = 0; i < 41; i++) {
                   let client = io.connect(socketURL, options);
@@ -567,7 +567,7 @@ describe('loading express', function () {
             testClient.emit(Events.NEW_ROOM, TEST_ROOM);
 
             testClient.on(Events.ROOM_JOINED, function () {
-                testClient.emit(Events.ROOM_SETUP, TEST_ROOM, Room.TYPE_GROUP, {groupType: Group.TYPE_ALL_FOR_ONE, numStudents: 41, assignGroups: true});
+                testClient.emit(Events.ROOM_SETUP, TEST_ROOM, Room.TYPE_GROUP, {groupType: Group.TYPE_ONE_FOR_ALL, numStudents: 41, assignGroups: true});
                 testFunc();
             });
         });

@@ -13,7 +13,7 @@
                                 {{/eq}}
                             {{/if}}
                         {{/if}}>
-                            <div class="score-name">{{name}}</div>
+                            <div class="score-name" data-name="{{name}}">{{name}}</div>
                             {{#if ../../winners}}
                                 {{#if (hasOwn ../../winners ../id)}}
                                     {{#eq (get "name" (get ../id ../../winners)) name}}

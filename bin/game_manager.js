@@ -54,7 +54,7 @@ const RoomTypes = {
 const GroupModule = require('./group');
 const Group = GroupModule.Group;
 const GroupTypes = {
-    TYPE_ALL_FOR_ONE: GroupModule.TYPE_ALL_FOR_ONE,
+    TYPE_ONE_FOR_ALL: GroupModule.TYPE_ONE_FOR_ALL,
     TYPE_FREE_FOR_ALL: GroupModule.TYPE_FREE_FOR_ALL
 };
 
@@ -177,7 +177,6 @@ function getButtons(room, buttonOptions) {
 
 
 function processStudentResponseRWRT(socket, roomID, studentResponse) {
-    console.log("RECEIVED");
     if (questionActive && playersAnswered.indexOf(socket.id) === -1) {
 
         playersAnswered.push(socket.id);
@@ -186,7 +185,7 @@ function processStudentResponseRWRT(socket, roomID, studentResponse) {
         let player = PlayerList.getPlayerBySocketID(socket.id);
         let isCorrect = studentResponse === currentQuestion;
         let isIndividualMode = room.type === RoomTypes.TYPE_INDIVIDUAL;
-        let isAllForOneMode = room.type === RoomTypes.TYPE_GROUP && room.groupType === GroupTypes.TYPE_ALL_FOR_ONE;
+        let isOneForAllMode = room.type === RoomTypes.TYPE_GROUP && room.groupType === GroupTypes.TYPE_ONE_FOR_ALL;
         let isFreeForAllMode = room.type === RoomTypes.TYPE_GROUP && room.groupType === GroupTypes.TYPE_FREE_FOR_ALL;
         let currentQuestionTmp = currentQuestion;
         let failed = false;
@@ -195,15 +194,15 @@ function processStudentResponseRWRT(socket, roomID, studentResponse) {
 
         if (isIndividualMode) {
             failed = processIndividualResponse(room, player, currentQuestionTmp, isCorrect);
-        } else if (isAllForOneMode) {
-            failed = processAllForOneResponse(room, player, currentQuestionTmp, studentResponse, isCorrect);
+        } else if (isOneForAllMode) {
+            failed = processOneForAllResponse(room, player, currentQuestionTmp, studentResponse, isCorrect);
         } else {
             failed = processFreeForAllResponse(room, player, currentQuestionTmp, isCorrect);
         }
 
         if (failed) {
             debug('Question failed! Resetting...');
-            let groups = (!isAllForOneMode) ?
+            let groups = (!isOneForAllMode) ?
                 room.groups : room.groups.sort((a,b) => b.points - a.points);
             TemplateManager.emitWithTemplate(
                 roomID,
@@ -222,8 +221,8 @@ function processStudentResponseRWRT(socket, roomID, studentResponse) {
         }
 
         if (isCorrect && isIndividualMode ||
-            isCorrect && (isAllForOneMode && room.afoType === GroupModule.AFO_TYPE_SCORE && Util.getLen(groupsAnswered) === room.groupCount) ||
-            isCorrect && (isAllForOneMode && room.afoType === GroupModule.AFO_TYPE_SPEED) ||
+            isCorrect && (isOneForAllMode && room.afoType === GroupModule.AFO_TYPE_SCORE && Util.getLen(groupsAnswered) === room.groupCount) ||
+            isCorrect && (isOneForAllMode && room.afoType === GroupModule.AFO_TYPE_SPEED) ||
             !failed && isFreeForAllMode && individualCounter === room.playerCount) {
             resetTrackingVariables();
         }
@@ -257,10 +256,10 @@ function processIndividualResponse(room, player, currentQuestionTmp, isCorrect) 
     }
 }
 
-function processAllForOneResponse(room, player, currentQuestionTmp, studentResponse, isCorrect) {
+function processOneForAllResponse(room, player, currentQuestionTmp, studentResponse, isCorrect) {
     let group = room.findGroupByPlayer(player);
 
-        // Each group can only have one response for All-for-One mode
+        // Each group can only have one response for One-for-All mode
         if (groupsAnswered.hasOwnProperty(group.id)) {
             TemplateManager.emitWithTemplate(
                 `${group.id}@${room.id}`,

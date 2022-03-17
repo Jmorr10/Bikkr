@@ -29,7 +29,7 @@
 const debug = require('debug')('BoinKikuRenshuu:group');
 const Util = require('./util');
 const TYPE_FREE_FOR_ALL = "freeForAll";
-const TYPE_ALL_FOR_ONE = "allForOne";
+const TYPE_ONE_FOR_ALL = "oneForAll";
 const KEY_GROUP_TYPE = 'groupType';
 const KEY_NUM_STUDENTS = 'numStudents';
 const KEY_ASSIGN_GROUPS = 'assignGroups';
@@ -59,7 +59,7 @@ class Group {
      */
     constructor(groupID, baseNumber) {
         this.id = groupID;
-        this.type = TYPE_ALL_FOR_ONE;
+        this.type = TYPE_ONE_FOR_ALL;
         this.players = {};
         this._points = 0;
         this.baseNumber = baseNumber;
@@ -164,7 +164,7 @@ class Group {
 
 module.exports = {
     Group: Group,
-    TYPE_ALL_FOR_ONE: TYPE_ALL_FOR_ONE,
+    TYPE_ONE_FOR_ALL: TYPE_ONE_FOR_ALL,
     TYPE_FREE_FOR_ALL: TYPE_FREE_FOR_ALL,
     KEY_GROUP_TYPE: KEY_GROUP_TYPE,
     KEY_NUM_STUDENTS: KEY_NUM_STUDENTS,

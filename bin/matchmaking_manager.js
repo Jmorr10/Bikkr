@@ -57,7 +57,7 @@ const RoomTypes = {
 const GroupModule = require('./group');
 const Group = GroupModule.Group;
 const GroupTypes = {
-    TYPE_ALL_FOR_ONE: GroupModule.TYPE_ALL_FOR_ONE,
+    TYPE_ONE_FOR_ALL: GroupModule.TYPE_ONE_FOR_ALL,
     TYPE_FREE_FOR_ALL: GroupModule.TYPE_FREE_FOR_ALL
 };
 
@@ -200,10 +200,10 @@ function setupRoom(socket, roomID, roomType, options) {
                 (options.hasOwnProperty(GroupModule.KEY_NUM_GROUPS) && options.hasOwnProperty(GroupModule.KEY_NUM_PER_GROUP))) {
                 room.groupType = (
                     options.hasOwnProperty(GroupModule.KEY_GROUP_TYPE) && options.groupType === GroupTypes.TYPE_FREE_FOR_ALL)
-                    ? GroupTypes.TYPE_FREE_FOR_ALL : GroupTypes.TYPE_ALL_FOR_ONE;
+                    ? GroupTypes.TYPE_FREE_FOR_ALL : GroupTypes.TYPE_ONE_FOR_ALL;
                 createGroups(socket, room, options);
                 room.groupsAssigned = (options.hasOwnProperty(GroupModule.KEY_ASSIGN_GROUPS)) ? options.assignGroups : false;
-                if (room.groupType === GroupTypes.TYPE_ALL_FOR_ONE) {
+                if (room.groupType === GroupTypes.TYPE_ONE_FOR_ALL) {
                     room.afoType = options.hasOwnProperty(GroupModule.KEY_AFO_TYPE) ?
                         options[GroupModule.KEY_AFO_TYPE] : GroupModule.AFO_TYPE_SPEED;
                 }
@@ -468,7 +468,7 @@ function reconnectPlayer(socket, playerState) {
         group.addPlayer(room, new_player);
     }
 
-    if (room && room.type === RoomTypes.TYPE_GROUP && room.groupType === GroupTypes.TYPE_ALL_FOR_ONE) {
+    if (room && room.type === RoomTypes.TYPE_GROUP && room.groupType === GroupTypes.TYPE_ONE_FOR_ALL) {
         group.points = playerState.points;
     } else {
         new_player.points = playerState.points;

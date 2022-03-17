@@ -3,7 +3,7 @@
     <div id="gameoverContent" class="modal-popup-content" style="justify-content: center; align-items: center;">
         <h1>Final Scores</h1>
         <div class="modal-scroll-container">
-            {{#or (eq roomType "individual") (and (eq roomType "group") (eq groupType "allForOne")) }}
+            {{#or (eq roomType "individual") (and (eq roomType "group") (eq groupType "oneForAll")) }}
                 {{#equalsLength podiumList 0}}
                     <div class="no-data-container">
                         <span class="no-data-title">No scores!</span>

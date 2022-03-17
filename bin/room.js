@@ -70,7 +70,7 @@ class Room {
         this.type = TYPE_INDIVIDUAL;
         this.players = [];
         this.groups = [];
-        this.groupType = Group.TYPE_ALL_FOR_ONE;
+        this.groupType = Group.TYPE_ONE_FOR_ALL;
         this.groupsAssigned = false;
         this.afoType = Group.AFO_TYPE_SPEED;
         this.usernamesAssigned = false;
@@ -227,7 +227,7 @@ class Room {
     }
 
     getRankings () {
-        if (this.type === TYPE_INDIVIDUAL || (this.type === TYPE_GROUP && this.groupType === Group.TYPE_ALL_FOR_ONE)) {
+        if (this.type === TYPE_INDIVIDUAL || (this.type === TYPE_GROUP && this.groupType === Group.TYPE_ONE_FOR_ALL)) {
             // Create a shallow copy using the spread operator
             let source = (this.type === TYPE_INDIVIDUAL) ? this.players : this.groups;
             let sorted = [...source].sort((a, b) => b.points - a.points);

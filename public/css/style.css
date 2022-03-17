@@ -252,6 +252,7 @@ button:disabled {
     align-items: center;
     display: flex;
     min-height: 36px;
+    padding: 0.25rem;
     position: relative;
 }
 
@@ -699,7 +700,7 @@ input:disabled {
     max-width: 9rem;
 }
 
-#groupAllForOne:not(:checked) ~ .afo-options {
+#groupOneForAll:not(:checked) ~ .afo-options {
     display: none;
 }
 
@@ -770,6 +771,10 @@ input:disabled {
     justify-content: center;
     align-items: center;
     padding: 16px;
+}
+
+.highlighted-row {
+    background-color: #ff8f04;
 }
 
 
