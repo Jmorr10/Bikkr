@@ -259,50 +259,56 @@ function processIndividualResponse(room, player, currentQuestionTmp, isCorrect) 
 function processOneForAllResponse(room, player, currentQuestionTmp, studentResponse, isCorrect) {
     let group = room.findGroupByPlayer(player);
 
-        // Each group can only have one response for One-for-All mode
-        if (groupsAnswered.hasOwnProperty(group.id)) {
-            TemplateManager.emitWithTemplate(
-                `${group.id}@${room.id}`,
-                'partials/player_already_answered',
-                {player: groupsAnswered[group.id],
-                    myAnswer: studentResponse, correctAnswer: currentQuestionTmp},
-                Events.QUESTION_ALREADY_ANSWERED,
-                groupsAnswered[group.id]
-            );
-            return false;
+    // Each group can only have one response for One-for-All mode
+    if (groupsAnswered.hasOwnProperty(group.id)) {
+        TemplateManager.emitWithTemplate(
+            `${group.id}@${room.id}`,
+            'partials/player_already_answered',
+            {player: groupsAnswered[group.id],
+                myAnswer: studentResponse, correctAnswer: currentQuestionTmp},
+            Events.QUESTION_ALREADY_ANSWERED,
+            groupsAnswered[group.id]
+        );
+        return false;
+    }
+
+    groupsAnswered[group.id] = player.name;
+    let responseCount = Util.getLen(groupsAnswered);
+
+    function finish() {
+        TemplateManager.emitWithTemplate(
+            room.id,
+            'partials/leaderboard_content',
+            {players: room.players.sort((a,b) => b.points - a.points),
+                roomType: room.type,
+                groupType: room.groupType,
+                groups: room.groups.sort((a,b) => b.points - a.points)
+            },
+            Events.QUESTION_FINISHED,
+            currentQuestionTmp,
+            group.points,
+            (room.wordSearchModeEnabled) ? currentWSQuestion : ""
+        );
+        debug('Question answered and finished!');
+    }
+
+    if (isCorrect) {
+        let baseScore = (Util.getLen(groupScores) > 0) ?
+            Object.values(groupScores).reduce((a, b) => a > b ? a : b) : null;
+        groupScores[group.id] = group.addPoints(answerTimer, performance.now(), baseScore);
+        if (room.afoType === GroupModule.AFO_TYPE_SPEED ||
+            (room.afoType === GroupModule.AFO_TYPE_SCORE && responseCount === room.groupCount))
+        {
+            finish();
         }
 
-        groupsAnswered[group.id] = player.name;
-        let responseCount = Util.getLen(groupsAnswered);
+        return false;
 
-        if (isCorrect) {
-            let baseScore = (Util.getLen(groupScores) > 0) ?
-                Object.values(groupScores).reduce((a, b) => a > b ? a : b) : null;
-            groupScores[group.id] = group.addPoints(answerTimer, performance.now(), baseScore);
-            if (room.afoType === GroupModule.AFO_TYPE_SPEED ||
-                (room.afoType === GroupModule.AFO_TYPE_SCORE && responseCount === room.groupCount)
-            ) {
-                TemplateManager.emitWithTemplate(
-                    room.id,
-                    'partials/leaderboard_content',
-                    {players: room.players.sort((a,b) => b.points - a.points),
-                        roomType: room.type,
-                        groupType: room.groupType,
-                        groups: room.groups.sort((a,b) => b.points - a.points)
-                    },
-                    Events.QUESTION_FINISHED,
-                    currentQuestionTmp,
-                    group.points,
-                    (room.wordSearchModeEnabled) ? currentWSQuestion : ""
-                );
-                debug('Question answered and finished!');
-            }
-
-            return false;
-
-        } else {
-            return Util.getLen(groupsAnswered) === room.groupCount;
-        }
+    } else if (room.afoType === GroupModule.AFO_TYPE_SPEED) {
+        return responseCount === room.groupCount;
+    } else if (room.afoType === GroupModule.AFO_TYPE_SCORE && responseCount === room.groupCount) {
+        finish();
+    }
 }
 
 function processFreeForAllResponse(room, player, currentQuestionTmp, isCorrect) {
@@ -341,7 +347,6 @@ function processFreeForAllResponse(room, player, currentQuestionTmp, isCorrect) 
             return false;
         }
     }
-
 }
 
 
