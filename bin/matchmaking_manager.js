@@ -327,7 +327,7 @@ function joinGroup(socket, roomID, groupID) {
  * @returns {*|boolean} Whether or not the name is valid
  */
 function isRoomNameValid(name) {
-    //return (name && name !== "" && name.length >= 4) && !PlayerList.hasPlayerByName(name);
+    //return (name && name !== "" && name.length >= 4) && !PlayerList.getPlayerByName(name);
     return (name && name !== "" && name.length >= 4);
 }
 
@@ -338,7 +338,7 @@ function isRoomNameValid(name) {
  * @returns {*|boolean} Whether or not the name is valid
  */
 function isUserNameValid(name) {
-    return (name && name !== "" && name.length >= 4) && !PlayerList.hasPlayerByName(name);
+    return (name && name !== "" && name.length >= 4) && !PlayerList.getPlayerByName(name);
 }
 
 /**
@@ -422,7 +422,7 @@ function setUsername(socket, roomID, username) {
     } else {
         if (username && username.length < 4) {
             TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: 'Your username must be at least 4 characters in length.'});
-        } else if (PlayerList.hasPlayerByName(username)) {
+        } else if (PlayerList.getPlayerByName(username)) {
             TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: 'Username already in use.'});
         }
         else {
@@ -433,8 +433,26 @@ function setUsername(socket, roomID, username) {
 }
 
 function reconnectPlayer(socket, playerState) {
+    let existing_player = PlayerList.getPlayerByName(playerState.name);
     let new_player = new Player(socket.id, false);
     new_player.socket = socket;
+
+    if (existing_player) {
+        PlayerList.removePlayer(existing_player);
+
+        let playerGroups = existing_player.getGroups();
+        for (const [roomID, group] of Object.entries(playerGroups)) {
+            let room = RoomList.getRoomByID(roomID);
+            group.removePlayer(room, existing_player);
+        }
+
+        let playerRooms = existing_player.getRooms();
+        for (let i = 0; i < playerRooms.length; i++) {
+            let room = playerRooms[i];
+            room.removePlayer(existing_player);
+        }
+    }
+
     PlayerList.addPlayer(new_player);
     let room = RoomList.getRoomByID(playerState.room);
     let group;

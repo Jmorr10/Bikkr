@@ -78,14 +78,14 @@ function getPlayerBySocketID(socketID) {
 
 }
 
-function hasPlayerByName(name) {
+function getPlayerByName(name) {
     for (const [key, val] of Object.entries(players)) {
         if (val.name.toLowerCase() === name.toLowerCase()) {
-            return true;
+            return val;
         }
     }
 
-    return false;
+    return null;
 }
 
 function getList() {
@@ -107,6 +107,6 @@ module.exports = {
     getList: getList,
     getLength: getLength,
     reset: reset,
-    hasPlayerByName: hasPlayerByName
+    getPlayerByName: getPlayerByName
 };
 
