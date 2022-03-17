@@ -357,7 +357,7 @@ function getRandomUsername() {
 
     let name = ADJ[rand[0]] + COLORS[rand[1]] + ANIMALS[rand[2]];
 
-    if (isUserNameValid(name)) {
+    if (isUserNameValid(name) && !PlayerList.getPlayerByName(name)) {
         return name;
     } else {
         return getRandomUsername();
