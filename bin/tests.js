@@ -12,7 +12,7 @@ const TEST_ROOM_INVALID = 'AAA';
 const TEST_GROUP = 'Group 1';
 const EVENT_MESSAGE_TEST = "message_test";
 
-const LOCAL = "JRMACER:5000";
+const LOCAL = "http://127.0.0.1:5000";
 const HEROKU = 'https://bikkr.herokuapp.com';
 
 describe('loading express', function () {
@@ -475,9 +475,77 @@ describe('loading express', function () {
         createGroupFFARoom(testFunc);
     });
 
+
+    it('correctly computes FFA scores when multiple requests are received in quick succession', function (done) {
+
+        let clients = [];
+        this.timeout(0);
+
+        function testFunc() {
+            for (let i = 0; i < 41; i++) {
+                let client = io.connect(socketURL, options);
+                clients.push(client);
+                if (i === 40) {
+                    client.on(Events.USERNAME_OK, next1);
+                }
+                client.emit(Events.CLIENT_CONNECTED, false);
+                client.emit(Events.JOIN_ROOM, TEST_ROOM);
+                client.emit(Events.SET_USERNAME, TEST_ROOM, `USER ${i}`);
+            }
+        }
+
+        function next1 () {
+            testClient.on(Events.QUESTION_READY, answerQuestion);
+            testClient.emit(Events.SET_QUESTION, TEST_ROOM, 'LONG_I');
+        }
+
+        function answerQuestion() {
+            let room = RoomList.getRoomByID(TEST_ROOM);
+            let groups = room.groups;
+            let debugPlayer = clients.find((x) => x.id === groups[0].players[Object.keys(groups[0].players)[0]].id);
+            debugPlayer.on(Events.QUESTION_FINISHED, next2);
+
+            let groupTracker = [];
+
+            for (let i = 0; i < 41; i++) {
+                let player = PlayerList.getPlayerBySocketID(clients[i].id);
+                let group = room.findGroupByPlayer(player);
+                if (groups[2].hasPlayer(player)) {
+                    clients[i].emit(Events.STUDENT_RESPONSE, TEST_ROOM, "LONG_I");
+                } else if (groupTracker.indexOf(group.id) === -1) {
+                    let j = Math.floor(Math.random() * (8 + 1) + 1);
+                    for (let i = 0; i < j; i++) {
+                        clients[i].emit(Events.STUDENT_RESPONSE, TEST_ROOM, "LONG_I");
+                    }
+                    groupTracker.push(group.id);
+                } else {
+                    clients[i].emit(Events.STUDENT_RESPONSE, TEST_ROOM, "LONG_A");
+                }
+            }
+        }
+
+        function next2 () {
+            let room = RoomList.getRoomByID(TEST_ROOM);
+            let players = room.playerScores;
+            for (const x of players) {
+                console.log(x.points);
+                if (x.points > 1) {
+                    throw Error("Scores exceeded 1");
+                }
+            }
+            done();
+        }
+
+        createGroupFFARoom(testFunc);
+
+    });
+
     function connectClient(testFunc) {
         testClient = io.connect(socketURL, options);
         testClient.on('connect', testFunc);
+        testClient.on('connect_error', function (e) {
+            console.log(e);
+        });
     }
 
     function createRoom(testFunc) {

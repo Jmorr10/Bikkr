@@ -103,7 +103,9 @@ let questionActive = false;
 let individualCounter = 0;
 let groupsAnswered = {};
 let groupScores = {};
+let playersAnswered = [];
 let ffaWinners = {};
+
 let answerTimer = performance.now();
 
 class Button {
@@ -121,6 +123,7 @@ function resetTrackingVariables() {
     groupsAnswered = {};
     groupScores = {};
     ffaWinners = {};
+    playersAnswered = [];
     answerTimer = null;
 }
 
@@ -174,7 +177,10 @@ function getButtons(room, buttonOptions) {
 
 
 function processStudentResponseRWRT(socket, roomID, studentResponse) {
-    if (questionActive) {
+    console.log("RECEIVED");
+    if (questionActive && playersAnswered.indexOf(socket.id) === -1) {
+
+        playersAnswered.push(socket.id);
 
         let room = RoomList.getRoomByID(roomID);
         let player = PlayerList.getPlayerBySocketID(socket.id);
@@ -195,17 +201,8 @@ function processStudentResponseRWRT(socket, roomID, studentResponse) {
             failed = processFreeForAllResponse(room, player, currentQuestionTmp, isCorrect);
         }
 
-
-        if (isCorrect && isIndividualMode ||
-            isCorrect && (isAllForOneMode && room.afoType === GroupModule.AFO_TYPE_SCORE && Util.getLen(groupsAnswered) === room.groupCount) ||
-            isCorrect && (isAllForOneMode && room.afoType === GroupModule.AFO_TYPE_SPEED) ||
-            !failed && isFreeForAllMode && individualCounter === room.playerCount) {
-            resetTrackingVariables();
-        }
-
         if (failed) {
             debug('Question failed! Resetting...');
-            resetTrackingVariables();
             let groups = (!isAllForOneMode) ?
                 room.groups : room.groups.sort((a,b) => b.points - a.points);
             TemplateManager.emitWithTemplate(
@@ -221,6 +218,14 @@ function processStudentResponseRWRT(socket, roomID, studentResponse) {
                 currentQuestionTmp,
                 (room.wordSearchModeEnabled) ? currentWSQuestion : ""
             );
+            resetTrackingVariables();
+        }
+
+        if (isCorrect && isIndividualMode ||
+            isCorrect && (isAllForOneMode && room.afoType === GroupModule.AFO_TYPE_SCORE && Util.getLen(groupsAnswered) === room.groupCount) ||
+            isCorrect && (isAllForOneMode && room.afoType === GroupModule.AFO_TYPE_SPEED) ||
+            !failed && isFreeForAllMode && individualCounter === room.playerCount) {
+            resetTrackingVariables();
         }
     }
 }
@@ -356,7 +361,8 @@ function skipQuestion(socket, roomID, correctAnswer) {
                 groups: room.groups
             },
             Events.QUESTION_FAILED,
-            correctAnswer
+            correctAnswer,
+            (room.wordSearchModeEnabled) ? currentWSQuestion : ""
         );
     }
 }

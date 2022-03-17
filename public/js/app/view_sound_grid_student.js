@@ -33,8 +33,8 @@
  * @version 1.0
  * @since 1.0
  */
-define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
-    function (jQ, Player, render_manager, Events) {
+define(['jquery', 'app/player', 'app/render_manager', 'event_types', 'app/util'],
+    function (jQ, Player, render_manager, Events, Util) {
 
         const socket = Player.getConnection();
         let player;
@@ -97,11 +97,11 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
         }
 
         function addButtonListeners() {
-            soundGridHolder.find('button').click(function (e) {
+            soundGridHolder.find('button').click(Util.debounce(function (e) {
                 e.stopImmediatePropagation();
                 soundGridHolder.addClass('locked');
                 sendAnswer(jQ(this).attr('data-sound'));
-            });
+            }, 250, true));
         }
 
         function unlockSoundGrid () {
