@@ -218,7 +218,8 @@ function processStudentResponseRWRT(socket, roomID, studentResponse) {
                     groups: groups
                 },
                 Events.QUESTION_FAILED,
-                currentQuestionTmp
+                currentQuestionTmp,
+                (room.wordSearchModeEnabled) ? currentWSQuestion : ""
             );
         }
     }

@@ -79,12 +79,12 @@
 			updateArea.empty().append(content[0].outerHTML);
 		};
 
-		let questionFailed = function () {
+		let questionFailed = function (template, correctAnswer, wordSearchWord) {
 		    updateArea.fadeOut();
             failNotification.fadeIn();
 		    setTimeout(function () {
 		        failNotification.fadeOut();
-		        updateArea.fadeIn();
+		        showAnswer(template, correctAnswer, null, wordSearchWord);
                 update();
             }, 4000);
         };
@@ -99,7 +99,7 @@
                 answerNotification.fadeOut();
                 updateArea.fadeIn();
                 update();
-            }, 4000);
+            }, 6000);
         }
 
         let showPodium = function (template) {
