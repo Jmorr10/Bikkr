@@ -194,6 +194,8 @@ function setupRoom(socket, roomID, roomType, options) {
         room.usernamesAssigned = (options.hasOwnProperty(RoomModule.KEY_ASSIGN_USERNAMES)) ? options.assignUsernames : false;
         if (roomType === RoomTypes.TYPE_INDIVIDUAL) {
             room.type = RoomTypes.TYPE_INDIVIDUAL;
+            room.individualType = (options.hasOwnProperty(RoomModule.KEY_INDIVIDUAL_TYPE)) ?
+                options[RoomModule.KEY_INDIVIDUAL_TYPE] : RoomModule.INDIVIDUAL_MODE_SCORE_BASED;
         } else if (roomType === RoomTypes.TYPE_GROUP) {
             room.type = RoomTypes.TYPE_GROUP;
             if (options && options.hasOwnProperty(GroupModule.KEY_NUM_STUDENTS) ||

@@ -343,6 +343,10 @@ button:disabled {
     display: none;
 }
 
+#typeGroup:checked ~ .individual-sub-options {
+    display: none;
+}
+
 .group-sub-options h6 {
     text-align: left;
 }

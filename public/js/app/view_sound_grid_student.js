@@ -111,6 +111,15 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types', 'app/util']
         function processResults(template, correctAnswer, points) {
 
             render_manager.renderResponse(template);
+            // Check if group or player
+            // Group = access by group ID
+            // Player = filter array by name property on values
+            if (points.constructor === Array) {
+                points = points.filter(x => x.name === player.name);
+                points = (points.length > 0) ? points[0].points : 0;
+            } else {
+                points = points[player.group]
+            }
             player.points = points;
             soundGridHolder.addClass('locked');
 

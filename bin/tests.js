@@ -269,6 +269,8 @@ describe('loading express', function () {
 
             counter++;
 
+            testClient.emit(Events.SET_QUESTION, TEST_ROOM, 'LONG_I');
+
             testClient2 = io.connect(socketURL, options);
             testClient2.emit(Events.CLIENT_CONNECTED, false);
             testClient2.emit(Events.JOIN_ROOM, TEST_ROOM);
@@ -276,10 +278,8 @@ describe('loading express', function () {
             testClient3 = io.connect(socketURL, options);
             testClient3.emit(Events.CLIENT_CONNECTED, false);
             testClient3.emit(Events.JOIN_ROOM, TEST_ROOM);
+            testClient3.on(Events.ROOM_JOINED, answerQuestion);
 
-
-            testClient.on(Events.QUESTION_READY, answerQuestion);
-            testClient.emit(Events.SET_QUESTION, TEST_ROOM, 'LONG_I');
         }
 
         function answerQuestion() {
@@ -291,7 +291,7 @@ describe('loading express', function () {
         function testFunc() {
             let player1 = PlayerList.getPlayerBySocketID(testClient2.id);
             let player2 = PlayerList.getPlayerBySocketID(testClient3.id);
-            if (player2.points === 0 && player1.points === 1) {
+            if (player2.points === 1 && player1.points === 1) {
                 done();
             }
         }
@@ -482,10 +482,10 @@ describe('loading express', function () {
         this.timeout(0);
 
         function testFunc() {
-            for (let i = 0; i < 41; i++) {
+            for (let i = 0; i < 15; i++) {
                 let client = io.connect(socketURL, options);
                 clients.push(client);
-                if (i === 40) {
+                if (i === 14) {
                     client.on(Events.USERNAME_OK, next1);
                 }
                 client.emit(Events.CLIENT_CONNECTED, false);
@@ -503,11 +503,11 @@ describe('loading express', function () {
             let room = RoomList.getRoomByID(TEST_ROOM);
             let groups = room.groups;
             let debugPlayer = clients.find((x) => x.id === groups[0].players[Object.keys(groups[0].players)[0]].id);
-            debugPlayer.on(Events.QUESTION_FINISHED, next2);
+            debugPlayer.once(Events.QUESTION_FINISHED, next2);
 
             let groupTracker = [];
 
-            for (let i = 0; i < 41; i++) {
+            for (let i = 0; i < 15; i++) {
                 let player = PlayerList.getPlayerBySocketID(clients[i].id);
                 let group = room.findGroupByPlayer(player);
                 if (groups[2].hasPlayer(player)) {
@@ -539,6 +539,90 @@ describe('loading express', function () {
         createGroupFFARoom(testFunc);
 
     });
+
+    it('properly handles score-based individual mode', function (done) {
+
+        let clients = [];
+        this.timeout(0);
+
+        function sendOptions() {
+            testClient.on(Events.ROOM_SET_UP, testFunc);
+            testClient.emit(Events.ROOM_SETUP, TEST_ROOM, Room.TYPE_INDIVIDUAL, {assignUsernames: true});
+        }
+
+        function testFunc() {
+
+            for (let i = 0; i < 10; i++) {
+                let client = io.connect(socketURL, options);
+                clients.push(client);
+                if (i === 9) {
+                    client.on(Events.USERNAME_OK, next1);
+                }
+                client.emit(Events.CLIENT_CONNECTED, false);
+                client.once(Events.ROOM_JOINED, function () {
+                    client.emit(Events.SET_USERNAME, TEST_ROOM, `USER ${i}`);
+                });
+                client.emit(Events.JOIN_ROOM, TEST_ROOM);
+            }
+        }
+
+        function next1 () {
+            testClient.once(Events.QUESTION_FAILED, next2);
+            testClient.once(Events.QUESTION_READY, answerQuestionIncorrectly);
+            testClient.emit(Events.SET_QUESTION, TEST_ROOM, 'LONG_I');
+        }
+
+        function answerQuestionIncorrectly() {
+            for (let i = 0; i < 10; i++) {
+                clients[i].emit(Events.STUDENT_RESPONSE, TEST_ROOM, "LONG_A");
+            }
+        }
+
+        function next2() {
+            testClient.once(Events.QUESTION_READY, answerQuestionCorrectly1);
+            testClient.once(Events.QUESTION_FINISHED, next3);
+            testClient.emit(Events.SET_QUESTION, TEST_ROOM, 'LONG_I');
+        }
+
+        function answerQuestionCorrectly1() {
+            for (let i = 0; i < 9; i++) {
+                clients[i].emit(Events.STUDENT_RESPONSE, TEST_ROOM, "LONG_A");
+            }
+
+            clients[9].emit(Events.STUDENT_RESPONSE, TEST_ROOM, "LONG_I");
+        }
+
+        function next3() {
+            testClient.once(Events.QUESTION_READY, answerQuestionCorrectly2);
+            testClient.once(Events.QUESTION_FINISHED, next4);
+            testClient.emit(Events.SET_QUESTION, TEST_ROOM, 'LONG_I');
+        }
+
+        function answerQuestionCorrectly2 () {
+            for (let i = 0; i < 7; i++) {
+                clients[i].emit(Events.STUDENT_RESPONSE, TEST_ROOM, "LONG_A");
+            }
+            clients[7].emit(Events.STUDENT_RESPONSE, TEST_ROOM, "LONG_I");
+            clients[8].emit(Events.STUDENT_RESPONSE, TEST_ROOM, "LONG_I");
+            clients[9].emit(Events.STUDENT_RESPONSE, TEST_ROOM, "LONG_A");
+        }
+
+        function next4 () {
+            let player1 = PlayerList.getPlayerBySocketID(clients[7].id);
+            let player2 = PlayerList.getPlayerBySocketID(clients[8].id);
+            if (player1.points === player2.points) {
+                done();
+            } else {
+                throw Error("Players' points not equal!");
+            }
+        }
+
+
+        createRoom(sendOptions);
+
+    });
+
+
 
     function connectClient(testFunc) {
         testClient = io.connect(socketURL, options);

@@ -34,6 +34,9 @@ const Group = require('./group');
 const TYPE_GROUP = "group";
 const TYPE_INDIVIDUAL = "individual";
 const KEY_ASSIGN_USERNAMES = "assignUsernames";
+const KEY_INDIVIDUAL_TYPE = "individualType";
+const INDIVIDUAL_MODE_SCORE_BASED = "scoreBased";
+const INDIVIDUAL_MODE_SPEED_BASED = "speedBased";
 
 const DEFAULT_WORD_LISTS= {
     "SHORT_A": ["man","ran","pan","can","fat","hat","rat","mat","sat","lack","sack","tack","back","rack","cap","tap","gap","answer","add","ask","bad","apple","and","task","trash","last","math","class","example","practical","handsome","angry","anxiety","national","salad","plan","expansive"],
@@ -68,6 +71,7 @@ class Room {
         this.id = roomID;
         this.owner = owner;
         this.type = TYPE_INDIVIDUAL;
+        this.individualType = INDIVIDUAL_MODE_SCORE_BASED;
         this.players = [];
         this.groups = [];
         this.groupType = Group.TYPE_ONE_FOR_ALL;
@@ -317,5 +321,8 @@ module.exports = {
     Room: Room,
     TYPE_GROUP: TYPE_GROUP,
     TYPE_INDIVIDUAL: TYPE_INDIVIDUAL,
-    KEY_ASSIGN_USERNAMES: KEY_ASSIGN_USERNAMES
+    KEY_ASSIGN_USERNAMES: KEY_ASSIGN_USERNAMES,
+    KEY_INDIVIDUAL_TYPE: KEY_INDIVIDUAL_TYPE,
+    INDIVIDUAL_MODE_SCORE_BASED: INDIVIDUAL_MODE_SCORE_BASED,
+    INDIVIDUAL_MODE_SPEED_BASED: INDIVIDUAL_MODE_SPEED_BASED
 };

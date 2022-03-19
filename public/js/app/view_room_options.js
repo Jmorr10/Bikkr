@@ -69,7 +69,11 @@ define(['jquery', 'app/player', 'app/view_sound_grid', 'app/render_manager', 'ev
 
 		options = {assignUsernames: assignUsernames};
 
-		if (fieldValid && roomTypeField === TYPE_GROUP) {
+		if (fieldValid && roomTypeField !== TYPE_GROUP) {
+
+			options['individualType'] = jQ('input[name="individualType"]:checked').val();
+
+		} else if (fieldValid && roomTypeField === TYPE_GROUP) {
 			let numStudents = jQ('#numStudents').val();
 			let groupType = jQ('input[name="groupType"]:checked').val();
 			let assignGroups = jQ('#assignGroups').prop('checked');

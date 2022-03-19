@@ -105,6 +105,7 @@ let groupsAnswered = {};
 let groupScores = {};
 let playersAnswered = [];
 let ffaWinners = {};
+let fastestIndividual = null;
 
 let answerTimer = performance.now();
 
@@ -124,6 +125,7 @@ function resetTrackingVariables() {
     groupScores = {};
     ffaWinners = {};
     playersAnswered = [];
+    fastestIndividual = null;
     answerTimer = null;
 }
 
@@ -220,7 +222,8 @@ function processStudentResponseRWRT(socket, roomID, studentResponse) {
             resetTrackingVariables();
         }
 
-        if (isCorrect && isIndividualMode ||
+        if (isCorrect && isIndividualMode && room.individualType === RoomModule.INDIVIDUAL_MODE_SPEED_BASED ||
+            !failed && isIndividualMode && room.individualType === RoomModule.INDIVIDUAL_MODE_SCORE_BASED && individualCounter === room.playerCount ||
             isCorrect && (isOneForAllMode && room.afoType === GroupModule.AFO_TYPE_SCORE && Util.getLen(groupsAnswered) === room.groupCount) ||
             isCorrect && (isOneForAllMode && room.afoType === GroupModule.AFO_TYPE_SPEED) ||
             !failed && isFreeForAllMode && individualCounter === room.playerCount) {
@@ -230,8 +233,34 @@ function processStudentResponseRWRT(socket, roomID, studentResponse) {
 }
 
 function processIndividualResponse(room, player, currentQuestionTmp, isCorrect) {
+
     if (isCorrect) {
-        player.addPoints(answerTimer, performance.now(), 1);
+        if (!fastestIndividual) {
+            fastestIndividual = player;
+        }
+        player.addPoints(answerTimer, performance.now());
+        if (room.individualType === RoomModule.INDIVIDUAL_MODE_SPEED_BASED) {
+            return finish();
+        }
+    }
+
+    if (room.individualType === RoomModule.INDIVIDUAL_MODE_SPEED_BASED) {
+        return individualCounter === room.playerCount;
+    }
+
+    if (room.individualType === RoomModule.INDIVIDUAL_MODE_SCORE_BASED) {
+       if (individualCounter === room.playerCount) {
+           if (fastestIndividual) {
+               return finish();
+           } else {
+               return true;
+           }
+       }
+
+       return false;
+    }
+
+    function finish () {
         TemplateManager.emitWithTemplate(
             room.id,
             'partials/leaderboard_content',
@@ -239,21 +268,17 @@ function processIndividualResponse(room, player, currentQuestionTmp, isCorrect) 
                 players: room.players.sort((a,b) => b.points - a.points),
                 roomType: room.type,
                 groupType: room.groupType,
-                winner: player
+                winner: fastestIndividual
             },
             Events.QUESTION_FINISHED,
             currentQuestionTmp,
-            player.points,
+            room.playerScores,
             (room.wordSearchModeEnabled) ? currentWSQuestion : ""
         );
         debug('Question answered and finished!');
         return false;
-    } else {
-        if (individualCounter === room.playerCount) {
-            // This question has been failed!
-            return true;
-        }
     }
+
 }
 
 function processOneForAllResponse(room, player, currentQuestionTmp, studentResponse, isCorrect) {
@@ -275,6 +300,26 @@ function processOneForAllResponse(room, player, currentQuestionTmp, studentRespo
     groupsAnswered[group.id] = player.name;
     let responseCount = Util.getLen(groupsAnswered);
 
+    if (isCorrect) {
+        //let baseScore = (Util.getLen(groupScores) > 0) ?
+        //    Object.values(groupScores).reduce((a, b) => a > b ? a : b) : null;
+        groupScores[group.id] =  group.points + group.addPoints(answerTimer, performance.now());
+        if (room.afoType === GroupModule.AFO_TYPE_SPEED ||
+            (room.afoType === GroupModule.AFO_TYPE_SCORE && responseCount === room.groupCount))
+        {
+            return finish();
+        }
+
+        return false;
+
+    } else if (room.afoType === GroupModule.AFO_TYPE_SPEED) {
+        // The first correct answer will end the question. If the response count is the number of groups, that
+        // means no one answered the question correctly.
+        return responseCount === room.groupCount;
+    } else if (room.afoType === GroupModule.AFO_TYPE_SCORE && responseCount === room.groupCount) {
+        return finish();
+    }
+
     function finish() {
         TemplateManager.emitWithTemplate(
             room.id,
@@ -286,29 +331,13 @@ function processOneForAllResponse(room, player, currentQuestionTmp, studentRespo
             },
             Events.QUESTION_FINISHED,
             currentQuestionTmp,
-            group.points,
+            groupScores,
             (room.wordSearchModeEnabled) ? currentWSQuestion : ""
         );
         debug('Question answered and finished!');
-    }
-
-    if (isCorrect) {
-        let baseScore = (Util.getLen(groupScores) > 0) ?
-            Object.values(groupScores).reduce((a, b) => a > b ? a : b) : null;
-        groupScores[group.id] = group.addPoints(answerTimer, performance.now(), baseScore);
-        if (room.afoType === GroupModule.AFO_TYPE_SPEED ||
-            (room.afoType === GroupModule.AFO_TYPE_SCORE && responseCount === room.groupCount))
-        {
-            finish();
-        }
-
         return false;
-
-    } else if (room.afoType === GroupModule.AFO_TYPE_SPEED) {
-        return responseCount === room.groupCount;
-    } else if (room.afoType === GroupModule.AFO_TYPE_SCORE && responseCount === room.groupCount) {
-        finish();
     }
+
 }
 
 function processFreeForAllResponse(room, player, currentQuestionTmp, isCorrect) {
@@ -339,7 +368,7 @@ function processFreeForAllResponse(room, player, currentQuestionTmp, isCorrect) 
                 },
                 Events.QUESTION_FINISHED,
                 currentQuestionTmp,
-                player.points,
+                room.playerScores,
                 (room.wordSearchModeEnabled) ? currentWSQuestion : ""
             );
 
