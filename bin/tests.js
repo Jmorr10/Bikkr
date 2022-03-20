@@ -482,10 +482,10 @@ describe('loading express', function () {
         this.timeout(0);
 
         function testFunc() {
-            for (let i = 0; i < 15; i++) {
+            for (let i = 0; i < 41; i++) {
                 let client = io.connect(socketURL, options);
                 clients.push(client);
-                if (i === 14) {
+                if (i === 40) {
                     client.on(Events.USERNAME_OK, next1);
                 }
                 client.emit(Events.CLIENT_CONNECTED, false);
@@ -505,21 +505,13 @@ describe('loading express', function () {
             let debugPlayer = clients.find((x) => x.id === groups[0].players[Object.keys(groups[0].players)[0]].id);
             debugPlayer.once(Events.QUESTION_FINISHED, next2);
 
-            let groupTracker = [];
-
-            for (let i = 0; i < 15; i++) {
+            for (let i = 0; i < 41; i++) {
                 let player = PlayerList.getPlayerBySocketID(clients[i].id);
-                let group = room.findGroupByPlayer(player);
                 if (groups[2].hasPlayer(player)) {
                     clients[i].emit(Events.STUDENT_RESPONSE, TEST_ROOM, "LONG_I");
-                } else if (groupTracker.indexOf(group.id) === -1) {
-                    let j = Math.floor(Math.random() * (8 + 1) + 1);
-                    for (let i = 0; i < j; i++) {
-                        clients[i].emit(Events.STUDENT_RESPONSE, TEST_ROOM, "LONG_I");
-                    }
-                    groupTracker.push(group.id);
                 } else {
-                    clients[i].emit(Events.STUDENT_RESPONSE, TEST_ROOM, "LONG_A");
+                    let response = (Math.random() <= 0.5) ? "LONG_I" : "LONG_A";
+                    clients[i].emit(Events.STUDENT_RESPONSE, TEST_ROOM, response);
                 }
             }
         }
@@ -622,9 +614,65 @@ describe('loading express', function () {
 
     });
 
+    it('properly handles speed-based individual mode', function (done) {
+
+        let t1Client;
+        let t2Client;
+
+        let clients = [];
+        this.timeout(0);
+
+        function sendOptions() {
+            testClient.on(Events.ROOM_SET_UP, testFunc);
+            testClient.emit(Events.ROOM_SETUP, TEST_ROOM, Room.TYPE_INDIVIDUAL, {individualType: Room.INDIVIDUAL_MODE_SPEED_BASED, assignUsernames: true});
+        }
+
+        function testFunc() {
+
+            for (let i = 0; i < 10; i++) {
+                let client = io.connect(socketURL, options);
+                clients.push(client);
+                if (i === 9) {
+                    client.on(Events.USERNAME_OK, next1);
+                }
+                client.emit(Events.CLIENT_CONNECTED, false);
+                client.once(Events.ROOM_JOINED, function () {
+                    client.emit(Events.SET_USERNAME, TEST_ROOM, `USER ${i}`);
+                });
+                client.emit(Events.JOIN_ROOM, TEST_ROOM);
+            }
+
+            t1Client = clients[0];
+            t2Client = clients[1];
+        }
+
+        function next1() {
+            testClient.once(Events.QUESTION_FINISHED, next2);
+            testClient.once(Events.QUESTION_READY, answerQuestion);
+            testClient.emit(Events.SET_QUESTION, TEST_ROOM, 'LONG_I');
+        }
+
+        function answerQuestion() {
+            t1Client.emit(Events.STUDENT_RESPONSE, TEST_ROOM, "LONG_I");
+            t2Client.emit(Events.STUDENT_RESPONSE, TEST_ROOM, "LONG_I");
+        }
+
+        function next2() {
+            let player1 = PlayerList.getPlayerBySocketID(t1Client.id);
+            let player2 = PlayerList.getPlayerBySocketID(t2Client.id);
+            if (player1.points === 1 && player2.points === 0) {
+                done();
+            } else {
+                throw Error("Scores not correct!");
+            }
+        }
+
+        createRoom(sendOptions);
+    });
 
 
-    function connectClient(testFunc) {
+
+        function connectClient(testFunc) {
         testClient = io.connect(socketURL, options);
         testClient.on('connect', testFunc);
         testClient.on('connect_error', function (e) {
