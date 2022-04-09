@@ -78,13 +78,13 @@ define(['jquery', 'app/player', 'app/view_sound_grid', 'app/render_manager', 'ev
 			let groupType = jQ('input[name="groupType"]:checked').val();
 			let assignGroups = jQ('#assignGroups').prop('checked');
 			let customGroups = jQ('#typeCustom').prop('checked');
-			let isAFO = (groupType === 'oneForAll');
+			let isOFA = (groupType === 'oneForAll');
 
 			if (groupType && groupType !== "") {
 				options = {groupType: groupType, assignGroups: assignGroups, assignUsernames: assignUsernames};
 
-				if (isAFO) {
-					options['afoType'] = jQ('input[name="afoType"]:checked').val();
+				if (isOFA) {
+					options['ofaType'] = jQ('input[name="ofaType"]:checked').val();
 				}
 
 				if (customGroups) {

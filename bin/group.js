@@ -35,9 +35,9 @@ const KEY_NUM_STUDENTS = 'numStudents';
 const KEY_ASSIGN_GROUPS = 'assignGroups';
 const KEY_NUM_PER_GROUP = 'numPerGroup';
 const KEY_NUM_GROUPS = 'numGroups';
-const KEY_AFO_TYPE = "afoType";
-const AFO_TYPE_SPEED = "speedBased";
-const AFO_TYPE_SCORE = "scoreBased";
+const KEY_OFA_TYPE = "ofaType";
+const OFA_TYPE_SPEED = "OFASpeedBased";
+const OFA_TYPE_SCORE = "OFAScoreBased";
 const BASE_STUDENTS_PER_GROUP = 5;
 const BASE_SCORE = 3000;
 
@@ -172,7 +172,7 @@ module.exports = {
     KEY_ASSIGN_GROUPS: KEY_ASSIGN_GROUPS,
     KEY_NUM_GROUPS: KEY_NUM_GROUPS,
     KEY_NUM_PER_GROUP: KEY_NUM_PER_GROUP,
-    KEY_AFO_TYPE: KEY_AFO_TYPE,
-    AFO_TYPE_SCORE: AFO_TYPE_SCORE,
-    AFO_TYPE_SPEED: AFO_TYPE_SPEED
+    KEY_OFA_TYPE: KEY_OFA_TYPE,
+    OFA_TYPE_SCORE: OFA_TYPE_SCORE,
+    OFA_TYPE_SPEED: OFA_TYPE_SPEED
 };

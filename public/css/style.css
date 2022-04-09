@@ -260,6 +260,11 @@ button:disabled {
     align-items: center;
     display: flex;
     flex: 1;
+    padding-left: 1rem;
+}
+
+.score-value {
+    padding-right: 1rem;
 }
 
 .modal-popup-content h1 {
@@ -450,8 +455,18 @@ input#typeIndividual + .radio-label:after {
     content: '\e808';
 }
 
+input#switchToIndividualScore + .radio-label:after, input#switchToOFAScore + .radio-label:after {
+    content: '\e80b';
+}
+
+input#switchToIndividualSpeed + .radio-label:after, input#switchToOFASpeed + .radio-label:after {
+    content: '\e80a';
+}
+
+
+
 input:checked + .radio-label:after {
-    background-color: #003c8f;
+    background-color: #0075ff;
 }
 
 .inner-form {
@@ -704,7 +719,7 @@ input:disabled {
     max-width: 9rem;
 }
 
-#groupOneForAll:not(:checked) ~ .afo-options {
+#groupOneForAll:not(:checked) ~ .ofa-options {
     display: none;
 }
 
@@ -779,6 +794,31 @@ input:disabled {
 
 .highlighted-row {
     background-color: #ff8f04;
+}
+
+.round-radio {
+    height: 2.1875rem;
+    position: relative;
+    width: 2.1875rem;
+    z-index: -1;
+}
+
+input.round-radio + .radio-label:after {
+    align-items: center;
+    background-color: #003c8f;
+    border-radius: 100px;
+    color: white;
+    display: flex;
+    font-family: 'boinkikurenshuu';
+    font-size: 1rem;
+    height: 2.1875rem !important;
+    justify-content: center;
+    width: 2.1875rem !important;
+}
+
+.round-radio + .radio-label {
+    bottom: -0.27rem;
+    left: -2.1875rem;
 }
 
 

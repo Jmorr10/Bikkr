@@ -224,8 +224,8 @@ function processStudentResponseRWRT(socket, roomID, studentResponse) {
 
         if (isCorrect && isIndividualMode && room.individualType === RoomModule.INDIVIDUAL_MODE_SPEED_BASED ||
             !failed && isIndividualMode && room.individualType === RoomModule.INDIVIDUAL_MODE_SCORE_BASED && individualCounter === room.playerCount ||
-            isCorrect && (isOneForAllMode && room.afoType === GroupModule.AFO_TYPE_SCORE && Util.getLen(groupsAnswered) === room.groupCount) ||
-            isCorrect && (isOneForAllMode && room.afoType === GroupModule.AFO_TYPE_SPEED) ||
+            isCorrect && (isOneForAllMode && room.ofaType === GroupModule.OFA_TYPE_SCORE && Util.getLen(groupsAnswered) === room.groupCount) ||
+            isCorrect && (isOneForAllMode && room.ofaType === GroupModule.OFA_TYPE_SPEED) ||
             !failed && isFreeForAllMode && individualCounter === room.playerCount) {
             resetTrackingVariables();
         }
@@ -304,19 +304,19 @@ function processOneForAllResponse(room, player, currentQuestionTmp, studentRespo
         //let baseScore = (Util.getLen(groupScores) > 0) ?
         //    Object.values(groupScores).reduce((a, b) => a > b ? a : b) : null;
         groupScores[group.id] =  group.points + group.addPoints(answerTimer, performance.now());
-        if (room.afoType === GroupModule.AFO_TYPE_SPEED ||
-            (room.afoType === GroupModule.AFO_TYPE_SCORE && responseCount === room.groupCount))
+        if (room.ofaType === GroupModule.OFA_TYPE_SPEED ||
+            (room.ofaType === GroupModule.OFA_TYPE_SCORE && responseCount === room.groupCount))
         {
             return finish();
         }
 
         return false;
 
-    } else if (room.afoType === GroupModule.AFO_TYPE_SPEED) {
+    } else if (room.ofaType === GroupModule.OFA_TYPE_SPEED) {
         // The first correct answer will end the question. If the response count is the number of groups, that
         // means no one answered the question correctly.
         return responseCount === room.groupCount;
-    } else if (room.afoType === GroupModule.AFO_TYPE_SCORE && responseCount === room.groupCount) {
+    } else if (room.ofaType === GroupModule.OFA_TYPE_SCORE && responseCount === room.groupCount) {
         return finish();
     }
 
@@ -425,7 +425,9 @@ function clearWordLists(socket, roomID) {
     let player = PlayerList.getPlayerBySocketID(socket.id);
     if (room && player.isTeacher) {
         for (let k in room.wordLists) {
-            room.wordLists[k] = [];
+            if (room.wordLists.hasOwnProperty(k)) {
+                room.wordLists[k] = [];
+            }
         }
     }
 }

@@ -94,9 +94,6 @@ function clientConnected(socket, isTeacher) {
  */
 function clientDisconnected(socket) {
 
-    // TODO: Need to test the whole reconnection flow
-
-
     let player = PlayerList.getPlayerBySocketID(socket.id);
     if (player && player.isTeacher) {
         RoomList.destroyRooms(player);
@@ -206,8 +203,8 @@ function setupRoom(socket, roomID, roomType, options) {
                 createGroups(socket, room, options);
                 room.groupsAssigned = (options.hasOwnProperty(GroupModule.KEY_ASSIGN_GROUPS)) ? options.assignGroups : false;
                 if (room.groupType === GroupTypes.TYPE_ONE_FOR_ALL) {
-                    room.afoType = options.hasOwnProperty(GroupModule.KEY_AFO_TYPE) ?
-                        options[GroupModule.KEY_AFO_TYPE] : GroupModule.AFO_TYPE_SPEED;
+                    room.ofaType = options.hasOwnProperty(GroupModule.KEY_OFA_TYPE) ?
+                        options[GroupModule.KEY_OFA_TYPE] : GroupModule.OFA_TYPE_SPEED;
                 }
             } else {
                 TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: ERR_INVALID_ROOM_OPTIONS});

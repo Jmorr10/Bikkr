@@ -174,7 +174,7 @@ describe('loading express', function () {
             done();
         }
 
-        createGroupAFORoom(testFunc);
+        createGroupOFARoom(testFunc);
 
     });
 
@@ -336,7 +336,7 @@ describe('loading express', function () {
             }
         }
 
-        createGroupAFORoom(setQuestion);
+        createGroupOFARoom(setQuestion);
     });
 
     it('sends FFA scores at the end of a game', function (done) {
@@ -692,7 +692,7 @@ describe('loading express', function () {
         });
     }
 
-    function createGroupAFORoom(testFunc) {
+    function createGroupOFARoom(testFunc) {
         connectClient(function () {
             testClient.emit(Events.CLIENT_CONNECTED, true);
 

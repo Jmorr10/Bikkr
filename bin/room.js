@@ -35,8 +35,8 @@ const TYPE_GROUP = "group";
 const TYPE_INDIVIDUAL = "individual";
 const KEY_ASSIGN_USERNAMES = "assignUsernames";
 const KEY_INDIVIDUAL_TYPE = "individualType";
-const INDIVIDUAL_MODE_SCORE_BASED = "scoreBased";
-const INDIVIDUAL_MODE_SPEED_BASED = "speedBased";
+const INDIVIDUAL_MODE_SCORE_BASED = "individualScoreBased";
+const INDIVIDUAL_MODE_SPEED_BASED = "individualSpeedBased";
 
 const DEFAULT_WORD_LISTS= {
     "SHORT_A": ["man","ran","pan","can","fat","hat","rat","mat","sat","lack","sack","tack","back","rack","cap","tap","gap","answer","add","ask","bad","apple","and","task","trash","last","math","class","example","practical","handsome","angry","anxiety","national","salad","plan","expansive"],
@@ -76,7 +76,7 @@ class Room {
         this.groups = [];
         this.groupType = Group.TYPE_ONE_FOR_ALL;
         this.groupsAssigned = false;
-        this.afoType = Group.AFO_TYPE_SPEED;
+        this.ofaType = Group.OFA_TYPE_SPEED;
         this.usernamesAssigned = false;
         this.wordSearchModeEnabled = false;
         this.setUp = false;
