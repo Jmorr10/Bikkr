@@ -114,13 +114,15 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types', 'app/util']
             // Check if group or player
             // Group = access by group ID
             // Player = filter array by name property on values
-            if (points.constructor === Array) {
-                points = points.filter(x => x.name === player.name);
-                points = (points.length > 0) ? points[0].points : 0;
-            } else {
-                points = points[player.group]
+            if (points) {
+                if (points.constructor === Array) {
+                    points = points.filter(x => x.name === player.name);
+                    points = (points.length > 0) ? points[0].points : 0;
+                } else {
+                    points = points[player.group]
+                }
+                player.points = points;
             }
-            player.points = points;
             soundGridHolder.addClass('locked');
 
             jQ(`#leaderboardContent .score-name[data-name=${player.name}]`).parent().addClass('highlighted-row');

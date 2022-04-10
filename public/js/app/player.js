@@ -131,7 +131,7 @@ define(['event_types'], function (Events) {
                     name: player.name,
                     room: player.room,
                     points: player.points,
-                    group: player.group,
+                    group: player.group
                 });
                 gameRef.toggleReconnectingMessage(false);
             }

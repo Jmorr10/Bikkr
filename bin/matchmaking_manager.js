@@ -42,10 +42,14 @@ const PlayerList = require('./player_list');
 const RoomList = require('./room_list');
 const TemplateManager = require('./template_manager');
 
+const {performance} = require('perf_hooks');
+
+
 const GameManager = require('./game_manager');
 const DEFAULT_VOWELS = GameManager.DEFAULT_VOWELS;
 const VOWEL_LABELS = GameManager.VOWEL_LABELS;
 
+const pendingDisconnects = {};
 
 const RoomModule = require('./room');
 const Room = RoomModule.Room;
@@ -95,14 +99,21 @@ function clientConnected(socket, isTeacher) {
 function clientDisconnected(socket) {
 
     let player = PlayerList.getPlayerBySocketID(socket.id);
+
+    function _finalizeDisconnect() {
+        let disconnectedEntry = PlayerList.getPlayerBySocketID(socket.id);
+        if (pendingDisconnects.hasOwnProperty(socket.id)) {
+            delete pendingDisconnects[socket.id];
+        }
+        if (disconnectedEntry) {
+            PlayerList.removePlayer(player);
+        }
+    }
+
     if (player && player.isTeacher) {
         RoomList.destroyRooms(player);
         PlayerList.removePlayer(player);
-    }
-
-    if (player) {
-        PlayerList.removePlayer(player);
-
+    } else if (player) {
         let playerGroups = player.getGroups();
         for (const [roomID, group] of Object.entries(playerGroups)) {
             let room = RoomList.getRoomByID(roomID);
@@ -127,6 +138,9 @@ function clientDisconnected(socket) {
             );
         }
 
+        player.disconnectTime = performance.now();
+
+        pendingDisconnects[player.name] = setTimeout(_finalizeDisconnect, 300000);
     }
 
     debug(`Client ${socket.id} has disconnected!`);
@@ -219,8 +233,8 @@ function setupRoom(socket, roomID, roomType, options) {
 
     // Teacher sound grid should be locked until start is pressed.
     TemplateManager.emitWithTemplate(player.id, 'sound_grid',
-        {players: room.players, roomType: room.type,
-            groupType: room.groupType, roomID: room.id, playerCount: room.playerCount,
+        {players: room.players, roomType: room.type, individualType: room.individualType,
+            groupType: room.groupType, ofaType: room.ofaType, roomID: room.id, playerCount: room.playerCount,
             locked: true, vowels: VOWEL_LABELS, wordLists: room.getWordLists()}, Events.ROOM_SET_UP);
 
 }
@@ -432,11 +446,22 @@ function setUsername(socket, roomID, username) {
 }
 
 function reconnectPlayer(socket, playerState) {
+    if (!playerState.name) { return; }
     let existing_player = PlayerList.getPlayerByName(playerState.name);
     let new_player = new Player(socket.id, false);
     new_player.socket = socket;
 
+    let disconnectTime = null;
+
     if (existing_player) {
+
+        if (pendingDisconnects.hasOwnProperty(existing_player.name)) {
+            clearTimeout(pendingDisconnects[existing_player.name]);
+            delete pendingDisconnects[existing_player.name];
+        }
+
+        disconnectTime = existing_player.disconnectTime;
+
         PlayerList.removePlayer(existing_player);
 
         let playerGroups = existing_player.getGroups();
@@ -467,7 +492,13 @@ function reconnectPlayer(socket, playerState) {
         group.addPlayer(room, new_player);
     }
 
-    if (room && room.type === RoomTypes.TYPE_GROUP && room.groupType === GroupTypes.TYPE_ONE_FOR_ALL) {
+    if (disconnectTime && room) {
+        if (room.lastModeChangeDatetime && room.lastModeChangeDatetime > disconnectTime) {
+            playerState.points = 0;
+        }
+    }
+
+   if (room && room.type === RoomTypes.TYPE_GROUP && room.groupType === GroupTypes.TYPE_ONE_FOR_ALL) {
         group.points = playerState.points;
     } else {
         new_player.points = playerState.points;

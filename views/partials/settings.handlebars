@@ -53,21 +53,29 @@
                 </label>
             </div>
             <hr>
-            <div>
+            <div id="gameModeOptions">
                 <label>Change Game Mode</label>
                 {{#eq roomType "individual"}}
-                    <input id="switchToIndividualScore" type="radio" class="radio round-radio" name="gameMode" value="individualScore">
-                    <label for="switchToIndividualScore" class="radio-label"></label>
-                    <input id="switchToIndividualSpeed" type="radio" class="radio round-radio" name="gameMode" value="individualSpeed">
+                    <input id="switchToIndividualSpeed" type="radio" class="radio round-radio"
+                           name="gameMode" value="individualSpeedBased"
+                           {{#eq individualType "individualSpeedBased"}}checked{{/eq}}>
                     <label for="switchToIndividualSpeed" class="radio-label"></label>
+                    <input id="switchToIndividualScore" type="radio" class="radio round-radio"
+                           name="gameMode" value="individualScoreBased"
+                           {{#eq individualType "individualScoreBased"}}checked{{/eq}}>
+                    <label for="switchToIndividualScore" class="radio-label"></label>
                 {{/eq}}
 
                 {{#eq roomType "group"}}
                     {{#eq groupType "oneForAll"}}
-                        <input id="switchToOFAScore" type="radio" class="radio round-radio" name="gameMode" value="OFAScoreBased">
-                        <label for="switchToOFAScore" class="radio-label"></label>
-                        <input id="switchToOFASpeed" type="radio" class="radio round-radio" name="gameMode" value="OFASpeedBased">
+                        <input id="switchToOFASpeed" type="radio" class="radio round-radio"
+                               name="gameMode" value="OFASpeedBased"
+                               {{#eq ofaType "OFASpeedBased"}}checked{{/eq}}>
                         <label for="switchToOFASpeed" class="radio-label"></label>
+                        <input id="switchToOFAScore" type="radio" class="radio round-radio"
+                               name="gameMode" value="OFAScoreBased"
+                               {{#eq ofaType "OFAScoreBased"}}checked{{/eq}}>
+                        <label for="switchToOFAScore" class="radio-label"></label>
                     {{/eq}}
                 {{/eq}}
             </div>
@@ -114,6 +122,10 @@
                 jQ('#showWordListsEditorBtn').prop('disabled', !enabled);
                 jQ('#showVowelLabelsBtn, #randomizeVowelLabels, #randomizeVowelPositions').prop('disabled', enabled);
             })
+
+            jQ('#gameModeOptions input').click(function () {
+                soundGrid.changeGameMode(jQ('input[name="gameMode"]:checked').val());
+            });
 
             jQ('#showWordListsEditorBtn').click(function () {
                 soundGrid.openWordListEditor();

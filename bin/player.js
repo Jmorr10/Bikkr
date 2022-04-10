@@ -52,6 +52,7 @@ class Player {
         this.isTeacher = (isTeacher === true);
         this.name = this.isTeacher ? "Teacher" : "";
         this._points = 0;
+        this.disconnectTime = null;
     }
 
     set name(name) {

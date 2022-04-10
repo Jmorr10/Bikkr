@@ -188,18 +188,19 @@ function processStudentResponseRWRT(socket, roomID, studentResponse) {
         let isCorrect = studentResponse === currentQuestion;
         let isIndividualMode = room.type === RoomTypes.TYPE_INDIVIDUAL;
         let isOneForAllMode = room.type === RoomTypes.TYPE_GROUP && room.groupType === GroupTypes.TYPE_ONE_FOR_ALL;
-        let isFreeForAllMode = room.type === RoomTypes.TYPE_GROUP && room.groupType === GroupTypes.TYPE_FREE_FOR_ALL;
         let currentQuestionTmp = currentQuestion;
         let failed = false;
+        let finished = false;
 
         individualCounter++;
 
         if (isIndividualMode) {
-            failed = processIndividualResponse(room, player, currentQuestionTmp, isCorrect);
+            [failed, finished] = processIndividualResponse(room, player, currentQuestionTmp, isCorrect);
         } else if (isOneForAllMode) {
-            failed = processOneForAllResponse(room, player, currentQuestionTmp, studentResponse, isCorrect);
+            [failed, finished] = processOneForAllResponse(room, player, currentQuestionTmp, studentResponse, isCorrect);
+
         } else {
-            failed = processFreeForAllResponse(room, player, currentQuestionTmp, isCorrect);
+            [failed, finished] = processFreeForAllResponse(room, player, currentQuestionTmp, isCorrect);
         }
 
         if (failed) {
@@ -222,11 +223,7 @@ function processStudentResponseRWRT(socket, roomID, studentResponse) {
             resetTrackingVariables();
         }
 
-        if (isCorrect && isIndividualMode && room.individualType === RoomModule.INDIVIDUAL_MODE_SPEED_BASED ||
-            !failed && isIndividualMode && room.individualType === RoomModule.INDIVIDUAL_MODE_SCORE_BASED && individualCounter === room.playerCount ||
-            isCorrect && (isOneForAllMode && room.ofaType === GroupModule.OFA_TYPE_SCORE && Util.getLen(groupsAnswered) === room.groupCount) ||
-            isCorrect && (isOneForAllMode && room.ofaType === GroupModule.OFA_TYPE_SPEED) ||
-            !failed && isFreeForAllMode && individualCounter === room.playerCount) {
+        if (!failed && finished) {
             resetTrackingVariables();
         }
     }
@@ -245,7 +242,7 @@ function processIndividualResponse(room, player, currentQuestionTmp, isCorrect) 
     }
 
     if (room.individualType === RoomModule.INDIVIDUAL_MODE_SPEED_BASED) {
-        return individualCounter === room.playerCount;
+        return [individualCounter === room.playerCount, individualCounter === room.playerCount];
     }
 
     if (room.individualType === RoomModule.INDIVIDUAL_MODE_SCORE_BASED) {
@@ -253,11 +250,12 @@ function processIndividualResponse(room, player, currentQuestionTmp, isCorrect) 
            if (fastestIndividual) {
                return finish();
            } else {
-               return true;
+               // No one answered correctly and all players have answered.
+               return [true, true];
            }
        }
 
-       return false;
+       return [false, false];
     }
 
     function finish () {
@@ -276,7 +274,7 @@ function processIndividualResponse(room, player, currentQuestionTmp, isCorrect) 
             (room.wordSearchModeEnabled) ? currentWSQuestion : ""
         );
         debug('Question answered and finished!');
-        return false;
+        return [false, true];
     }
 
 }
@@ -294,7 +292,8 @@ function processOneForAllResponse(room, player, currentQuestionTmp, studentRespo
             Events.QUESTION_ALREADY_ANSWERED,
             groupsAnswered[group.id]
         );
-        return false;
+        // [failed?, finished?]
+        return [false, false];
     }
 
     groupsAnswered[group.id] = player.name;
@@ -310,14 +309,19 @@ function processOneForAllResponse(room, player, currentQuestionTmp, studentRespo
             return finish();
         }
 
-        return false;
+        return [false, false];
 
     } else if (room.ofaType === GroupModule.OFA_TYPE_SPEED) {
         // The first correct answer will end the question. If the response count is the number of groups, that
         // means no one answered the question correctly.
-        return responseCount === room.groupCount;
+        return [responseCount === room.groupCount, responseCount === room.groupCount];
     } else if (room.ofaType === GroupModule.OFA_TYPE_SCORE && responseCount === room.groupCount) {
-        return finish();
+        if (Object.keys(groupScores).length === 0) {
+            // The question is finished, but no one group answered correctly. So... failed.
+            return [true, true];
+        } else {
+            return finish();
+        }
     }
 
     function finish() {
@@ -335,9 +339,10 @@ function processOneForAllResponse(room, player, currentQuestionTmp, studentRespo
             (room.wordSearchModeEnabled) ? currentWSQuestion : ""
         );
         debug('Question answered and finished!');
-        return false;
+        return [false, true];
     }
 
+    return [false, false];
 }
 
 function processFreeForAllResponse(room, player, currentQuestionTmp, isCorrect) {
@@ -354,7 +359,8 @@ function processFreeForAllResponse(room, player, currentQuestionTmp, isCorrect) 
 
     if (individualCounter === room.playerCount) {
         if (Util.getLen(ffaWinners) === 0) {
-            return true;
+            // Everyone has answered and no one answered correctly.
+            return [true, true];
         } else {
 
             TemplateManager.emitWithTemplate(
@@ -373,9 +379,11 @@ function processFreeForAllResponse(room, player, currentQuestionTmp, isCorrect) 
             );
 
             debug('Question answered and finished!');
-            return false;
+            return [false, true];
         }
     }
+
+    return [false, false];
 }
 
 
@@ -437,6 +445,35 @@ function toggleWordSearchMode(socket, roomID, enabled) {
     let player = PlayerList.getPlayerBySocketID(socket.id);
     if (room && player.isTeacher) {
         room.wordSearchModeEnabled = enabled;
+    }
+}
+
+/*
+ * This function will change between speed/score based modes for Individual and OFA games.
+ * When this function is called, player's scores are reset.
+ */
+function changeGameMode(socket, roomID, gameMode) {
+    let resetNeeded = false;
+    let room = RoomList.getRoomByID(roomID);
+    let player = PlayerList.getPlayerBySocketID(socket.id);
+    if (room && player.isTeacher) {
+        if (room.type === RoomTypes.TYPE_INDIVIDUAL) {
+            if (gameMode === RoomModule.INDIVIDUAL_MODE_SPEED_BASED || gameMode === RoomModule.INDIVIDUAL_MODE_SCORE_BASED) {
+                room.individualType = gameMode;
+                resetNeeded = true;
+            }
+        } else if (room.type === RoomTypes.TYPE_GROUP && room.groupType === GroupTypes.TYPE_ONE_FOR_ALL) {
+            if (gameMode === GroupModule.OFA_TYPE_SPEED || gameMode === GroupModule.OFA_TYPE_SCORE) {
+                room.ofaType = gameMode;
+                resetNeeded = true;
+            }
+        }
+        if (resetNeeded) {
+            room.resetScores();
+            room.lastModeChangeDatetime = performance.now();
+            socket.emit(Events.GAME_MODE_CHANGED);
+            sendLeaderboard(socket, roomID);
+        }
     }
 }
 
@@ -508,6 +545,7 @@ module.exports = {
     removeWordFromList: removeWordFromList,
     clearWordLists: clearWordLists,
     toggleWordSearchMode: toggleWordSearchMode,
+    changeGameMode: changeGameMode,
     sendLeaderboard: sendLeaderboard,
     endGame: endGame,
     DEFAULT_VOWELS: DEFAULT_VOWELS,

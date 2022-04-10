@@ -48,7 +48,7 @@ const DEFAULT_WORD_LISTS= {
     "SHORT_O": ["cot","dot","got","not","rot","cop","mop","hop","rod","cod","nod","sock","father","stop","hot","modern","job","watch","common","problem","possible","hospital","top","dollar","want","car","army","farm","pocket","lock","odd","office","box","mom","fox","hog","pop"],
     "LONG_O": ["boat","coat","goat","note","wrote","cope","mope","soap","hope","road","code","toad","joke","poke","vote","home","slow","though","phone","smoke","window","woke","low","chose","moment","remote","cold","soda","told","broke","piano","goal","float","drove","total","focus","loan"],
     "SHORT_U": ["cut","cub","rub","tub","us","duck","luck","hug","run","good","childhood","push","sugar","would","book","woman","cooked","wool","wooden","butcher","understood","took","shook","hook","cookie","should","could","full","stood","umbrella","gum","drum","hum","shut","jump","nut","scrub"],
-    "LONG_U": ["cute","cube","mute","tube","use","huge","super","rule","new","blue","true","suitcase","shoes","value","statue","beautiful","fool","pool","school","few","university","student","prove","avenue","soup","proof","food","broom","group","rescue","music","flute","duty","due","glue","crew","flew"]
+    "LONG_U": ["cute","cube","mute","tube","use","huge","super","rule","new","blue","true","suitcase","shoes","blew","drew","beautiful","fool","pool","school","few","university","student","prove","avenue","soup","proof","food","broom","group","rescue","music","flute","duty","due","glue","crew","flew"]
 };
 
 /**
@@ -80,6 +80,8 @@ class Room {
         this.usernamesAssigned = false;
         this.wordSearchModeEnabled = false;
         this.setUp = false;
+
+        this.lastModeChangeDatetime = null;
 
         this.wordLists = JSON.parse(JSON.stringify(DEFAULT_WORD_LISTS));
     }

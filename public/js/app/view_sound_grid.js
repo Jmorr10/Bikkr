@@ -269,6 +269,16 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 		return wordSearchModeEnabled;
 	}
 
+	function changeGameMode(gameMode) {
+		if (gameMode) {
+			socket.once(Events.GAME_MODE_CHANGED, function () {
+				alert("Game mode changed successfully! Scores reset.");
+			});
+			socket.emit(Events.CHANGE_GAME_MODE, roomID, gameMode);
+		}
+	}
+
+
 	function addWordListItem(listKey, item) {
 		socket.emit(Events.ADD_WORD_TO_LIST, roomID, listKey, item);
 		jQ(`button[data-sound=${listKey}`).toggle(true);
@@ -404,6 +414,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 		setScoreboard: setScoreboard,
 		toggleWordSearchMode: toggleWordSearchMode,
 		isWordSearchModeEnabled: isWordSearchModeEnabled,
+		changeGameMode: changeGameMode,
 		addWordListItem: addWordListItem,
 		deleteWordListItem: deleteWordListItem,
 		openWordListEditor: openWordListEditor,

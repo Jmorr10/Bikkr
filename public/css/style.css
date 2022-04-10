@@ -466,7 +466,7 @@ input#switchToIndividualSpeed + .radio-label:after, input#switchToOFASpeed + .ra
 
 
 input:checked + .radio-label:after {
-    background-color: #0075ff;
+    background-color: #0075ff !important;
 }
 
 .inner-form {
