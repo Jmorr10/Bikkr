@@ -36,13 +36,12 @@ define(['event_types'], function (Events) {
 	
 	let socket;
 	let selfPlayer;
-    let SERVER_PATH;
+    let SERVER_PATH = window.location.origin;
     let soundElement;
     let gameRef;
 
-    require(['app/game',], function (game) {
-        gameRef = game;
-        SERVER_PATH = game.SERVER_PATH;
+    require(['app/game',], function (Game) {
+        gameRef = Game;
     });
 
 
@@ -113,6 +112,8 @@ define(['event_types'], function (Events) {
             }
         );
 
+        socket.once(Events.SOCKET_CONNECTED, ping);
+
         socket.once("connect_error", (err) => {
             alert("Could not connect to the server. Please reload the page. サーバーに接続できませんでした。ページを再読み込みしてください。");
         });
@@ -140,6 +141,13 @@ define(['event_types'], function (Events) {
         window.getSocket = function () {
             return socket;
         }
+    }
+
+    function ping() {
+	    if (socket.connected) {
+            socket.emit(Events.HEARTBEAT);
+        }
+        setTimeout(ping, 16000);
     }
 
     function getPlayer() {

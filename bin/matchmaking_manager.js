@@ -552,8 +552,6 @@ function _destroyPlayer(player) {
     }
 }
 
-
-
 module.exports = {
     clientConnected: clientConnected,
     clientDisconnected: clientDisconnected,

@@ -36,10 +36,12 @@
 
 // General - Socket.IO specific
 const CONNECTION = 'connection';
+const SOCKET_CONNECTED = 'connect';
 const DISCONNECT = 'disconnect';
 const LOGIN_SUCCESS = "login_success";
 
 const CLIENT_CONNECTED = 'client_connected';
+const HEARTBEAT = 'heartbeat';
 const NEW_ROOM = 'new_room';
 const JOIN_ROOM = 'join_room';
 
@@ -82,9 +84,11 @@ const DEBUG = "debug";
 
 module.exports = {
     CONNECTION: CONNECTION,
+    SOCKET_CONNECTED: SOCKET_CONNECTED,
     DISCONNECT: DISCONNECT,
     LOGIN_SUCCESS: LOGIN_SUCCESS,
     CLIENT_CONNECTED: CLIENT_CONNECTED,
+    HEARTBEAT: HEARTBEAT,
     NEW_ROOM: NEW_ROOM,
     JOIN_ROOM: JOIN_ROOM,
     ROOM_JOINED: ROOM_JOINED,
