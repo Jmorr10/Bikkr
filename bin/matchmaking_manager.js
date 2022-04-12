@@ -101,46 +101,28 @@ function clientDisconnected(socket) {
     let player = PlayerList.getPlayerBySocketID(socket.id);
 
     function _finalizeDisconnect() {
-        let disconnectedEntry = PlayerList.getPlayerBySocketID(socket.id);
-        if (pendingDisconnects.hasOwnProperty(socket.id)) {
-            delete pendingDisconnects[socket.id];
-        }
-        if (disconnectedEntry) {
-            PlayerList.removePlayer(player);
+        if (pendingDisconnects.hasOwnProperty(player.name)) {
+            delete pendingDisconnects[player.name];
         }
     }
 
-    if (player && player.isTeacher) {
-        RoomList.destroyRooms(player);
+    if (player) {
+
         PlayerList.removePlayer(player);
-    } else if (player) {
-        let playerGroups = player.getGroups();
-        for (const [roomID, group] of Object.entries(playerGroups)) {
-            let room = RoomList.getRoomByID(roomID);
-            group.removePlayer(room, player);
+
+        if (player.isTeacher) {
+            RoomList.destroyRooms(player);
+        } else {
+            _destroyPlayer(player);
+
+            player.disconnectTime = performance.now();
+
+            pendingDisconnects[player.name] = {
+                player: player,
+                intervalID: setTimeout(_finalizeDisconnect, 300000)
+            };
         }
 
-        let playerRooms = player.getRooms();
-        for (let i = 0; i < playerRooms.length; i++) {
-            let room = playerRooms[i];
-            room.removePlayer(player);
-            TemplateManager.emitWithTemplateArray(
-                room.id,
-                ['partials/player_list_content', 'partials/leaderboard_content'],
-                [{
-                    players: room.players,
-                    roomType: room.type,
-                    groupType: room.groupType,
-                    groups: room.groups,
-                    playerCount: room.playerCount
-                }],
-                Events.RENDER_TEMPLATE
-            );
-        }
-
-        player.disconnectTime = performance.now();
-
-        pendingDisconnects[player.name] = setTimeout(_finalizeDisconnect, 300000);
     }
 
     debug(`Client ${socket.id} has disconnected!`);
@@ -446,35 +428,34 @@ function setUsername(socket, roomID, username) {
 }
 
 function reconnectPlayer(socket, playerState) {
-    if (!playerState.name) { return; }
-    let existing_player = PlayerList.getPlayerByName(playerState.name);
+    // Here == is better because it will coerce null to undefined
+    if (!playerState.name || !playerState.room || playerState.points == undefined) {
+        // Something's not right... make the student log in again.
+        clientConnected(socket, false);
+        return;
+    }
+
+    if (pendingDisconnects[playerState.name]) {
+        clearInterval(pendingDisconnects[playerState.name].intervalID);
+    }
+
+    let existing_player = pendingDisconnects[playerState.name]?.player || PlayerList.getPlayerByName(playerState.name);
     let new_player = new Player(socket.id, false);
     new_player.socket = socket;
 
-    let disconnectTime = null;
+    let disconnectTime = existing_player?.disconnectTime;
 
-    if (existing_player) {
-
-        if (pendingDisconnects.hasOwnProperty(existing_player.name)) {
-            clearTimeout(pendingDisconnects[existing_player.name]);
-            delete pendingDisconnects[existing_player.name];
-        }
-
-        disconnectTime = existing_player.disconnectTime;
-
+    if (!disconnectTime && existing_player) {
+        // This means that the reconnect even has triggered before the server realized the client disconnected.
+        // The existing player is a ghost and can be removed.
         PlayerList.removePlayer(existing_player);
+        _destroyPlayer(existing_player);
+    }
 
-        let playerGroups = existing_player.getGroups();
-        for (const [roomID, group] of Object.entries(playerGroups)) {
-            let room = RoomList.getRoomByID(roomID);
-            group.removePlayer(room, existing_player);
-        }
+    new_player.name = playerState.name;
 
-        let playerRooms = existing_player.getRooms();
-        for (let i = 0; i < playerRooms.length; i++) {
-            let room = playerRooms[i];
-            room.removePlayer(existing_player);
-        }
+    if (PlayerList.getPlayerByName(playerState.name)) {
+        new_player.name = new_player.name + "_" + Math.floor(Math.random()*(999-100+1)+100).toString();
     }
 
     PlayerList.addPlayer(new_player);
@@ -483,13 +464,25 @@ function reconnectPlayer(socket, playerState) {
 
     if (room) {
         room.addPlayer(new_player);
+    } else {
+        // Something's not right... make the student log in again.
+        PlayerList.removePlayer(new_player);
+        clientConnected(socket, false);
+        return;
     }
 
-    new_player.name = playerState.name;
 
     if (room && room.type === RoomTypes.TYPE_GROUP) {
         group = room.getGroupByID(playerState.group);
-        group.addPlayer(room, new_player);
+        if (group) {
+            group.addPlayer(room, new_player);
+        } else {
+            //Something is really wrong... The student should log in again.
+            room.removePlayer(new_player);
+            PlayerList.removePlayer(new_player);
+            clientConnected(socket, false);
+            return;
+        }
     }
 
     if (disconnectTime && room) {
@@ -532,6 +525,34 @@ function reconnectPlayer(socket, playerState) {
 
     debug(`User ${new_player.name} - Reconnected: ${room.type} - ${room.groupType}`);
 }
+
+function _destroyPlayer(player) {
+    let playerGroups = player.getGroups();
+    for (const [roomID, group] of Object.entries(playerGroups)) {
+        let room = RoomList.getRoomByID(roomID);
+        group.removePlayer(room, player);
+    }
+
+    let playerRooms = player.getRooms();
+    for (let i = 0; i < playerRooms.length; i++) {
+        let room = playerRooms[i];
+        room.removePlayer(player);
+        TemplateManager.emitWithTemplateArray(
+            room.id,
+            ['partials/player_list_content', 'partials/leaderboard_content'],
+            [{
+                players: room.players,
+                roomType: room.type,
+                groupType: room.groupType,
+                groups: room.groups,
+                playerCount: room.playerCount
+            }],
+            Events.RENDER_TEMPLATE
+        );
+    }
+}
+
+
 
 module.exports = {
     clientConnected: clientConnected,

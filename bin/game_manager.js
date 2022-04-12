@@ -194,6 +194,11 @@ function processStudentResponseRWRT(socket, roomID, studentResponse) {
 
         individualCounter++;
 
+        if (!player) {
+            debug('PLAYER NOT FOUND - processStudentResponse');
+            return;
+        }
+
         if (isIndividualMode) {
             [failed, finished] = processIndividualResponse(room, player, currentQuestionTmp, isCorrect);
         } else if (isOneForAllMode) {
@@ -285,7 +290,8 @@ function processOneForAllResponse(room, player, currentQuestionTmp, studentRespo
     // Each group can only have one response for One-for-All mode
     if (groupsAnswered.hasOwnProperty(group.id)) {
         TemplateManager.emitWithTemplate(
-            `${group.id}@${room.id}`,
+            //`${group.id}@${room.id}`, --> sends to the entire group. But let's encourage individual participation!
+            player.socket.id,
             'partials/player_already_answered',
             {player: groupsAnswered[group.id],
                 myAnswer: studentResponse, correctAnswer: currentQuestionTmp},

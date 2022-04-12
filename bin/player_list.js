@@ -61,7 +61,7 @@ function addPlayer(player) {
  * @param player {Player} The Player class-instance to remove from the list
  */
 function removePlayer(player) {
-    if (player && player.id !== "") {
+    if (player && player.id !== "" && players.hasOwnProperty(player.id)) {
         delete players[player.id];
     }
 }

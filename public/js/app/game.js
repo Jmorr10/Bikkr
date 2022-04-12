@@ -38,11 +38,7 @@ define(['jquery', 'app/render_manager', 'app/player', 'event_types'],
 
 	require(['bootstrap'], function() {});
 
-
-	const LOCAL = "http://10.153.7.131:5000";
-	const HEROKU = 'https://bikkr.herokuapp.com';
-
-	const SERVER_PATH = HEROKU;
+	const SERVER_PATH = window.location.origin;
 
 	let imageRoot = "/static/img/";
 
@@ -53,10 +49,12 @@ define(['jquery', 'app/render_manager', 'app/player', 'event_types'],
 		jQ('html').css('height', window.innerHeight + "px");
 
 		jQ(window).on('orientationchange', function () {
-			jQ(window).one('resize', function () {
-                jQ('html').css('height', window.innerHeight + "px");
-			});
+			jQ('html').css('height', window.innerHeight + "px");
         });
+
+		jQ(window).on('resize', function () {
+			jQ('html').css('height', window.innerHeight + "px");
+		});
 
 		preload([
 			'group_selection.jpg',

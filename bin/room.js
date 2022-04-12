@@ -156,7 +156,6 @@ class Room {
     }
 
     getGroupIndex(group) {
-
         let idx = -1;
 
         if (group.hasOwnProperty('id')) {

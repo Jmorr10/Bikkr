@@ -149,7 +149,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types', 'app/util']
                 popup.addClass('open');
                 setTimeout(function () {
                     popup.removeClass('open');
-                }, 2000);
+                }, 5000);
             }
         }
 
