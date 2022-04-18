@@ -106,6 +106,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
         	if (currentQuestion && currentQuestion !== "") {
                 socket.emit(Events.SKIP_QUESTION, roomID, currentQuestion);
                 currentQuestion = "";
+				jQ('#answerCounter').hide();
 			} else {
         		shake(this);
 			}
@@ -140,6 +141,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 
 		socket.on(Events.QUESTION_FINISHED, updateState);
 		socket.on(Events.QUESTION_FAILED, questionFailed);
+		//	socket.on(Events.QUESTION_READY, () => { jQ('#answerCounter').show(); });
 	}
 
 	function addButtonListeners() {
@@ -209,6 +211,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 	function updateState(template) {
 		currentQuestion = "";
 		soundGridHolder.removeClass('locked');
+		jQ('#answerCounter').hide();
 		render_manager.renderResponse(template);
 	}
 
@@ -340,6 +343,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 	}
 
 	function endGame() {
+		jQ('#answerCounter').hide();
 		socket.emit(Events.END_GAME, roomID);
 		socket.once(Events.GAME_OVER, gameOver);
 	}
@@ -350,6 +354,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 
 	function updatePlayerCount(count) {
 		playerCount = count;
+		jQ('#playerListBtn').attr('data-player-count', playerCount);
 	}
 
 	function setScoreboard(windowRef) {

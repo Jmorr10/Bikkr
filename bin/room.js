@@ -84,6 +84,24 @@ class Room {
         this.lastModeChangeDatetime = null;
 
         this.wordLists = JSON.parse(JSON.stringify(DEFAULT_WORD_LISTS));
+
+
+        // This is information used only by the game manager
+        this.resetTrackingVariables();
+    }
+
+    resetTrackingVariables() {
+        this.currentQuestion = "";
+        this.currentWSQuestion = "";
+        this.questionActive = false;
+        this.individualCounter = 0;
+        this.expectedAnswerCount = 0;
+        this.groupsAnswered = {};
+        this.groupScores = {};
+        this.ffaWinners = {};
+        this.playersAnswered = [];
+        this.fastestIndividual = null;
+        this.answerTimer = null;
     }
 
     get playerCount() {

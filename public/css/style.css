@@ -77,6 +77,10 @@ button:disabled {
     margin-top: 8px;
 }
 
+#answerCounter {
+    display: none;
+}
+
 .icon-btn {
     background: none;
     border: none;
@@ -241,7 +245,7 @@ button:disabled {
 .modal-close-btn {
     background: none;
     border: none;
-    color: #d50000;
+    color: #dc3545;
     font-size: 1.5rem;
     position: absolute;
     right: 0;
@@ -306,6 +310,20 @@ button:disabled {
     cursor: pointer;
     font-size: 1.8rem;
     outline: none !important;
+    position: relative;
+}
+
+button#playerListBtn:after {
+    content: attr(data-player-count);
+    position: absolute;
+    height: 20px;
+    width: 32px;
+    border-radius: 45px;
+    background-color: #dc3545;
+    font-size: 0.8rem;
+    right: -12px;
+    bottom: 0px;
+    font-weight: bold;
 }
 
 #endBtn {
@@ -313,7 +331,7 @@ button:disabled {
 }
 
 #playerListContent .kick-btn {
-    background-color: #d50000;
+    background-color: #dc3545;
     border: none;
     border-radius: 60px;
     box-shadow: 0 0 2px #888;
@@ -474,7 +492,7 @@ input:checked + .radio-label:after {
 }
 
 .login-holder .error-lbl {
-    color: #d50000;
+    color: #dc3545;
     margin-top: 1rem;
 }
 
@@ -793,7 +811,9 @@ input:disabled {
 }
 
 .highlighted-row {
-    background-color: #ff8f04;
+    background-color: #dc3545;
+    border-radius: 0.75rem;
+    color: white !important;
 }
 
 .round-radio {
