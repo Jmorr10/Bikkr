@@ -4,7 +4,7 @@
         <div class="score-holder">
             {{#each groups}}
                 <div class="score-row">
-                    <div class="score-name">{{id}}</div>
+                    <div class="score-name" data-name="{{id}}">{{id}}</div>
                     {{#if ../winner}}
                         {{#eq ../winner.id id}}
                             <i class="icon-crown round-winner"></i>
@@ -15,4 +15,9 @@
             {{/each}}
         </div>
     </div>
+    <script>
+        require(['jquery', 'app/player'], function (jQ, Player) {
+            jQ(`#leaderboardContent .score-name[data-name="${Player.getPlayer().group}"]`).parent().addClass('highlighted-row');
+        });
+    </script>
 </div>

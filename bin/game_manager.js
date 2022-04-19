@@ -132,8 +132,14 @@ function setQuestion(socket, roomID, questionSound, buttonOptions, studentsPlayS
         }
         room.answerTimer = performance.now();
 
+        let answersNeeded = (
+            (room.type === RoomModule.TYPE_INDIVIDUAL && room.individualType === RoomModule.INDIVIDUAL_MODE_SPEED_BASED) ||
+            (room.type === RoomModule.TYPE_GROUP &&
+            room.groupType === GroupTypes.TYPE_ONE_FOR_ALL &&
+            room.ofaType === GroupModule.OFA_TYPE_SPEED)) ? 1 : room.expectedAnswerCount;
+
         TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/answer_counter',
-            { answers_needed: room.expectedAnswerCount });
+            { answers_needed: answersNeeded });
 
         debug('Question set!');
     }
@@ -202,12 +208,7 @@ function processStudentResponseRWRT(socket, roomID, studentResponse) {
             TemplateManager.emitWithTemplate(
                 roomID,
                 'partials/leaderboard_content',
-                {
-                    players: room.players.sort((a,b) => b.points - a.points),
-                    roomType: room.type,
-                    groupType: room.groupType,
-                    groups: groups
-                },
+                room.lastLeaderboard,
                 Events.QUESTION_FAILED,
                 currentQuestionTmp,
                 (room.wordSearchModeEnabled) ? room.currentWSQuestion : ""
@@ -223,8 +224,12 @@ function processStudentResponseRWRT(socket, roomID, studentResponse) {
 
 function processIndividualResponse(room, player, currentQuestionTmp, isCorrect) {
 
+    let answersNeeded = (!isCorrect && room.individualType === RoomModule.INDIVIDUAL_MODE_SPEED_BASED) ?
+        1 : room.expectedAnswerCount - room.individualCounter;
+
     TemplateManager.sendPrecompiledTemplate(room.id, 'partials/answer_counter',
-        {answers_needed: (room.expectedAnswerCount - room.individualCounter) });
+        {answers_needed: answersNeeded }
+    );
 
     if (isCorrect) {
         if (!room.fastestIndividual) {
@@ -254,15 +259,18 @@ function processIndividualResponse(room, player, currentQuestionTmp, isCorrect) 
     }
 
     function finish () {
+
+        room.lastLeaderboard = {
+            players: room.players.sort((a,b) => b.points - a.points),
+            roomType: room.type,
+            groupType: room.groupType,
+            winner: room.fastestIndividual
+        };
+
         TemplateManager.emitWithTemplate(
             room.id,
             'partials/leaderboard_content',
-            {
-                players: room.players.sort((a,b) => b.points - a.points),
-                roomType: room.type,
-                groupType: room.groupType,
-                winner: room.fastestIndividual
-            },
+            room.lastLeaderboard,
             Events.QUESTION_FINISHED,
             currentQuestionTmp,
             room.playerScores,
@@ -295,8 +303,10 @@ function processOneForAllResponse(room, player, currentQuestionTmp, studentRespo
     room.groupsAnswered[group.id] = player.name;
     let responseCount = Util.getLen(room.groupsAnswered);
 
+    let answersNeeded = (room.ofaType === GroupModule.OFA_TYPE_SPEED) ? 1 :  room.groupCount - responseCount;
+
     TemplateManager.sendPrecompiledTemplate(room.id, 'partials/answer_counter',
-        { answers_needed: (room.groupCount - responseCount) }
+        { answers_needed: answersNeeded }
     );
 
     if (isCorrect) {
@@ -329,15 +339,19 @@ function processOneForAllResponse(room, player, currentQuestionTmp, studentRespo
     }
 
     function finish() {
+
+        room.lastLeaderboard = {
+            players: room.players.sort((a,b) => b.points - a.points),
+            roomType: room.type,
+            groupType: room.groupType,
+            winner: room.fastestIndividual,
+            groups: room.groups.sort((a,b) => b.points - a.points)
+        };
+
         TemplateManager.emitWithTemplate(
             room.id,
             'partials/leaderboard_content',
-            {players: room.players.sort((a,b) => b.points - a.points),
-                roomType: room.type,
-                groupType: room.groupType,
-                winner: room.fastestIndividual,
-                groups: room.groups.sort((a,b) => b.points - a.points)
-            },
+            room.lastLeaderboard,
             Events.QUESTION_FINISHED,
             currentQuestionTmp,
             room.groupScores,
@@ -371,15 +385,18 @@ function processFreeForAllResponse(room, player, currentQuestionTmp, isCorrect) 
             return [true, true];
         } else {
 
+            room.lastLeaderboard = {
+                players: room.players.sort((a,b) => b.points - a.points),
+                roomType: room.type,
+                groupType: room.groupType,
+                groups: room.groups,
+                winners: room.ffaWinners
+            };
+
             TemplateManager.emitWithTemplate(
                 room.id,
                 'partials/leaderboard_content',
-                {players: room.players.sort((a,b) => b.points - a.points),
-                    roomType: room.type,
-                    groupType: room.groupType,
-                    groups: room.groups,
-                    winners: room.ffaWinners
-                },
+                room.lastLeaderboard,
                 Events.QUESTION_FINISHED,
                 currentQuestionTmp,
                 room.playerScores,
@@ -403,12 +420,7 @@ function skipQuestion(socket, roomID, correctAnswer) {
         TemplateManager.emitWithTemplate(
             roomID,
             'partials/leaderboard_content',
-            {
-                players: room.players.sort((a,b) => b.points - a.points),
-                roomType: room.type,
-                groupType: room.groupType,
-                groups: room.groups
-            },
+            room.lastLeaderboard,
             Events.QUESTION_FAILED,
             correctAnswer,
             (room.wordSearchModeEnabled) ? room.currentWSQuestion : ""
@@ -491,11 +503,7 @@ function sendLeaderboard(socket, roomID) {
         TemplateManager.sendPrecompiledTemplate(
             room.id,
             'partials/leaderboard_content',
-            {players: room.players,
-                roomType: room.type,
-                groupType: room.groupType,
-                groups: room.groups
-            }
+            room.lastLeaderboard
         );
     }
 }
@@ -545,13 +553,13 @@ function endGame(socket, roomID) {
 }
 
 function _getExpectedAnswerCount(room) {
-    if ((room.type === RoomTypes.TYPE_INDIVIDUAL && room.individualType === RoomModule.INDIVIDUAL_MODE_SPEED_BASED) ||
-        (room.type === RoomTypes.TYPE_GROUP && room.groupType ===  GroupModule.TYPE_ONE_FOR_ALL &&
-        room.ofaType === GroupModule.OFA_TYPE_SPEED))
+
+    let isOneForAll = room.type === RoomTypes.TYPE_GROUP && room.groupType === GroupModule.TYPE_ONE_FOR_ALL;
+
+    if (isOneForAll && room.ofaType === GroupModule.OFA_TYPE_SPEED )
     {
         return 1;
-    } else if (room.type === RoomTypes.TYPE_GROUP && room.groupType === GroupModule.TYPE_ONE_FOR_ALL &&
-                room.ofaType === GroupModule.OFA_TYPE_SCORE)
+    } else if (isOneForAll && room.ofaType === GroupModule.OFA_TYPE_SCORE)
     {
         return room.groupCount;
     } else {

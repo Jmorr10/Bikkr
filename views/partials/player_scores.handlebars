@@ -25,4 +25,9 @@
             {{/if}}
         </div>
     </div>
+    <script>
+        require(['jquery', 'app/player'], function (jQ, Player) {
+            jQ(`#leaderboardContent .score-name[data-name="${Player.getPlayer().name}"]`).parent().addClass('highlighted-row');
+        });
+    </script>
 </div>

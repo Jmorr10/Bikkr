@@ -85,6 +85,13 @@ class Room {
 
         this.wordLists = JSON.parse(JSON.stringify(DEFAULT_WORD_LISTS));
 
+        this._lastLeaderboard = {
+            players: this.players,
+            roomType: this.type,
+            groupType: this.groupType,
+            groups: this.groups,
+            playerCount: this.playerCount
+        };
 
         // This is information used only by the game manager
         this.resetTrackingVariables();
@@ -103,6 +110,16 @@ class Room {
         this.fastestIndividual = null;
         this.answerTimer = null;
     }
+
+    get lastLeaderboard() {
+        this._lastLeaderboard['playerCount'] = this.playerCount;
+        return this._lastLeaderboard;
+    }
+
+    set lastLeaderboard(val) {
+        this._lastLeaderboard = val;
+    }
+
 
     get playerCount() {
         return this.players.length;

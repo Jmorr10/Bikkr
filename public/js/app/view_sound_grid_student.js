@@ -105,6 +105,8 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types', 'app/util']
         }
 
         function unlockSoundGrid () {
+            //Close any open modals before unlocking
+            modalBlack.parent().removeClass('open');
             soundGridHolder.removeClass('locked');
         }
 
@@ -124,8 +126,6 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types', 'app/util']
                 player.points = points;
             }
             soundGridHolder.addClass('locked');
-
-            jQ(`#leaderboardContent .score-name[data-name=${player.name}]`).parent().addClass('highlighted-row');
 
             let correctBtn = soundGridHolder.find(`button[data-sound=${correctAnswer}]`);
             let incorrectBtn;

@@ -294,15 +294,12 @@ function joinGroup(socket, roomID, groupID) {
                 playerCount: room.playerCount
             });
 
+
+
             TemplateManager.emitWithTemplateArray(
                 roomID,
                 ['partials/player_list_content', 'partials/leaderboard_content'],
-                [{players: room.players,
-                    roomType: room.type,
-                    groupType: room.groupType,
-                    groups: room.groups,
-                    playerCount: room.playerCount
-                }],
+                [room.lastLeaderboard],
                 Events.RENDER_TEMPLATE
             );
 
@@ -401,11 +398,7 @@ function setUsername(socket, roomID, username) {
                 TemplateManager.sendPrecompiledTemplate(
                     roomID,
                     'partials/leaderboard_content',
-                    {players: room.players,
-                        roomType: room.type,
-                        groupType: room.groupType,
-                        groups: room.groups
-                    }
+                    room.lastLeaderboard
                 );
 
                 socket.emit(Events.USERNAME_OK, roomID);
@@ -513,13 +506,7 @@ function reconnectPlayer(socket, playerState) {
     TemplateManager.emitWithTemplateArray(
         room.id,
         ['partials/player_list_content', 'partials/leaderboard_content'],
-        [{
-            players: room.players,
-            roomType: room.type,
-            groupType: room.groupType,
-            groups: room.groups,
-            playerCount: room.playerCount
-        }],
+        [room.lastLeaderboard],
         Events.RENDER_TEMPLATE
     );
 
@@ -540,13 +527,7 @@ function _destroyPlayer(player) {
         TemplateManager.emitWithTemplateArray(
             room.id,
             ['partials/player_list_content', 'partials/leaderboard_content'],
-            [{
-                players: room.players,
-                roomType: room.type,
-                groupType: room.groupType,
-                groups: room.groups,
-                playerCount: room.playerCount
-            }],
+            [room.lastLeaderboard],
             Events.RENDER_TEMPLATE
         );
     }
