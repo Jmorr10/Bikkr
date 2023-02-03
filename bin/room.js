@@ -217,7 +217,9 @@ class Room {
 
     destroy() {
         TemplateManager.sendPrecompiledTemplate(this.id, 'disconnected', {});
-        this.owner.socket.to(this.id).emit(Events.DISCONNECT);
+        this.players.forEach((player) => {
+            player.socket.emit(Events.DISCONNECT);
+        });
     }
 
     findGroupByPlayer(player) {
