@@ -63,7 +63,7 @@ define(['jquery', 'app/player', 'app/view_sound_grid', 'app/render_manager', 'ev
 
 	function submitOptions () {
 		let options;
-		roomTypeField = jQ('input[name="roomType"]:checked').val();
+		roomTypeField = jQ('#roomType .nav-link.active').attr('data-val');
 		let fieldValid = roomTypeField && roomTypeField !== "";
 		let assignUsernames = jQ('#assignUsernames').prop('checked');
 
@@ -75,9 +75,9 @@ define(['jquery', 'app/player', 'app/view_sound_grid', 'app/render_manager', 'ev
 
 		} else if (fieldValid && roomTypeField === TYPE_GROUP) {
 			let numStudents = jQ('#numStudents').val();
-			let groupType = jQ('input[name="groupType"]:checked').val();
+			let groupType = jQ('#groupType .nav-link.active').attr('data-val');
 			let assignGroups = jQ('#assignGroups').prop('checked');
-			let customGroups = jQ('#typeCustom').prop('checked');
+			let customGroups = jQ('#pills-custom-btn').hasClass('active');
 			let isOFA = (groupType === 'oneForAll');
 
 			if (groupType && groupType !== "") {

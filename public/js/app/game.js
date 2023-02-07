@@ -22,8 +22,6 @@
  * SOFTWARE.
 */
 
-"use strict";
-
 /** @module app/game **/
 
 /**
@@ -57,10 +55,11 @@ define(['jquery', 'app/render_manager', 'app/player', 'event_types'],
 		});
 
 		preload([
+			'logo.svg',
 			'group_selection.jpg',
-			'room.png',
-			'room_settings.png',
-			'username.png'
+			'room.svg',
+			'room_settings.svg',
+			'username.svg'
 		], function () {
 
             // Set up our template rendering system to receive templates from the server.

@@ -1,80 +1,138 @@
-<div id="roomOptionsForm" data-target="#content" data-add="self" class="theme default setup-form" style="text-align: left;">
-	<div class="form-content">
-		<div class="inner-form">
-			<p style="margin-bottom: 0;">Select a room type - Individual or Group</p>
-			<input type="radio" class="radio" name="roomType" value="individual" id="typeIndividual" checked="" />
-			<label for="typeIndividual" class="radio-label"></label>
-			<input type="radio" class="radio" name="roomType" value="group" id="typeGroup" />
-			<label for="typeGroup" class="radio-label"></label>
-            <div style="margin-top: 0.5rem;">
-                <input type="checkbox" class="checkbox" name="assignUsernames" id="assignUsernames" checked="" />
-                <label for="assignUsernames">Auto-Assign Usernames</label>
-            </div>
-            <div class="individual-sub-options">
-                <h6 style="margin-top: 1rem;">Individual Game Type:</h6>
-                <input type="radio" class="radio" name="individualType" value="individualSpeedBased" id="individualSpeedBased" checked="" />
-                <label   for="individualSpeedBased" style="margin-bottom: 0;">Speed Based</label>
-                <input type="radio" class="radio" name="individualType" value="individualScoreBased" id="individualScoreBased"
-                       style="margin-left:1.5rem;" />
-                <label for="individualScoreBased" style="margin-right: 1rem;margin-bottom: 0;">Score Based</label>
-            </div>
-            <div class="group-sub-options">
-                <input type="checkbox" class="checkbox" name="assignGroups" id="assignGroups" checked="" />
-                <label for="assignGroups">Auto-Assign Groups</label>
-                <h6 style="margin-top:0.5rem">Group Setup:</h6>
-                <input type="radio" class="radio" name="groupSetup" value="auto" id="typeAuto" checked="" />
-                <label for="typeAuto">Auto</label>
-                <input type="radio" class="radio" name="groupSetup" value="custom" id="typeCustom" style="margin-left:1.5rem;" />
-                <label for="typeCustom">Custom</label>
-                <div class="default-group-options">
-                    <input type="number" name="numStudents" min="4" placeholder="Number of Students" id="numStudents"
-                           style="margin: 0.5rem 0;text-align: center;border-radius: 0.5rem;padding-bottom: 0.2rem;" />
+<div id="content" data-mode="update" data-add="self" class="w-100 h-100 d-flex flex-column">
+    <div class="section-header d-flex flex-nowrap align-items-center mb-4">
+        <img src="/static/img/logo.svg" class="mh-100 me-3"/>
+        <h1 class="mb-0 fs-2 flex-1">Setup</h1>
+        <button id="roomOptionsOpenHelpBtn" class="btn btn-bkr-secondary icon-btn icon-help-circled align-self-end" data-bs-toggle="modal" data-bs-target="#roomOptionsHelp"></button>
+    </div>
+    <div class="section-img text-center"><img src="/static/img/room_settings.svg" alt="Room settings page" class="mh-100"/></div>
+    <div class="d-flex flex-column my-4 card p-3">
+        <label class="form-label mb-4 fw-bold text-center">Select a room type</label>
+        <ul class="nav nav-pills justify-content-center gap-4" id="roomType" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link icon-user d-flex flex-column justify-content-center align-items-center"
+                        id="pills-individual-btn" data-bs-toggle="pill" data-bs-target="#pills-individual" data-val="individual"
+                        type="button" role="tab" aria-controls="pills-individual" aria-selected="false">Individual</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link icon-users d-flex flex-column justify-content-center align-items-center"
+                        id="pills-group-btn" data-bs-toggle="pill" data-bs-target="#pills-group" data-val="group"
+                        type="button" role="tab" aria-controls="pills-group" aria-selected="false">Group</button>
+            </li>
+        </ul>
+    </div>
+    <div class="tab-content flex-1 pb-4 text-center" id="pills-tabContent">
+        <div class="form-check card flex-row p-3 ps-5">
+            <input type="checkbox" class="form-check-input" name="assignUsernames" id="assignUsernames" checked="" />
+            <label for="assignUsernames" class="form-check-label ms-2">Auto-Assign Usernames</label>
+        </div>
+        <div class="tab-pane mb-4 fade" id="pills-individual" role="tabpanel" aria-labelledby="pills-individual-btn" tabindex="0">
+            <div id="individualSubOptions" class="mt-4">
+                <h6 class="mb-4">Individual Game Type:</h6>
+                <div class="d-flex justify-content-center gap-4">
+                    <input type="radio" class="btn-check" name="individualType" id="individualSpeedBased"
+                           checked="" autocomplete="off" value="individualSpeedBased">
+                    <label class="btn btn-bkr-secondary icon-stopwatch" for="individualSpeedBased">Speed</label>
+                    <input type="radio" class="btn-check" name="individualType" id="individualScoreBased"
+                           autocomplete="off" value="individualScoreBased">
+                    <label class="btn btn-bkr-secondary icon-target" for="individualScoreBased">Score</label>
                 </div>
-                <div class="custom-group-options">
-                    <input type="number" name="numGroups" min="2" placeholder="Num. of Groups" id="numGroups"
-                           style="margin: 0.5rem 0.5rem 0.5rem 0;text-align: center;" />
-                    <input type="number" name="numPerGroup" min="2" placeholder="Group Size" id="numPerGroup"
-                           style="margin: 0.5rem 0 0.5rem 0.5rem;text-align: center;"/>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="pills-group" role="tabpanel" aria-labelledby="pills-group-btn" tabindex="0">
+            <div id="groupSubOptions" class="d-flex flex-column gap-4 mt-4">
+                <div class="form-check card flex-row p-3 ps-5">
+                    <input type="checkbox" class="form-check-input" name="assignGroups" id="assignGroups" checked="" />
+                    <label for="assignGroups" class="form-check-label ms-2">Auto-Assign Groups</label>
                 </div>
-                <h6 style="margin-top: 0.5rem;">Group Game Mode:</h6>
-				<div>
-                    <input type="radio" class="radio" name="groupType" value="oneForAll" id="groupOneForAll" checked="" />
-                    <label for="groupOneForAll" style="margin-bottom: 0;">One-for-all</label>
-                    <input type="radio" class="radio" name="groupType" value="freeForAll" id="groupFreeForAll"
-                           style="margin-left:1.5rem;" />
-					<label for="groupFreeForAll" style="margin-bottom: 0;">Free-for-all</label>
-                    <div class="ofa-options">
-                        <h6 style="margin-top: 1rem;">One-For-All Game Type:</h6>
-                        <input type="radio" class="radio" name="ofaType" value="OFASpeedBased" id="speedBased" checked="" />
-                        <label   for="speedBased" style="margin-bottom: 0;">Speed Based</label>
-                        <input type="radio" class="radio" name="ofaType" value="OFAScoreBased" id="scoreBased"
-                               style="margin-left:1.5rem;" />
-                        <label for="scoreBased" style="margin-right: 1rem;margin-bottom: 0;">Score Based</label>
+                <div class="card p-3">
+                    <h6 class="my-0">Group Setup:</h6>
+                    <ul class="nav nav-pills justify-content-center gap-4 my-4" id="" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="pills-auto-btn" data-bs-toggle="pill" data-bs-target="#pills-auto" type="button" role="tab" aria-controls="pills-auto" aria-selected="true">Auto</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pills-custom-btn" data-bs-toggle="pill" data-bs-target="#pills-custom" type="button" role="tab" aria-controls="pills-custom" aria-selected="false">Custom</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="pills-groupSetup">
+
+                        <div id="pills-auto" class="tab-pane fade active show">
+                            <div class="input-group flex-nowrap">
+                                <span class="input-group-text" id="addon-numStudents"># of students</span>
+                                <input type="number" class="form-control" name="numStudents" min="4" id="numStudents" aria-label="Number of students" aria-describedby="addon-numStudents">
+                            </div>
+                        </div>
+                        <div id="pills-custom" class="tab-pane fade">
+                            <div class="input-group flex-nowrap mb-4">
+                                <span class="input-group-text" id="addon-numGroups"># of groups</span>
+                                <input type="number" class="form-control" name="numGroups" min="2" id="numGroups" aria-label="Number of groups" aria-describedby="addon-numGroups">
+                            </div>
+                            <div class="input-group flex-nowrap">
+                                <span class="input-group-text" id="addon-groupSize">Group size</span>
+                                <input type="number" class="form-control" name="numPerGroup" min="2" id="numPerGroup" aria-label="Number of students per group" aria-describedby="addon-groupSize">
+                            </div>
+                        </div>
                     </div>
                 </div>
-			</div>
-			<p class="error-lbl">{{errorTxt}}</p>
-		</div>
-	</div>
-	<input type="submit" id="submitRoomOptions" value="OK">
-    <div id="roomOptionsHelp" class="modal-popup">
-        <div class="modal-black"></div>
-        <div id="roomOptionsHelpContentHolder" class="modal-popup-content">
-            <h1>Room Options</h1>
-            <div class="modal-scroll-container">
+                <div class="card p-3">
+                    <h6 class="my-0">Group Game Mode:</h6>
+
+                    <ul class="nav nav-pills justify-content-center gap-4 mt-4" id="groupType" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="pills-ofa-btn" data-bs-toggle="pill" data-bs-target="#pills-ofa"
+                                    type="button" role="tab" aria-controls="pills-ofa" aria-selected="true" data-val="oneForAll">One-for-All</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pills-ffa-btn" data-bs-toggle="pill" data-bs-target="#pills-ffa"
+                                    type="button" role="tab" aria-controls="pills-ffa" aria-selected="false" data-val="freeForAll">Free-for-All</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="pills-groupGameType">
+
+                        <div id="pills-ofa" class="tab-pane fade active show">
+                            <h6 class="my-4">One-For-All Game Type:</h6>
+                            <div class="d-flex justify-content-center gap-4">
+                                <input type="radio" class="btn-check" name="ofaType" id="OFASpeedBasedBtn"
+                                       checked="" autocomplete="off" value="OFASpeedBased">
+                                <label class="btn btn-bkr-secondary icon-stopwatch" for="OFASpeedBasedBtn">Speed</label>
+                                <input type="radio" class="btn-check" name="ofaType" id="OFAScoreBasedBtn"
+                                       autocomplete="off" value="OFAScoreBased">
+                                <label class="btn btn-bkr-secondary icon-target" for="OFAScoreBasedBtn">Score</label>
+                            </div>
+                        </div>
+
+                        <div id="pills-ffa" class="tab-pane fade">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="alert alert-danger text-center mb-0 error-lbl mt-4">{{errorTxt}}</div>
+        <input type="submit" class="form-control btn btn-bkr-confirm mt-4" id="submitRoomOptions" value="OK">
+    </div>
+</div>
+
+<div id="roomOptionsHelp" class="modal fade" data-target="body" data-add="self" data-mode="append" tabindex="-1" aria-labelledby="roomOptionsHelpModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header hstack gap-2">
+                <h1 class="modal-title fs-2 flex-1" id="roomOptionsHelpModalLabel">Help</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
                 <h3>Game Modes:</h3>
                 <ul>
                     <li><b>Individual Mode:</b> In this mode, all of the players battle against each other. The first person
-                    to answer correctly will be awarded points.</li>
+                        to answer correctly will be awarded points.</li>
                     <li><b>Group Mode:</b> In group mode, players can either work together and battle against other groups, or they
-                    can battle the people within their own group.</li>
+                        can battle the people within their own group.</li>
                 </ul>
                 <h3>Auto-Assign Options:</h3>
                 <ul>
                     <li><b>Auto-Assign Usernames:</b> A school-friendly username will automatically be assigned to the student. Disable this
-                    option if you want to allow the students to type in their own usernames.</li>
+                        option if you want to allow the students to type in their own usernames.</li>
                     <li><b>Auto-Assign Groups:</b> Students will be automatically assigned to groups based on the order that they join the game.
-                    Disable this option to allow students to manually select their group number.</li>
+                        Disable this option to allow students to manually select their group number.</li>
                 </ul>
                 <h3>Group Options:</h3>
                 <ul>
@@ -102,37 +160,81 @@
                     </li>
                 </ul>
             </div>
-            <button id="closeRoomOptionsHelpBtn" class="modal-close-btn icon-cancel"></button>
         </div>
     </div>
-    <script>
-        require(['jquery'], function (jQ) {
-            jQ('#roomOptionsHelp .modal-close-btn').click(function () {
-                jQ(this).parents('.modal-popup').removeClass('open');
-            });
-
-            jQ('#roomOptionsHelp .modal-black').click(function () {
-                jQ(this).parent().removeClass('open');
-            });
-
-            jQ('body').keypress(function (e) {
-                if (e.keyCode === 27) {
-                    jQ('#roomOptionsHelp .modal-black').parent().removeClass('open');
-                }
-            });
-
-            jQ('#roomOptionsOpenHelpBtn').click(function (e) {
-                jQ('#roomOptionsHelp').addClass('open');
-            });
-        });
-
-    </script>
 </div>
 
-<div id="header">
-    <div id="header-text">
-        <h1>母音聞く練習 - Room Options</h1>
-    </div>
-    <button id="roomOptionsOpenHelpBtn" class="icon-btn icon-help-circled"></button>
-</div>
+
+<!--
+
+<div class="hstack justify-content-around align-items-center">
+                <div class="d-flex justify-content-center align-items-center">
+                    <input type="radio" class="radio round-radio" name="roomType" value="individual" id="typeIndividual"
+                           data-bs-toggle="collapse" data-bs-target="#individualSubOptions" />
+                    <label for="typeIndividual" class="form-label radio-label icon-btn icon-user"></label>
+                </div>
+                <div class="d-flex justify-content-center align-items-center">
+                    <input type="radio" class="radio round-radio" name="roomType" value="group" id="typeGroup"
+                           data-bs-toggle="collapse" data-bs-target="#groupSubOptions"/>
+                    <label for="typeGroup" class="form-label radio-label icon-btn icon-users"></label>
+                </div>
+            </div>
+            <div>
+                <input type="checkbox" class="checkbox" name="assignUsernames" id="assignUsernames" checked="" />
+                <label for="assignUsernames" class="form-label">Auto-Assign Usernames</label>
+            </div>
+        </div>
+        <div id="individualSubOptions" class="vstack transition-all flex-1 mx-auto gap-4 mt-4 text-center flex-wrap justify-content-center align-content-center collapse">
+            <h6 >Individual Game Type:</h6>
+            <div class="d-flex align-items-center">
+                <input type="radio" class="radio" name="individualType" value="individualSpeedBased" id="individualSpeedBased" checked="" />
+                <label   for="individualSpeedBased" class="form-label">Speed Based</label>
+            </div>
+            <div class="d-flex align-items-center">
+                <input type="radio" class="radio" name="individualType" value="individualScoreBased" id="individualScoreBased"/>
+                <label for="individualScoreBased" class="form-label">Score Based</label>
+            </div>
+        </div>
+        <div id="groupSubOptions" class="vstack transition-all flex-1 mx-auto gap-4 mt-4 text-center flex-wrap justify-content-center align-content-center collapse">
+            <div class="d-flex align-items-center">
+                <input type="checkbox" class="form-control checkbox" name="assignGroups" id="assignGroups" checked="" />
+                <label for="assignGroups" class="form-label">Auto-Assign Groups</label>
+            </div>
+            <h6 >Group Setup:</h6>
+            <div class="d-flex align-items-center">
+                <input type="radio" class="form-control radio" name="groupSetup" value="auto" id="typeAuto" checked="" />
+                <label for="typeAuto" class="form-label">Auto</label>
+                <input type="radio" class="form-control radio" name="groupSetup" value="custom" id="typeCustom" " />
+                <label for="typeCustom" class="form-label">Custom</label>
+            </div>
+            <div class="default-group-options">
+                <input type="number" class="form-control" name="numStudents" min="4" placeholder="Number of Students" id="numStudents"/>
+            </div>
+            <div class="custom-group-options">
+                <input type="number" class="form-control" name="numGroups" min="2" placeholder="Num. of Groups" id="numGroups"/>
+                <input type="number" class="form-control" name="numPerGroup" min="2" placeholder="Group Size" id="numPerGroup"/>
+            </div>
+            <h6 >Group Game Mode:</h6>
+            <div>
+                <div class="d-flex align-items-center">
+                    <input type="radio" class="form-control radio" name="groupType" value="oneForAll" id="groupOneForAll" checked="" />
+                    <label for="groupOneForAll" class="form-label">One-for-all</label>
+                    <input type="radio" class="form-control radio" name="groupType" value="freeForAll" id="groupFreeForAll"
+                    data-bs-target="#oFAOptions" data-bs-toggle="collapse"/>
+                    <label for="groupFreeForAll" class="form-label">Free-for-all</label>
+                </div>
+                <div id="oFAOptions" class="collapse show transition-all">
+                    <h6 >One-For-All Game Type:</h6>
+                    <div class="d-flex align-items-center">
+                        <input type="radio" class="form-control radio" name="ofaType" value="OFASpeedBased" id="speedBased" checked="" />
+                        <label for="speedBased" class="form-label">Speed Based</label>
+                        <input type="radio" class="form-control radio" name="ofaType" value="OFAScoreBased" id="scoreBased"/>
+                        <label for="scoreBased" class="form-label">Score Based</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+-->
 

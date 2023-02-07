@@ -1,21 +1,22 @@
-<div id="roomNameForm" data-target="#content" data-add="self" class="theme default setup-form">
-	<div class="form-content">
-		<div class="login-img"></div>
-		<div style="flex:1;">
-			<p>Please enter a room name</p>
-			<input type="text" name="roomName" id="roomName" placeholder="部屋の名前">
-			<p class="error-lbl">{{errorTxt}}</p>
-		</div>
-	</div>
-	<input type="submit" id="submitRoom" value="OK">
+<div id="content" data-add="self" data-mode="update" class="d-flex flex-column flex-nowrap m-0 w-100 h-100">
+    <div class="section-header d-flex flex-nowrap align-items-center mb-4">
+        <img src="/static/img/logo.svg" class="mh-100 me-3"/>
+        <h1 class="mb-0 fs-2 flex-1">Room Name</h1>
+    </div>
+    <div class="section-img flex-1 text-center"><img src="/static/img/room.svg" alt="Enter room name." class="mh-100"/></div>
+    <div class="flex-1 text-center">
+        <div class="vstack mx-auto gap-4 my-4 text-center flex-wrap justify-content-center align-content-center card p-3">
+            <label class="form-label mb-0 fw-bold" for="roomName">Please enter a room name.</label>
+            <input class="form-control text-center" type="text" name="roomName" id="roomName" placeholder="部屋の名前">
+        </div>
+        <div class="alert alert-danger text-center mb-0 error-lbl">{{errorTxt}}</div>
+        <input class="btn btn-bkr-confirm mx-auto mt-4" type="submit" id="submitRoom" value="OK">
+    </div>
+
 	<script>
 		require(['app/view_roomname', 'app/player'], function (view_roomname, Player) {
 			Player.initializePlayer({{isTeacher}});
 			view_roomname.start();
 		});
 	</script>
-</div>
-
-<div id="header-text">
-	<h1>母音聞く練習 - Room Name</h1>
 </div>

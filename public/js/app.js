@@ -33,7 +33,7 @@ requirejs.config({
       "app": "../app",
       "jquery": "./jquery-2.2.4.min",
       "handlebars": "//cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.11/handlebars.amd.min",
-      "bootstrap": "./bootstrap.bundle.min"
+      "bootstrap": "//cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min"
     }
 });
 
