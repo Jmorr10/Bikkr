@@ -46,7 +46,6 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 	let roomID;
 	let currentQuestion = "";
 	let playing = false;
-	let modalBlack;
 	let playerCount;
 	let scoreboard;
 	let studentsPlaySound = false;
@@ -76,7 +75,6 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
         soundGridHolder = jQ('#T_soundGridHolder');
         errorLbl = jQ('.error-lbl');
         roomID = jQ('#roomIDVal').val();
-        modalBlack = jQ('.modal-black');
 
         startBtn.click(function () {
         	if (playerCount === 0) {
@@ -85,6 +83,10 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 			}
 
         	socket.emit(Events.UPDATE_LEADERBOARD, roomID);
+
+			if (scoreboard) {
+				scoreboard.resetScoreboard();
+			}
 
             soundGridHolder.removeClass('locked');
             playing = true;
@@ -120,25 +122,6 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 			}
 		});
 
-        jQ('button[data-open]').click(function () {
-			let target = jQ(this).attr('data-open');
-			jQ(target).addClass('open');
-		});
-
-        jQ('.modal-close-btn').click(function () {
-        	jQ(this).parents('.modal-popup').removeClass('open');
-		});
-
-        modalBlack.click(function () {
-            jQ(this).parent().removeClass('open');
-        });
-
-        jQ('body').keypress(function (e) {
-            if (e.keyCode === 27) {
-                modalBlack.parent().removeClass('open');
-            }
-        });
-
 		socket.on(Events.QUESTION_FINISHED, updateState);
 		socket.on(Events.QUESTION_FAILED, questionFailed);
 		//	socket.on(Events.QUESTION_READY, () => { jQ('#answerCounter').show(); });
@@ -158,6 +141,11 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 
 
 	function setQuestion (questionSound) {
+
+		if (soundGridHolder.hasClass('locked')) {
+			return;
+		}
+
 		soundGridHolder.addClass('locked');
 		currentQuestion = questionSound;
 		let vowelLabels = getVowelLabels();
@@ -231,10 +219,6 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 		disableMainSound = val;
 	}
 
-	function openVowelLabelsSelector() {
-        jQ('#vowelSelector').addClass('open');
-	}
-
 	function toggleVowelLabel(listID, itemID, enabled) {
 		let vowelList = enabledVowelLabels[listID];
 		if (vowelList) {
@@ -259,17 +243,9 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 		randomizeVowelPositions = val;
 	}
 
-	function openWordListEditor() {
-		jQ('#wordListEditor').addClass('open');
-	}
-
 	function toggleWordSearchMode(enabled) {
 		wordSearchModeEnabled = enabled;
 		socket.emit(Events.TOGGLE_WORD_SEARCH_MODE, roomID, enabled);
-	}
-
-	function isWordSearchModeEnabled() {
-		return wordSearchModeEnabled;
 	}
 
 	function changeGameMode(gameMode) {
@@ -405,24 +381,27 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 		}
 	}
 
+	window.getParentConnection = function () {
+		return {
+			socket: socket,
+			VOWEL_LABELS: vowelLabels
+		};
+	}
 
 	return {
 		start: start,
 		kickPlayer: kickPlayer,
 		setStudentsPlaySound: setStudentsPlaySound,
 		setDisableMainSound: setDisableMainSound,
-		openVowelLabelsSelector: openVowelLabelsSelector,
 		toggleVowelLabel: toggleVowelLabel,
         setRandomizeVowelLabels: setRandomizeVowelLabels,
 		setRandomizeVowelPositions: setRandomizeVowelPositions,
 		updatePlayerCount: updatePlayerCount,
 		setScoreboard: setScoreboard,
 		toggleWordSearchMode: toggleWordSearchMode,
-		isWordSearchModeEnabled: isWordSearchModeEnabled,
 		changeGameMode: changeGameMode,
 		addWordListItem: addWordListItem,
 		deleteWordListItem: deleteWordListItem,
-		openWordListEditor: openWordListEditor,
 		saveWordLists: saveWordLists,
 		loadWordLists: loadWordLists,
 		VOWEL_LABELS: vowelLabels

@@ -1,116 +1,122 @@
-<div id="settings" class="modal-popup">
-	<div class="modal-black"></div>
-	<div id="settingsContent" class="modal-popup-content">
-		<h1>Settings</h1>
-		<div class="options-holder">
-			<div>
-				<label>Show Popup Scoreboard</label>
-				<button id="showScoreboardBtn" class="btn btn-primary icon-award"></button>
-			</div>
-			<div>
-				<label>Play sound on students' devices.</label>
-				<label class="switch">
-					<input id="studentsPlaySound" name="studentsPlaySound" type="checkbox">
-					<span class="slider round"></span>
-				</label>
-			</div>
-			<div>
-				<label>Disable sound on teacher's device.</label>
-				<label class="switch">
-					<input id="disableMainSound" name="disableMainSound" type="checkbox">
-					<span class="slider round"></span>
-				</label>
-			</div>
-            <hr>
-            <div>
-                <label>Enable Word Search Mode</label>
-                <label class="switch">
-                    <input id="enableWordSearchMode" name="enableWordSearchMode" type="checkbox">
-                    <span class="slider round"></span>
-                </label>
+<div id="settings" class="modal fade" data-target="body" data-add="self" data-mode="append" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header hstack gap-2">
+                <h1 class="modal-title fs-2 flex-1" id="settingsModalLabel">Settings</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div>
-                <label>Edit Word Lists</label>
-                <button id="showWordListsEditorBtn" class="btn btn-primary icon-cog" disabled=""></button>
+            <div class="modal-body vstack gap-4">
+                <div class="vstack gap-4 card p-2">
+                    <div class="d-flex align-items-center">
+                        <label class="flex-1">Show Popup Scoreboard</label>
+                        <button id="showScoreboardBtn" class="btn btn-bkr-primary icon-award"></button>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <label class="flex-1">Play sound on students' devices.</label>
+                        <label class="switch">
+                            <input id="studentsPlaySound" name="studentsPlaySound" type="checkbox">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <label class="flex-1">Disable sound on teacher's device.</label>
+                        <label class="switch">
+                            <input id="disableMainSound" name="disableMainSound" type="checkbox">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="vstack gap-4 card p-2">
+                    <div class="d-flex align-items-center">
+                        <label class="flex-1">Enable Word Search Mode</label>
+                        <label class="switch">
+                            <input id="enableWordSearchMode" name="enableWordSearchMode" type="checkbox">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <label class="flex-1">Edit Word Lists</label>
+                        <button id="showWordListsEditorBtn" class="btn btn-bkr-primary icon-cog" disabled="" data-bs-toggle="modal" data-bs-target="#wordListEditor"></button>
+                    </div>
+                </div>
+
+                <div class="vstack gap-4 card p-2">
+                    <div class="d-flex align-items-center">
+                        <label class="flex-1">Choose Vowel Labels</label>
+                        <button id="showVowelLabelsBtn" class="btn btn-bkr-primary icon-cog" data-bs-toggle="modal" data-bs-target="#vowelSelector"></button>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <label class="flex-1">Randomize Vowel Labels</label>
+                        <label class="switch">
+                            <input id="randomizeVowelLabels" name="randomizeVowelLabels" type="checkbox">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <label class="flex-1">Randomize Vowel Button Positions</label>
+                        <label class="switch">
+                            <input id="randomizeVowelPositions" name="randomizeVowelPositions" type="checkbox">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="gameModeOptions" class="d-flex flex-column align-items-center card p-2">
+                    <label class="flex-1 mb-3">Change Game Mode</label>
+                    <div class="d-flex align-items-center justify-content-center">
+                        {{#eq roomType "individual"}}
+                            <input type="radio" class="btn-check" name="gameMode" id="switchToIndividualSpeed"
+                                   {{#eq individualType "individualSpeedBased"}}checked{{/eq}} autocomplete="off" value="individualSpeedBased">
+                            <label class="btn btn-bkr-secondary icon-stopwatch d-flex flex-column justify-content-center align-items-center" for="switchToIndividualSpeed">Speed</label>
+
+                            <input type="radio" class="btn-check" name="gameMode" id="switchToIndividualScore"
+                                   {{#eq individualType "individualScoreBased"}}checked{{/eq}} autocomplete="off" value="individualScoreBased">
+                            <label class="btn btn-bkr-secondary icon-target d-flex flex-column justify-content-center align-items-center ms-3" for="switchToIndividualScore">Score</label>
+                        {{/eq}}
+
+                        {{#eq roomType "group"}}
+                            {{#eq groupType "oneForAll"}}
+                                <input type="radio" class="btn-check" name="gameMode" id="switchToOFASpeed"
+                                       {{#eq ofaType "OFASpeedBased"}}checked{{/eq}} autocomplete="off" value="OFASpeedBased">
+                                <label class="btn btn-bkr-secondary icon-stopwatch d-flex flex-column justify-content-center align-items-center" for="switchToOFASpeed">Speed</label>
+
+                                <input type="radio" class="btn-check" name="gameMode" id="switchToOFAScore"
+                                       {{#eq ofaType "OFAScoreBased"}}checked{{/eq}} autocomplete="off" value="OFAScoreBased">
+                                <label class="btn btn-bkr-secondary icon-target d-flex flex-column justify-content-center align-items-center ms-3" for="switchToOFAScore">Score</label>
+                            {{/eq}}
+                        {{/eq}}
+                    </div>
+                </div>
             </div>
-            <hr>
-			<div>
-				<label>Choose Vowel Labels</label>
-				<button id="showVowelLabelsBtn" class="btn btn-primary icon-cog"></button>
-			</div>
-			<div>
-				<label>Randomize Vowel Labels</label>
-				<label class="switch">
-					<input id="randomizeVowelLabels" name="randomizeVowelLabels" type="checkbox">
-					<span class="slider round"></span>
-				</label>
-			</div>
-            <div>
-                <label>Randomize Vowel Button Positions</label>
-                <label class="switch">
-                    <input id="randomizeVowelPositions" name="randomizeVowelPositions" type="checkbox">
-                    <span class="slider round"></span>
-                </label>
-            </div>
-            <hr>
-            <div id="gameModeOptions">
-                <label>Change Game Mode</label>
-                {{#eq roomType "individual"}}
-                    <input id="switchToIndividualSpeed" type="radio" class="radio round-radio"
-                           name="gameMode" value="individualSpeedBased"
-                           {{#eq individualType "individualSpeedBased"}}checked{{/eq}}>
-                    <label for="switchToIndividualSpeed" class="radio-label"></label>
-                    <input id="switchToIndividualScore" type="radio" class="radio round-radio"
-                           name="gameMode" value="individualScoreBased"
-                           {{#eq individualType "individualScoreBased"}}checked{{/eq}}>
-                    <label for="switchToIndividualScore" class="radio-label"></label>
-                {{/eq}}
+        </div>
+    </div>
+    <script>
+        require(['jquery', 'app/view_sound_grid'], function (jQ, soundGrid) {
 
-                {{#eq roomType "group"}}
-                    {{#eq groupType "oneForAll"}}
-                        <input id="switchToOFASpeed" type="radio" class="radio round-radio"
-                               name="gameMode" value="OFASpeedBased"
-                               {{#eq ofaType "OFASpeedBased"}}checked{{/eq}}>
-                        <label for="switchToOFASpeed" class="radio-label"></label>
-                        <input id="switchToOFAScore" type="radio" class="radio round-radio"
-                               name="gameMode" value="OFAScoreBased"
-                               {{#eq ofaType "OFAScoreBased"}}checked{{/eq}}>
-                        <label for="switchToOFAScore" class="radio-label"></label>
-                    {{/eq}}
-                {{/eq}}
-            </div>
-		</div>
-		<button id="closeSettingsBtn" class="modal-close-btn icon-cancel"></button>
-	</div>
+            let SERVER_PATH;
 
-	<script>
-		require(['jquery', 'app/view_sound_grid'], function (jQ, soundGrid) {
+            require(['app/game'], function (game) {
+                SERVER_PATH = game.SERVER_PATH;
+            });
 
-			let SERVER_PATH;
+            jQ('#showScoreboardBtn').click(function () {
+                let scoreboard = window.open('/scoreboard/', '_blank', 'Scoreboard');
+                scoreboard.opener = window;
+                soundGrid.setScoreboard(scoreboard);
+            });
 
-			require(['app/game'], function (game) {
-				SERVER_PATH = game.SERVER_PATH;
-			});
+            jQ('#studentsPlaySound').click(function () {
+                soundGrid.setStudentsPlaySound(jQ('#studentsPlaySound').prop('checked'));
+            });
 
-			jQ('#showScoreboardBtn').click(function () {
-			    soundGrid.setScoreboard(window.open('/scoreboard/', '_blank', 'Scoreboard'));
-			});
+            jQ('#disableMainSound').click(function () {
+                soundGrid.setDisableMainSound(jQ('#disableMainSound').prop('checked'));
+            });
 
-			jQ('#studentsPlaySound').click(function () {
-			    soundGrid.setStudentsPlaySound(jQ('#studentsPlaySound').prop('checked'));
-			});
-
-			jQ('#disableMainSound').click(function () {
-				soundGrid.setDisableMainSound(jQ('#disableMainSound').prop('checked'));
-			});
-
-			jQ('#showVowelLabelsBtn').click(function () {
-			    soundGrid.openVowelLabelsSelector();
-			});
-
-			jQ('#randomizeVowelLabels').click(function () {
-				soundGrid.setRandomizeVowelLabels(jQ('#randomizeVowelLabels').prop('checked'));
-			});
+            jQ('#randomizeVowelLabels').click(function () {
+                soundGrid.setRandomizeVowelLabels(jQ('#randomizeVowelLabels').prop('checked'));
+            });
 
             jQ('#randomizeVowelPositions').click(function () {
                 soundGrid.setRandomizeVowelPositions(jQ('#randomizeVowelPositions').prop('checked'));
@@ -127,11 +133,6 @@
                 soundGrid.changeGameMode(jQ('input[name="gameMode"]:checked').val());
             });
 
-            jQ('#showWordListsEditorBtn').click(function () {
-                soundGrid.openWordListEditor();
-            });
-
-		});
-	</script>
-
+        });
+    </script>
 </div>

@@ -1,14 +1,11 @@
-<div id="header">
-	<div id="header-text">
-		<h1>母音聞く練習</h1>
-	</div>
+<div id="contentHolder" class="m-auto p-3 d-flex flex-column flex-nowrap align-items-center justify-content-center bg-white">
+
+    <div id="content" class="d-flex flex-column flex-nowrap" style="width:25%;">
+        <img src="/static/img/logo.svg" class="mb-3"/>
+        <div class="lds-default"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+    </div>
 </div>
 
-<div class="login-holder">
-	<div id="content">
-		<div class="lds-default"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-	</div>
-</div>
 <script>
 	require(['/static/js/app.js'], function () {
 		requirejs(["app/game"], function (game) {

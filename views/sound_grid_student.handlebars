@@ -1,28 +1,37 @@
-<div id="sound-grid" class="student" data-target="body" data-add="self">
-	<input type="hidden" value="{{roomID}}" id="roomIDVal"/>
-	<div id="header">
-		<div id="header-text">
-			{{#if groupID}}<h2>{{groupID}}</h2>{{/if}}
-			<h1>母音聞く練習 - {{player.name}}</h1>
-		</div>
-		<button id="leaderboardBtn" class="icon-btn icon-award"></button>
-	</div>
-	{{> vowel_grid}}
+<div id="sound-grid-holder" data-target="body" data-add="self"
+     class="w-100 h-100 bg-white d-flex flex-column align-items-center justify-content-end">
 
-	{{> leaderboard}}
+    <div id="sound-grid" class="student mb-3" data-target="body" data-add="self">
+        <input type="hidden" value="{{roomID}}" id="roomIDVal"/>
 
-    {{> reconnecting}}
+        <div id="header">
+            <img src="/static/img/logo.svg" class="mh-100 w-25 me-3 flex-1"/>
+            <div class="d-flex flex-column m-0 p-0" style="flex: 2 1;">
+                <h6 class="m-0">{{player.name}}</h6>
+                {{#if groupID}}<h6 class="m-0">{{groupID}}</h6>{{/if}}
+            </div>
+            <button id="leaderboardBtn" class="icon-btn icon-award" data-bs-toggle="modal" data-bs-target="#leaderboard"></button>
+        </div>
 
-	<div id="popup">
-		<div id="popupContent"></div>
-	</div>
+        {{> vowel_grid}}
 
-	<script>
-		require(['app/view_sound_grid_student', 'app/player'], function (view_sound_grid_student, Player) {
-			let player = Player.getPlayer();
-			player.name = "{{player.name}}";
-            {{#if groupID}}player.group = "{{groupID}}";{{/if}}
-		    view_sound_grid_student.start();
-		});
-	</script>
+        {{> leaderboard}}
+
+        {{> reconnecting}}
+
+        <div id="popup">
+            <div id="popupContent"></div>
+        </div>
+
+        <script>
+            require(['app/view_sound_grid_student', 'app/player'], function (view_sound_grid_student, Player) {
+                let player = Player.getPlayer();
+                player.name = "{{player.name}}";
+                        {{#if groupID}}player.group = "{{groupID}}";{{/if}}
+                view_sound_grid_student.start();
+            });
+        </script>
+    </div>
+
 </div>
+

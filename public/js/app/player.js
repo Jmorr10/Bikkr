@@ -32,7 +32,7 @@
  * @version 1.0
  * @since 1.0
  */
-define(['event_types'], function (Events) {
+define(['event_types', 'app/messages'], function (Events, Messages) {
 	
 	let socket;
 	let selfPlayer;
@@ -108,14 +108,20 @@ define(['event_types'], function (Events) {
                 reconnection: true,
                 reconnectionDelay: 1000,
                 reconnectionDelayMax: 2000,
-                reconnectionAttempts: Infinity
+                reconnectionAttempts: Infinity,
+                closeOnBeforeunload: false,
+                transports: ["websocket"]
             }
         );
+
+        window.addEventListener('beforeunload',(event) =>{
+            socket.emit(Events.DISCONNECTING);
+        });
 
         socket.once(Events.SOCKET_CONNECTED, ping);
 
         socket.once("connect_error", (err) => {
-            alert("Could not connect to the server. Please reload the page. サーバーに接続できませんでした。ページを再読み込みしてください。");
+            alert(getPlayer()?.getErrorMessage(Messages.get(Messages.keys.ERR_CANT_CONNECT_TO_SERVER)));
         });
 
         socket.on('reconnect_attempt', function () {
@@ -137,10 +143,6 @@ define(['event_types'], function (Events) {
                 gameRef.toggleReconnectingMessage(false);
             }
         });
-
-        window.getSocket = function () {
-            return socket;
-        }
     }
 
     function ping() {

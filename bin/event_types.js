@@ -41,6 +41,8 @@ const DISCONNECT = 'disconnect';
 const LOGIN_SUCCESS = "login_success";
 
 const CLIENT_CONNECTED = 'client_connected';
+const DISCONNECTING = 'disconnecting';
+const CONNECTION_CLOSED = 'connection_closed';
 const HEARTBEAT = 'heartbeat';
 const NEW_ROOM = 'new_room';
 const JOIN_ROOM = 'join_room';
@@ -84,6 +86,8 @@ const DEBUG = "debug";
 
 module.exports = {
     CONNECTION: CONNECTION,
+    CONNECTION_CLOSED: CONNECTION_CLOSED,
+    DISCONNECTING: DISCONNECTING,
     SOCKET_CONNECTED: SOCKET_CONNECTED,
     DISCONNECT: DISCONNECT,
     LOGIN_SUCCESS: LOGIN_SUCCESS,

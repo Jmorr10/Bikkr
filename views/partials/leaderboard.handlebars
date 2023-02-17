@@ -1,7 +1,29 @@
-<div id="leaderboard" class="modal-popup">
-	<div class="modal-black"></div>
-	<div id="leaderboardContent" class="modal-popup-content">
-		{{> leaderboard_content}}
-		<button id="closeLeaderboardBtn" class="modal-close-btn icon-cancel"></button>
-	</div>
+<div id="leaderboard" class="modal fade" data-target="body" data-add="self" data-mode="append" tabindex="-1" aria-labelledby="leaderboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header hstack gap-2">
+                <h1 class="modal-title fs-2 flex-1" id="leaderboardModalLabel">Leaderboard</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="leaderboardContent">
+                    {{> leaderboard_content}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        require(['jquery', 'app/player', 'event_types'], function (jQ, Player, Events) {
+
+            let socket = Player.getConnection();
+            let modal = jQ('#leaderboard');
+
+            socket.on(Events.QUESTION_READY, function () {
+                modal.modal('hide');
+            });
+
+        });
+    </script>
+
 </div>

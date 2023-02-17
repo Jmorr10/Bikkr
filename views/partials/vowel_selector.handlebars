@@ -1,39 +1,39 @@
-<div id="vowelSelector" class="modal-popup">
-	<div class="modal-black"></div>
-	<div id="vowelSelectorContent" class="modal-popup-content">
-		<h1>Select Enabled Vowels</h1>
-		<div class="options-holder">
-			{{#each vowels}}
-                <ul data-key="{{@key}}">{{titleize (lowercase (replace @key "_" " "))}} - {{this.[0]}}
+<div id="vowelSelector" class="modal fade" data-target="body" data-add="self" data-mode="append" tabindex="-1" aria-labelledby="vowelSelectorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header hstack gap-2">
+                <h1 class="modal-title fs-2 flex-1" id="vowelSelectorModalLabel">Select Enabled Vowels</h1>
+                <button type="button" class="btn-close" data-bs-toggle="modal" data-bs-target="#settings" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {{#each vowels}}
+                    <div class="d-flex flex-column vowel-section card p-3 mb-4" data-key="{{@key}}">
+                        <h4 class="mb-0">{{titleize (lowercase (replace @key "_" " "))}} - {{this.[0]}}</h4>
+                        {{#each this}}
+                            <div class="d-flex align-items-center mt-3">
+                                <span class="flex-1">{{this}}</span>
+                                <label class="switch">
+                                    <input data-key="{{this}}" name="{{this}}" type="checkbox" checked="checked">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                        {{/each}}
 
-                    {{#each this}}
-                        <li>
-                            <label>{{this}}</label>
-                            <label class="switch">
-                                <input data-key="{{this}}" name="{{this}}" type="checkbox" checked="checked">
-                                <span class="slider round"></span>
-                            </label>
-                        </li>
-                    {{/each}}
+                    </div>
+                {{/each}}
+            </div>
+        </div>
+    </div>
+    <script>
+        require(['jquery', 'app/view_sound_grid'], function (jQ, soundGrid) {
 
-                </ul>
-			{{/each}}
+            jQ('#vowelSelector input').click(function (e) {
+                let el = jQ(this);
+                let ul = el.closest('.vowel-section');
+                if (!el || !ul) { return false; }
+                soundGrid.toggleVowelLabel(ul.attr('data-key'), el.attr('data-key'), el.is(':checked'));
+            });
 
-		</div>
-		<button id="closeVowelSelectorBtn" class="modal-close-btn icon-cancel"></button>
-	</div>
-
-	<script>
-		require(['jquery', 'app/view_sound_grid'], function (jQ, soundGrid) {
-
-			jQ('#vowelSelector input').click(function (e) {
-			    let el = jQ(this);
-			    let ul = el.closest('ul');
-			    if (!el || !ul) { return false; }
-			    soundGrid.toggleVowelLabel(ul.attr('data-key'), el.attr('data-key'), el.is(':checked'));
-			});
-
-		});
-	</script>
-
+        });
+    </script>
 </div>

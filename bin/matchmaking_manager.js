@@ -59,27 +59,27 @@ const RoomTypes = {
 };
 
 const GroupModule = require('./group');
+const Messages = require("./messages");
+const Errors = require("./error_types");
+const {ERR_INCORRECT_ROOM_NAME, ERR_ROOM_NOT_SET_UP} = require("./error_types");
 const Group = GroupModule.Group;
 const GroupTypes = {
     TYPE_ONE_FOR_ALL: GroupModule.TYPE_ONE_FOR_ALL,
     TYPE_FREE_FOR_ALL: GroupModule.TYPE_FREE_FOR_ALL
 };
 
-const ERR_ROOM_NAME_REQUIRED = 'You must enter a room name to begin!';
-const ERR_ROOM_NAME_TOO_SHORT = 'Room name must be at least 4 characters long.';
-const ERR_MUST_BE_TEACHER = 'Students cannot create rooms!';
-const ERR_INVALID_ROOM_OPTIONS = 'Invalid room options!';
+
 
 /**
  * Creates a player instance for the newly connected client and add it to the player list
  *
  * @param socket The socket of the connecting client
  */
-function clientConnected(socket, isTeacher) {
+function clientConnected(socket, isTeacher, japaneseLang) {
 
     isTeacher = (isTeacher === true);
 
-    let new_player = new Player(socket.id, isTeacher);
+    let new_player = new Player(socket.id, isTeacher, japaneseLang);
     new_player.socket = socket;
     PlayerList.addPlayer(new_player);
 
@@ -88,6 +88,10 @@ function clientConnected(socket, isTeacher) {
     debug(`Client ${socket.id} has connected!`);
     debug(`Players connected: ${PlayerList.getLength()}`);
 
+}
+
+function clientDisconnecting(socket) {
+    clientDisconnected(socket);
 }
 
 /**
@@ -134,8 +138,7 @@ function kickPlayer(socket, playerID) {
     if (playerID) {
         let player = PlayerList.getPlayerBySocketID(playerID);
         if (player) {
-            TemplateManager.sendPrecompiledTemplate(playerID, 'kicked', {});
-            player.socket.emit(Events.DISCONNECT);
+            TemplateManager.emitWithTemplate(playerID, 'kicked', {Messages: ((player.japaneseLang) ? Messages.jpn : Messages.default)}, Events.CONNECTION_CLOSED);
         }
     }
 }
@@ -153,7 +156,7 @@ function createRoom(socket, roomName) {
     let player = PlayerList.getPlayerBySocketID(socket.id);
 
     if (!player.isTeacher) {
-        TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: ERR_MUST_BE_TEACHER});
+        TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: player.getErrorMessage(Errors.ERR_MUST_BE_TEACHER)});
         return;
     }
 
@@ -171,9 +174,9 @@ function createRoom(socket, roomName) {
         roomName += "123456789".charAt(Math.floor(Math.random() * 10));
         createRoom(socket, roomName);
     } else if (roomName && roomName.length < 4) {
-        TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: ERR_ROOM_NAME_TOO_SHORT});
+        TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: player.getErrorMessage(Errors.ERR_ROOM_NAME_TOO_SHORT)});
     } else {
-        TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: ERR_ROOM_NAME_REQUIRED});
+        TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: player.getErrorMessage(Errors.ERR_ROOM_NAME_REQUIRED)});
     }
 
 }
@@ -203,7 +206,7 @@ function setupRoom(socket, roomID, roomType, options) {
                         options[GroupModule.KEY_OFA_TYPE] : GroupModule.OFA_TYPE_SPEED;
                 }
             } else {
-                TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: ERR_INVALID_ROOM_OPTIONS});
+                TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: Messages.default.ERR_INVALID_ROOM_OPTIONS});
                 return;
             }
 
@@ -232,7 +235,7 @@ function createGroups(socket, room, options) {
         numPerGroup = (numStudents < 25) ? (numStudents < 10) ? 2 : 4 : GroupModule.BASE_STUDENTS_PER_GROUP;
         numGroups = Math.floor(numStudents / numPerGroup);
     } else if (!numGroups || !numPerGroup) {
-        TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: ERR_INVALID_ROOM_OPTIONS});
+        TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: Messages.default.ERR_INVALID_ROOM_OPTIONS});
     }
 
     for (let i = 1; i <= numGroups; i++) {
@@ -246,7 +249,7 @@ function joinRoom(socket, roomID) {
     if (player && !player.isTeacher) {
         let room = RoomList.getRoomByID(roomID);
         if (room && !room.setUp) {
-            TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: 'The teacher has not finished setting up the room!'});
+            TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: player.getErrorMessage(ERR_ROOM_NOT_SET_UP)});
         } else if (room) {
             room.addPlayer(player);
             if (room.usernamesAssigned) {
@@ -256,7 +259,7 @@ function joinRoom(socket, roomID) {
                 TemplateManager.emitWithTemplate(socket.id, 'username', {roomID: room.id}, Events.ROOM_JOINED, room.id);
             }
         } else {
-            TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: 'Incorrect room name!'});
+            TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: player.getErrorMessage(ERR_INCORRECT_ROOM_NAME)});
         }
     }
 }
@@ -276,7 +279,7 @@ function joinGroup(socket, roomID, groupID) {
                 group = room.getGroupByID(groupID);
                 group.addPlayer(room, player);
             } else {
-                TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: 'Error joining group!'});
+                TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: player.getErrorMessage(Errors.ERR_UNKNOWN)});
             }
 
             debug(`${player.name} joined ${group.id}`);
@@ -306,7 +309,7 @@ function joinGroup(socket, roomID, groupID) {
             socket.emit(Events.GROUP_JOINED);
 
         } else {
-            TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: 'Incorrect room name!'});
+            TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: player.getErrorMessage(ERR_INCORRECT_ROOM_NAME)});
         }
 
     }
@@ -364,9 +367,9 @@ function getRandomUsername() {
  * @param username The player's desired username
  */
 function setUsername(socket, roomID, username) {
-
+    let player = PlayerList.getPlayerBySocketID(socket.id);
     if (isUserNameValid(username)) {
-        let player = PlayerList.getPlayerBySocketID(socket.id);
+
         if (player) {
             let room = RoomList.getRoomByID(roomID);
             if (room) {
@@ -404,17 +407,17 @@ function setUsername(socket, roomID, username) {
                 socket.emit(Events.USERNAME_OK, roomID);
             }
         } else {
-            TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: 'No matching user'});
+            TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: player.getErrorMessage(Errors.ERR_UNKNOWN)});
         }
 
     } else {
         if (username && username.length < 4) {
-            TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: 'Your username must be at least 4 characters in length.'});
+            TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: player.getErrorMessage(Errors.ERR_USERNAME_TOO_SHORT)});
         } else if (PlayerList.getPlayerByName(username)) {
-            TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: 'Username already in use.'});
+            TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: player.getErrorMessage(Errors.ERR_USERNAME_IN_USE)});
         }
         else {
-            TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: 'You must enter a username to begin!'});
+            TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/error', {errorTxt: player.getErrorMessage(Errors.ERR_USERNAME_REQUIRED)});
         }
     }
 
@@ -535,6 +538,7 @@ function _destroyPlayer(player) {
 
 module.exports = {
     clientConnected: clientConnected,
+    clientDisconnecting: clientDisconnecting,
     clientDisconnected: clientDisconnected,
     kickPlayer: kickPlayer,
     setUsername: setUsername,

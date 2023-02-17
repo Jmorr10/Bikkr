@@ -1,27 +1,51 @@
-<div id="gameover" class="modal-popup open" data-target="body" data-add="self" data-mode="append-update">
-    <div class="modal-black"></div>
-    <div id="gameoverContent" class="modal-popup-content" style="justify-content: center">
-        <h1>Game Over!</h1>
-        {{#if ranking}}
-            <div id="student-podium" class="p{{ranking}}">
-                <div class="place-img{{#gt ranking 3}} good-try{{/gt}}"></div>
-                <span class="ranking">{{ordinalize ranking}} place</span>
+<div id="gameover" class="modal fade" data-target="body" data-add="self" data-mode="append-update" tabindex="-1" aria-labelledby="gameoverModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header hstack gap-2">
+                <h1 class="modal-title fs-2 flex-1" id="gameoverModalLabel">Game Over!</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-        {{else}}
-            <div id="student-podium">
-                <div class="place-img good-try"></div>
-                <span class="ranking">No score</span>
+            <div class="modal-body">
+                <div id="gameoverContent">
+                    {{#if ranking}}
+                        <div id="student-podium" class="p{{ranking}}">
+                            <div class="place-img{{#gt ranking 3}} good-try{{/gt}}"></div>
+                            <span class="ranking">{{ordinalize ranking}} place</span>
+                        </div>
+                    {{else}}
+                        <div id="student-podium">
+                            <div class="place-img good-try"></div>
+                            <span class="ranking">No score</span>
+                        </div>
+                    {{/if}}
+                </div>
             </div>
-        {{/if}}
-
-        <button id="closeGameOverBtn" class="modal-close-btn icon-cancel"></button>
+        </div>
     </div>
 
     <script>
-        require(['jquery'], function (jQ) {
-            jQ('#closeGameOverBtn').click(function () {
-                jQ(this).parents('.modal-popup').removeClass('open');
+        require(['jquery', 'app/player', 'event_types'], function (jQ, Player, Events) {
+
+            let socket = Player.getConnection();
+            let goModal = jQ('#gameover');
+            let leaderboard = jQ('#leaderboard');
+
+            socket.once(Events.QUESTION_READY, function () {
+                goModal.modal('hide');
             });
+
+            goModal.one('hidden.bs.modal', event => {
+                goModal.remove();
+            });
+
+            if (leaderboard.hasClass('show')) {
+                leaderboard.one('hidden.bs.modal', event => {
+                    goModal.modal('show');
+                }).modal('hide');
+            } else {
+                goModal.modal('show');
+            }
+
         });
     </script>
 

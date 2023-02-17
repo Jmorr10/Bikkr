@@ -31,6 +31,7 @@ const Util = require('./util');
 const TemplateManager = require('./template_manager');
 const Events = require('./event_types');
 const Group = require('./group');
+const Messages = require("./messages");
 const TYPE_GROUP = "group";
 const TYPE_INDIVIDUAL = "individual";
 const KEY_ASSIGN_USERNAMES = "assignUsernames";
@@ -113,6 +114,8 @@ class Room {
 
     get lastLeaderboard() {
         this._lastLeaderboard['playerCount'] = this.playerCount;
+        this._lastLeaderboard.roomType = this.type;
+        this._lastLeaderboard.groupType = this.groupType;
         return this._lastLeaderboard;
     }
 
@@ -216,9 +219,8 @@ class Room {
     }
 
     destroy() {
-        TemplateManager.sendPrecompiledTemplate(this.id, 'disconnected', {});
         this.players.forEach((player) => {
-            player.socket.emit(Events.DISCONNECT);
+            TemplateManager.emitWithTemplate(player.socket.id, 'disconnected', {Messages: ((player.japaneseLang) ? Messages.jpn : Messages.default)}, Events.CONNECTION_CLOSED);
         });
     }
 
@@ -350,7 +352,18 @@ class Room {
         });
         this.groups.forEach(function (v) {
             v.resetPoints();
-        })
+        });
+
+        this.resetTrackingVariables();
+
+        this._lastLeaderboard = {
+            players: this.players,
+            roomType: this.type,
+            groupType: this.groupType,
+            groups: this.groups,
+            playerCount: this.playerCount
+        };
+
     }
 
 }

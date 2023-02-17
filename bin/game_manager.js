@@ -491,8 +491,8 @@ function changeGameMode(socket, roomID, gameMode) {
         if (resetNeeded) {
             room.resetScores();
             room.lastModeChangeDatetime = performance.now();
-            socket.emit(Events.GAME_MODE_CHANGED);
             sendLeaderboard(socket, roomID);
+            socket.emit(Events.GAME_MODE_CHANGED);
         }
     }
 }

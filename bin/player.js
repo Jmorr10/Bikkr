@@ -29,6 +29,7 @@
 const debug = require('debug')('BoinKikuRenshuu:player');
 const PlayerList = require('./player_list');
 const RoomList = require('./room_list');
+const Messages = require("./messages");
 const BASE_SCORE = 3000;
 
 /**
@@ -47,12 +48,13 @@ class Player {
      * @param socketID The socket which the player instance will represent
      * @param isTeacher Whether or not this player is the teacher
      */
-    constructor(socketID, isTeacher) {
+    constructor(socketID, isTeacher, japaneseLang) {
         this.id = socketID;
         this.isTeacher = (isTeacher === true);
         this.name = this.isTeacher ? "Teacher" : "";
         this._points = 0;
         this.disconnectTime = null;
+        this.japaneseLang = (isTeacher) ? false: japaneseLang;
     }
 
     set name(name) {
@@ -149,6 +151,20 @@ class Player {
         }
 
         return playerGroups;
+    }
+
+    getErrorMessage(type, ...extras) {
+        if (extras.length > 0) {
+            let func = (this.japaneseLang) ? Messages.jpn[type] : Messages.default[type];
+            if (typeof func === 'function') {
+                return func(...extras);
+            } else {
+                return type;
+            }
+        } else {
+            return (this.japaneseLang) ? Messages.jpn[type] : Messages.default[type];
+        }
+
     }
 
 }

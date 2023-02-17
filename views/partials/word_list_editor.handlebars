@@ -1,31 +1,30 @@
-<div id="wordListEditor" class="modal-popup">
-	<div class="modal-black"></div>
-	<div id="wordListEditorContent" class="modal-popup-content">
-		<h1>Word Lists</h1>
-        <div class="word-list-toolbar">
-            <button id="saveWordListsBtn" style="margin-right: 2rem;">Save</button>
-            <label class="custom-file-upload">
-                <input id="loadWordListsBtn" type="file" accept="text/text" name="files[]" style="display: none;">
-                Load
-            </label>
+<div id="wordListEditor" class="modal fade" data-target="body" data-add="self" data-mode="append" tabindex="-1" aria-labelledby="wordListEditorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header hstack gap-2">
+                <h1 class="modal-title fs-2 flex-1" id="wordListEditorModalLabel">Word Lists</h1>
+                <button id="saveWordListsBtn" style="margin-right: 2rem;">Save</button>
+                <label class="custom-file-upload">
+                    <input id="loadWordListsBtn" type="file" accept="text/text" name="files[]" style="display: none;">
+                    Load
+                </label>
+                <button type="button" class="btn-close" data-bs-toggle="modal" data-bs-target="#settings" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {{#each wordLists}}
+                    <h3 {{#not @first}}style="margin-top:2rem;"{{/not}}>{{titleize (lowercase (replace @key "_" " "))}}</h3>
+                    <input type="text" id="{{@key}}" data-wl-key="{{@key}}" value="{{this}}" data-role="tagsinput" placeholder="Add new..."/>
+                {{/each}}
+            </div>
         </div>
-		<div class="modal-scroll-container">
-			{{#each wordLists}}
-                <h3 {{#not @first}}style="margin-top:2rem;"{{/not}}>{{titleize (lowercase (replace @key "_" " "))}}</h3>
-                <input type="text" id="{{@key}}" data-wl-key="{{@key}}" value="{{this}}" data-role="tagsinput" placeholder="Add new..."/>
-			{{/each}}
+    </div>
+    <script>
+        require(['jquery', 'app/view_sound_grid'], function (jQ, soundGrid) {
 
-		</div>
-		<button id="closeWordListEditorBtn" class="modal-close-btn icon-cancel"></button>
-	</div>
-
-	<script>
-		require(['jquery', 'app/view_sound_grid'], function (jQ, soundGrid) {
-
-			jQ('#wordListEditor input').on('itemAdded', function (e) {
-			    let el = jQ(this);
-			    soundGrid.addWordListItem(el.attr('data-wl-key'), e.item);
-			});
+            jQ('#wordListEditor input').on('itemAdded', function (e) {
+                let el = jQ(this);
+                soundGrid.addWordListItem(el.attr('data-wl-key'), e.item);
+            });
 
             jQ('#wordListEditor input').on('itemRemoved', function (e) {
                 let el = jQ(this);
@@ -37,7 +36,6 @@
 
             jQ('#loadWordListsBtn').change(soundGrid.loadWordLists);
 
-		});
-	</script>
-
+        });
+    </script>
 </div>

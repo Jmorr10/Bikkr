@@ -33,8 +33,8 @@
  * @version 1.0
  * @since 1.0
  */
-define(['jquery', 'app/player', 'app/view_room_options', 'app/view_username', 'app/render_manager', 'event_types'],
-	function (jQ, Player, roomOptions, username, render_manager, Events) {
+define(['jquery', 'app/player', 'app/view_room_options', 'app/view_username', 'app/render_manager', 'event_types', 'app/messages'],
+	function (jQ, Player, roomOptions, username, render_manager, Events, Messages) {
 
 	const socket = Player.getConnection();
 	let player;
@@ -46,8 +46,6 @@ define(['jquery', 'app/player', 'app/view_room_options', 'app/view_username', 'a
 	const soundContainer = new Audio();
 	soundContainer.autoplay = true;
 
-	const ERR_NO_ROOMNAME = 'Please enter a room name to begin!';
-	
 	function start() {
 
         submitBtn = jQ('#submitRoom');
@@ -82,7 +80,7 @@ define(['jquery', 'app/player', 'app/view_room_options', 'app/view_username', 'a
 			let event = (player.isTeacher) ? Events.NEW_ROOM : Events.JOIN_ROOM;
 			socket.emit(event, roomname);
 		} else {
-			setError(ERR_NO_ROOMNAME);
+			setError(Messages.ERR_NO_ROOMNAME);
 		}
 	}
 

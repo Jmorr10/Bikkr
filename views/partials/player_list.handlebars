@@ -1,10 +1,13 @@
-<div id="playerList" class="modal-popup">
-	<div class="modal-black"></div>
-	<div id="playerListContentHolder" class="modal-popup-content">
-		<h1>Current Players</h1>
-        <div class="modal-scroll-container">
-            {{> player_list_content}}
+<div id="playerList" class="modal fade" data-target="body" data-add="self" data-mode="append" tabindex="-1" aria-labelledby="playerListModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header hstack gap-2">
+                <h1 class="modal-title fs-2 flex-1" id="playerListModalLabel">Player List</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {{> player_list_content}}
+            </div>
         </div>
-		<button id="closePlayerListBtn" class="modal-close-btn icon-cancel"></button>
-	</div>
+    </div>
 </div>

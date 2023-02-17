@@ -4,7 +4,7 @@ const Events = require('../bin/event_types');
 
 /* GET users listing. */
 router.get('/', function(req, res) {
-    res.render('scoreboard', { title: 'Scoreboard', constants: JSON.stringify(Events) });
+    res.render('scoreboard', { title: 'Scoreboard', constants: JSON.stringify(Events), layout: false });
 });
 
 module.exports = router;

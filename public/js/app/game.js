@@ -56,7 +56,7 @@ define(['jquery', 'app/render_manager', 'app/player', 'event_types'],
 
 		preload([
 			'logo.svg',
-			'group_selection.jpg',
+			'group_selection.svg',
 			'room.svg',
 			'room_settings.svg',
 			'username.svg'
@@ -65,8 +65,14 @@ define(['jquery', 'app/render_manager', 'app/player', 'event_types'],
             // Set up our template rendering system to receive templates from the server.
             socket.on(Events.RENDER_TEMPLATE, render_manager.renderResponse);
 
+			socket.on(Events.CONNECTION_CLOSED, function (template) {
+				render_manager.renderResponse(template, function () {
+					socket.disconnect();
+				});
+			});
+
             // Let the server know we are connecting as a new player. This will kick off the application.
-            socket.emit(Events.CLIENT_CONNECTED, isTeacher);
+			socket.emit(Events.CLIENT_CONNECTED, isTeacher, /^ja\b/.test(navigator.language));
 
 		});
 	}

@@ -47,6 +47,7 @@ function addSocketListeners (socket) {
 
     socket.on(Events.CLIENT_CONNECTED, MatchmakingManager.clientConnected.bind(null, socket));
     socket.on(Events.DISCONNECT, MatchmakingManager.clientDisconnected.bind(null, socket));
+    socket.on(Events.DISCONNECTING, MatchmakingManager.clientDisconnecting.bind(null, socket));
     socket.on(Events.SET_USERNAME, MatchmakingManager.setUsername.bind(null, socket));
     socket.on(Events.NEW_ROOM, MatchmakingManager.createRoom.bind(null, socket));
     socket.on(Events.JOIN_ROOM, MatchmakingManager.joinRoom.bind(null, socket));

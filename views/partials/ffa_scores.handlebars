@@ -1,33 +1,30 @@
-<div id="freeForAllScores" class="modal-inner-content">
-	<h1>Player Scores</h1>
-    <div class="modal-scroll-container">
-        <div class="score-holder">
-            {{#each groups}}
-                <div class="group-score-row">
-                    <h4 class="group-score-name">{{id}}</h4>
-                    {{#each playerScores}}
-                        <div class="score-row" {{#if ../../winners}}
+<div id="freeForAllScores">
+    <div class="vstack gap-3">
+        {{#each groups}}
+            <div class="group-score-row">
+                <h4 class="group-score-name">{{id}}</h4>
+                {{#each playerScores}}
+                    <div class="score-row d-flex px-3 py-2" {{#if ../../winners}}
+                        {{#if (hasOwn ../../winners ../id)}}
+                            {{#eq (get "name" (get ../id ../../winners)) name}}
+                         style="order:-1!important;"
+                            {{/eq}}
+                        {{/if}}
+                    {{/if}}>
+                        <div class="score-name flex-1" data-name="{{name}}">{{name}}</div>
+                        {{#if ../../winners}}
                             {{#if (hasOwn ../../winners ../id)}}
                                 {{#eq (get "name" (get ../id ../../winners)) name}}
-                             style="order:-1!important;"
+                                    <i class="icon-crown round-winner"></i>
                                 {{/eq}}
                             {{/if}}
-                        {{/if}}>
-                            <div class="score-name" data-name="{{name}}">{{name}}</div>
-                            {{#if ../../winners}}
-                                {{#if (hasOwn ../../winners ../id)}}
-                                    {{#eq (get "name" (get ../id ../../winners)) name}}
-                                        <i class="icon-crown round-winner"></i>
-                                    {{/eq}}
-                                {{/if}}
-                            {{/if}}
-                            <div class="score-value">{{points}}</div>
+                        {{/if}}
+                        <div class="score-value">{{points}}</div>
 
-                        </div>
-                    {{/each}}
-                </div>
-            {{/each}}
-        </div>
+                    </div>
+                {{/each}}
+            </div>
+        {{/each}}
     </div>
     <script>
         require(['jquery', 'app/player'], function (jQ, Player) {

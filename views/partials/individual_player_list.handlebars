@@ -1,14 +1,14 @@
 {{#if players}}
     {{#each players}}
-        <div class="player-row">
-            <div class="player-name">{{name}}</div>
+        <div class="player-row d-flex">
+            <div class="player-name flex-1">{{name}}</div>
             <button class="player-value icon-cancel kick-btn" data-user="{{id}}"></button>
         </div>
     {{/each}}
 {{else}}
     <div class="no-data-container">
+        <img src="/static/img/no_data.svg" class="mh-100 mb-3 w-25"/>
         <span class="no-data-title">No players!</span>
-        <div class="place-img no-data"></div>
     </div>
 {{/if}}
 

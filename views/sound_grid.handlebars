@@ -1,40 +1,44 @@
-<div id="sound-grid" data-target="body" data-add="self">
-	<input type="hidden" value="{{roomID}}" id="roomIDVal"/>
-	<div id="header">
-		<div id="header-text">
-			<div id="answerCounter">Still need <span id="answersNeeded"></span> answer(s).</div>
-		</div>
-        <button id="helpBtn" class="icon-btn icon-help-circled" data-open="#helpScreen"></button>
-		<button id="settingsBtn" class="icon-btn icon-cog" data-open="#settings"></button>
-	</div>
+<div id="sound-grid-holder" data-target="body" data-add="self"
+     class="w-100 h-100 bg-white d-flex flex-column align-items-center justify-content-center">
+    <div id="sound-grid">
+        <input type="hidden" value="{{roomID}}" id="roomIDVal"/>
+        <div id="header">
+            <img src="/static/img/logo.svg" class="mh-100 w-25 me-3"/>
+            <h5 class="mb-0 flex-1 me-3">Room: {{roomID}}</h5>
+            <div id="answerCounter">Still need <span id="answersNeeded"></span> answer(s).</div>
+            <button id="helpBtn" class="icon-btn icon-help-circled" data-bs-toggle="modal" data-bs-target="#helpScreen"></button>
+            <button id="settingsBtn" class="icon-btn icon-cog ms-3" data-bs-toggle="modal" data-bs-target="#settings"></button>
+        </div>
 
-	<div id="teacherBar">
-		<button id="startBtn" class="icon-play"></button>
-        <button id="endBtn" class="icon-stop" disabled="true"></button>
-		<button id="playerListBtn" class="icon-users" data-open="#playerList" data-player-count="0"></button>
-		<button id="leaderboardBtn" class="icon-award" data-open="#leaderboard"></button>
-		<button id="replayBtn" class="icon-volume-up"></button>
-		<button id="skipBtn" class="icon-forward"></button>
-	</div>
+        <div id="teacherBar">
+            <button id="startBtn" class="icon-play"></button>
+            <button id="endBtn" class="icon-stop" disabled="true"></button>
+            <button id="playerListBtn" class="icon-users" data-bs-toggle="modal" data-bs-target="#playerList" data-player-count="0"></button>
+            <button id="leaderboardBtn" class="icon-award" data-bs-toggle="modal" data-bs-target="#leaderboard"></button>
+            <button id="replayBtn" class="icon-volume-up"></button>
+            <button id="skipBtn" class="icon-forward"></button>
+        </div>
 
-	{{> teacher_vowel_grid}}
+        {{> teacher_vowel_grid}}
 
-	{{> leaderboard}}
+        {{> leaderboard}}
 
-	{{> player_list}}
+        {{> player_list}}
 
-	{{> settings}}
+        {{> settings}}
 
-	{{> vowel_selector}}
+        {{> vowel_selector}}
 
-    {{> word_list_editor}}
+        {{> word_list_editor}}
 
-    {{> help_information}}
+        {{> help_information}}
 
 
-	<div id="popup">
-		<div id="popupContent"></div>
-	</div>
+        <div id="popup">
+            <div id="popupContent"></div>
+        </div>
+    </div>
+
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.min.js"
             integrity="sha512-9UR1ynHntZdqHnwXKTaOm1s6V9fExqejKvg5XMawEMToW4sSw+3jtLrYfZPijvnwnnE8Uol1O9BcAskoxgec+g=="

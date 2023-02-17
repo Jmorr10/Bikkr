@@ -4,8 +4,8 @@
             <div class="group-row" {{#not @last}}style="margin-bottom: 2rem;"{{/not}}  >
                 <h4 class="group-name">{{id}}</h4>
                 {{#each playerScores}}
-                    <div class="player-row">
-                        <div class="player-name" style="padding-left:1rem;">{{name}}</div>
+                    <div class="player-row d-flex{{#not @last}} mb-2{{/not}}">
+                        <div class="player-name flex-1 ps-3">{{name}}</div>
                         <button class="player-value icon-cancel kick-btn" data-user="{{id}}"></button>
                     </div>
                 {{/each}}
@@ -13,8 +13,8 @@
         {{/each}}
     {{else}}
         <div class="no-data-container">
+            <img src="/static/img/no_data.svg" class="mh-100 mb-3 w-25"/>
             <span class="no-data-title">No players!</span>
-            <div class="place-img no-data"></div>
         </div>
     {{/if}}
 

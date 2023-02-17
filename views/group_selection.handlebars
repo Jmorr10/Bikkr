@@ -1,23 +1,20 @@
-<div id="groupSelectionForm" data-target="#content" data-add="self" class="setup-form">
-	<input type="hidden" value="{{roomID}}" id="roomIDVal"/>
-	<div class="form-content">
-		<div class="login-img"></div>
-		<div style="flex:1;">
-			<h2 style="margin-bottom: 8px;">Choose a group</h2>
-			<div class="group-btn-holder">
-				{{#each groups}}
-					<button data-group="{{id}}">{{add @index 1}}</button>
-				{{/each}}
-			</div>
-		</div>
-	</div>
+<div id="content" data-mode="update" data-add="self" class="w-100 h-100 d-flex flex-column">
+    <input type="hidden" value="{{roomID}}" id="roomIDVal"/>
+    <div class="section-header d-flex flex-nowrap align-items-center mb-4">
+        <img src="/static/img/logo.svg" class="mh-100 me-3"/>
+        <h1 class="mb-0 fs-2 flex-1">Join Group</h1>
+    </div>
+    <div class="section-img text-center"><img src="/static/img/room_settings.svg" alt="Room settings page" class="mh-100"/></div>
+    <label class="form-label mt-4 fw-bold text-center">Choose a group to join</label>
+    <div class="d-flex flex-row flex-wrap justify-content-around card p-3 my-4" id="groupSelectionForm">
+        {{#each groups}}
+            <button class="icon-btn" data-group="{{id}}">{{add @index 1}}</button>
+        {{/each}}
+    </div>
+    <div class="alert alert-danger text-center mb-0 error-lbl">{{errorTxt}}</div>
 	<script>
 		require(['app/view_group_selection'], function (view_group_selection) {
 			view_group_selection.start();
 		});
 	</script>
-</div>
-
-<div id="header-text">
-	<h1>母音聞く練習 - Group Selection</h1>
 </div>
