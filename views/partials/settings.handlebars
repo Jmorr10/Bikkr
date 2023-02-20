@@ -29,6 +29,22 @@
 
                 <div class="vstack gap-4 card p-2">
                     <div class="d-flex align-items-center">
+                        <label class="flex-1">Enable Answer Timer</label>
+                        <label class="switch">
+                            <input id="enableAnswerTimer" name="enableAnswerTimer" type="checkbox">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <label class="flex-1 form-label" for="timerLength">Timer length</label>
+                        <input id="timerLength" disabled="" class="form-control text-center"
+                               style="width: 3.75rem !important;" name="timerLength" type="number"
+                               value="10" min="3" max="600"/>
+                    </div>
+                </div>
+
+                <div class="vstack gap-4 card p-2">
+                    <div class="d-flex align-items-center">
                         <label class="flex-1">Enable Word Search Mode</label>
                         <label class="switch">
                             <input id="enableWordSearchMode" name="enableWordSearchMode" type="checkbox">
@@ -120,6 +136,21 @@
 
             jQ('#randomizeVowelPositions').click(function () {
                 soundGrid.setRandomizeVowelPositions(jQ('#randomizeVowelPositions').prop('checked'));
+            });
+
+            jQ('#enableAnswerTimer').click(function () {
+                let enabled = jQ('#enableAnswerTimer').prop('checked');
+                jQ('#timerLength').prop("disabled", !enabled);
+                soundGrid.toggleAnswerTimerEnabled(enabled);
+            });
+
+            jQ("#timerLength").change(function () {
+                if (this.checkValidity()) {
+                    soundGrid.setTimerLength(Number(jQ(this).val()));
+                } else {
+                    alert("Please enter a number between 3 and 600.");
+                    jQ('#timerLength').val(soundGrid.getTimerLength()).focus();
+                }
             });
 
             jQ('#enableWordSearchMode').click(function () {

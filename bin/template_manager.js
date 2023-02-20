@@ -38,6 +38,7 @@ const ConnectionManager = require('./connection_manager');
 const Events = require('./event_types');
 const path = require('path');
 const Handlebars = require('handlebars')
+const SASS = require('node-sass');
 const {allowInsecurePrototypeAccess} = require('@handlebars/allow-prototype-access')
 
 const helpers = require('handlebars-helpers')();
@@ -48,7 +49,8 @@ let handlebars = require('express-handlebars').create({
     partialsDir: path.join(__dirname, "../views/partials"),
     defaultLayout: 'main',
     helpers: Object.assign({
-        for: forHelper
+        for: forHelper,
+        sass: render_sass
     }, helpers)
 });
 
@@ -204,11 +206,19 @@ function forHelper (from, to, incr, block) {
     return accum;
 }
 
+function render_sass (sassString) {
+    return SASS.renderSync({
+        data: sassString
+    }).css.toString();
+}
+
 module.exports = {
     sendPrecompiledTemplate: sendPrecompiledTemplate,
     emitWithTemplate: emitWithTemplate,
     emitWithIndividualizedTemplate: emitWithIndividualizedTemplate,
-    emitWithTemplateArray: emitWithTemplateArray
+    emitWithTemplateArray: emitWithTemplateArray,
+    getTemplatePath: getTemplatePath,
+    handlebars: handlebars
 };
 
 

@@ -54,6 +54,8 @@ function addSocketListeners (socket) {
     socket.on(Events.TOGGLE_WORD_SEARCH_MODE, GameManager.toggleWordSearchMode.bind(null, socket));
     socket.on(Events.UPDATE_LEADERBOARD, GameManager.sendLeaderboard.bind(null, socket));
     socket.on(Events.CHANGE_GAME_MODE, GameManager.changeGameMode.bind(null, socket));
+    socket.on(Events.GET_TIMER, GameManager.getTimer.bind(null, socket));
+    socket.on(Events.FORCE_QUESTION_FINISHED, GameManager.forceQuestionFinished.bind(null, socket));
     socket.on(Events.END_GAME, GameManager.endGame.bind(null, socket));
 
 }

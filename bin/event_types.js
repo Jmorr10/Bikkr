@@ -78,6 +78,9 @@ const TOGGLE_WORD_SEARCH_MODE = "toggle_word_search";
 const CHANGE_GAME_MODE = "change_game_mode";
 const GAME_MODE_CHANGED = "game_mode_changed";
 const UPDATE_LEADERBOARD = "update_leaderboard";
+const GET_TIMER = "get_timer";
+const RENDERED_TIMER = "rendered_timer";
+const FORCE_QUESTION_FINISHED = "force_question_finished";
 
 // GUI
 const RENDER_TEMPLATE = "render_template";
@@ -124,5 +127,8 @@ module.exports = {
     CHANGE_GAME_MODE: CHANGE_GAME_MODE,
     GAME_MODE_CHANGED: GAME_MODE_CHANGED,
     UPDATE_LEADERBOARD: UPDATE_LEADERBOARD,
-    RENDER_TEMPLATE: RENDER_TEMPLATE
+    RENDER_TEMPLATE: RENDER_TEMPLATE,
+    GET_TIMER: GET_TIMER,
+    RENDERED_TIMER: RENDERED_TIMER,
+    FORCE_QUESTION_FINISHED: FORCE_QUESTION_FINISHED
 };

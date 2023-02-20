@@ -48,6 +48,9 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 	let playing = false;
 	let playerCount;
 	let scoreboard;
+	let teacherFailNotice;
+	let answerTimerEnabled = false;
+	let answerTimerLength = 10;
 	let studentsPlaySound = false;
 	let disableMainSound = false;
 	let randomizeVowelLabels = false;
@@ -73,6 +76,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
         startBtn = jQ('#startBtn');
         endBtn = jQ('#endBtn');
         soundGridHolder = jQ('#T_soundGridHolder');
+		teacherFailNotice = jQ('#teacherFailNotice');
         errorLbl = jQ('.error-lbl');
         roomID = jQ('#roomIDVal').val();
 
@@ -84,8 +88,8 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 
         	socket.emit(Events.UPDATE_LEADERBOARD, roomID);
 
-			if (scoreboard) {
-				scoreboard.resetScoreboard();
+			if (scoreboard && !scoreboard.closed) {
+				scoreboard.bikkr.resetScoreboard();
 			}
 
             soundGridHolder.removeClass('locked');
@@ -124,7 +128,12 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 
 		socket.on(Events.QUESTION_FINISHED, updateState);
 		socket.on(Events.QUESTION_FAILED, questionFailed);
-		//	socket.on(Events.QUESTION_READY, () => { jQ('#answerCounter').show(); });
+		socket.on(Events.RENDERED_TIMER, updateTeacherTimer);
+		socket.on(Events.QUESTION_READY, () => {
+			if (answerTimerEnabled) {
+				startTimer();
+			}
+		});
 	}
 
 	function addButtonListeners() {
@@ -198,6 +207,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 
 	function updateState(template) {
 		currentQuestion = "";
+		resetTimer();
 		soundGridHolder.removeClass('locked');
 		jQ('#answerCounter').hide();
 		render_manager.renderResponse(template);
@@ -205,6 +215,9 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 
 	function questionFailed(template) {
 		updateState(template);
+		if (!scoreboard || scoreboard && scoreboard.closed) {
+			teacherFailNotice.fadeIn(400).delay(1400).fadeOut(400);
+		}
 	}
 
 	function setError (errorTxt) {
@@ -335,6 +348,9 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 
 	function setScoreboard(windowRef) {
 		scoreboard = windowRef;
+		if (answerTimerEnabled) {
+			socket.emit(Events.GET_TIMER, answerTimerLength);
+		}
 	}
 
 	// Courtesy of StackOverflow's @phpslightly - https://stackoverflow.com/a/17381205
@@ -381,9 +397,58 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 		}
 	}
 
+	function getTimer() {
+		socket.emit(Events.GET_TIMER, answerTimerLength);
+	}
+
+	function updateTeacherTimer(template) {
+		render_manager.renderResponse(template);
+	}
+
+	function getTimerEnabled() {
+		return answerTimerEnabled;
+	}
+
+	function getTimerLength() {
+		return answerTimerLength;
+	}
+
+	function setTimerLength(length) {
+		answerTimerLength = length;
+		socket.emit(Events.GET_TIMER, answerTimerLength);
+	}
+
+	function toggleAnswerTimerEnabled(enabled) {
+		answerTimerEnabled = enabled;
+		if (enabled) {
+			socket.emit(Events.GET_TIMER, answerTimerLength);
+		}
+	}
+
+	function startTimer() {
+		if (scoreboard && !scoreboard.closed) {
+			scoreboard.bikkr.startTimer();
+		} else {
+			jQ('#teacherTimer').fadeIn().children('#answerTimer').one('animationend', function () {
+				timerEnded();
+			}).addClass('active')
+		}
+	}
+
+	function resetTimer () {
+		jQ('#teacherTimer').hide().children('#answerTimer').off('animationend').removeClass('active');
+	}
+
+	function timerEnded() {
+		socket.emit(Events.FORCE_QUESTION_FINISHED, roomID);
+	}
+
 	window.getParentConnection = function () {
 		return {
 			socket: socket,
+			getTimer: getTimer,
+			getTimerEnabled: getTimerEnabled,
+			timerEnded: timerEnded,
 			VOWEL_LABELS: vowelLabels
 		};
 	}
@@ -404,6 +469,9 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 		deleteWordListItem: deleteWordListItem,
 		saveWordLists: saveWordLists,
 		loadWordLists: loadWordLists,
+		setTimerLength: setTimerLength,
+		getTimerLength: getTimerLength,
+		toggleAnswerTimerEnabled: toggleAnswerTimerEnabled,
 		VOWEL_LABELS: vowelLabels
 	};
 	

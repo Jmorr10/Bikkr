@@ -66,28 +66,6 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types', 'app/util']
 
            addButtonListeners();
 
-            leaderboardBtn.click(function () {
-                leaderboard.addClass('open');
-            });
-
-            closeLeaderboardBtn.click(function () {
-                leaderboard.removeClass('open');
-            });
-
-            closePopupBtn.click(function () {
-                popup.removeClass('open');
-            });
-
-            modalBlack.click(function () {
-                jQ(this).parent().removeClass('open');
-            });
-
-            jQ('body').keypress(function (e) {
-                if (e.keyCode === 27) {
-                    modalBlack.parent().removeClass('open');
-                }
-            });
-
             socket.on(Events.QUESTION_READY, unlockSoundGrid);
             socket.on(Events.QUESTION_FINISHED, processResults);
             socket.on(Events.QUESTION_ALREADY_ANSWERED, alreadyAnswered);

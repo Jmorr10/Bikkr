@@ -141,6 +141,12 @@ class Room {
         return playerScores.sort((a, b) => b.points - a.points);
     }
 
+    get missingResponses() {
+        if (this.players && this.players.length > 0 && this.playersAnswered) {
+            return this.players.filter(x=> !this.playersAnswered.includes(x.id));
+        }
+    }
+
     addPlayer(player, isTeacher) {
         if (player.socket) {
             player.socket.join(this.id);

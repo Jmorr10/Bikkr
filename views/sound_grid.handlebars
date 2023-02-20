@@ -34,8 +34,19 @@
         {{> help_information}}
 
 
-        <div id="popup">
-            <div id="popupContent"></div>
+        <div id="teacherTimer" style="display: none;">
+            <div id="answerTimer"></div>
+        </div>
+
+        <div id="teacherFailNotice" style="display: none;">
+            <div id="questionFailed">
+                <div class="vstack gap-3">
+                    <div class="no-data-container">
+                        <img src="/static/img/fail.svg" class="mh-100 mb-3 w-50"/>
+                        <span class="fs-1 text-white fw-bold">Question Failed!</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

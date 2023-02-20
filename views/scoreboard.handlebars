@@ -60,7 +60,7 @@
 </body>
 
 <script>
-    require(['jquery', 'event_types'], function (jQ, Events) {
+    require(['jquery', 'event_types', '../app/render_manager'], function (jQ, Events, render_manager) {
 
         jQ('html').css('height', window.innerHeight + "px");
 
@@ -83,6 +83,7 @@
         };
 
         let questionFailed = function (template, correctAnswer, wordSearchWord) {
+            resetTimer();
             failNotification.fadeIn();
             setTimeout(function () {
                 failNotification.fadeOut(400, function () {
@@ -96,6 +97,7 @@
             let vowel_sound = parentWindow.VOWEL_LABELS[correctAnswer][0];
             let answerText = (wordSearchWord) ? `${vowel_sound} - ${wordSearchWord}` : vowel_sound;
             answerTxt.text(answerText);
+            resetTimer();
             answerNotification.fadeIn();
             setTimeout(function () {
                 answerNotification.fadeOut();
@@ -111,20 +113,49 @@
             }).removeClass('hidden');
         }
 
+        function updateScoreboardTimer (template) {
+            render_manager.renderResponse(template);
+        }
+
         socket.on(Events.QUESTION_FINISHED, update);
         socket.on(Events.QUESTION_FAILED, questionFailed);
         socket.on(Events.QUESTION_FINISHED, showAnswer);
         socket.on(Events.GAME_OVER, showPodium);
         socket.on(Events.GAME_MODE_CHANGED, update);
+        socket.on(Events.RENDERED_TIMER, updateScoreboardTimer);
 
         update();
 
-        window.resetScoreboard = function () {
+        if (parentWindow?.getTimerEnabled()) {
+            parentWindow.getTimer();
+        }
+
+        function resetScoreboard() {
             gameoverPodium.empty().one('transitionend', function () {
                 mainContainer.removeClass('hidden');
                 update();
             }).addClass('hidden');
         }
+
+        function startTimer() {
+            jQ('#answerTimer').fadeIn().one('animationend', function () {
+                jQ('#answerTimer').fadeOut().removeClass('active');
+                parentWindow.timerEnded();
+            }).addClass('active');
+        }
+
+        function resetTimer() {
+            jQ('#answerTimer').hide().off('animationend').removeClass('active');
+        }
+
+        window.bikkr = {
+            resetScoreboard: resetScoreboard,
+            startTimer: startTimer
+        }
+
+
+
+
 
     });
 

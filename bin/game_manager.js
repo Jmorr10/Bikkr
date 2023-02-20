@@ -476,7 +476,7 @@ function changeGameMode(socket, roomID, gameMode) {
     let resetNeeded = false;
     let room = RoomList.getRoomByID(roomID);
     let player = PlayerList.getPlayerBySocketID(socket.id);
-    if (room && player.isTeacher) {
+    if (room && player?.isTeacher) {
         if (room.type === RoomTypes.TYPE_INDIVIDUAL) {
             if (gameMode === RoomModule.INDIVIDUAL_MODE_SPEED_BASED || gameMode === RoomModule.INDIVIDUAL_MODE_SCORE_BASED) {
                 room.individualType = gameMode;
@@ -508,6 +508,32 @@ function sendLeaderboard(socket, roomID) {
     }
 }
 
+function getTimer(socket, length) {
+    length = Number(length);
+    let player = PlayerList.getPlayerBySocketID(socket.id);
+    if (!isNaN(length) && player && player.isTeacher) {
+        TemplateManager.handlebars.render(TemplateManager.getTemplatePath('partials/timer_sass'), {timerLength: length})
+            .then(function (data) {
+                TemplateManager.emitWithTemplate(socket.id, 'partials/timer', {sassString: data}, Events.RENDERED_TIMER);
+            })
+            .catch(function (err) {
+                console.log(err);
+            });
+    }
+}
+
+function forceQuestionFinished(socket, roomID) {
+    let room = RoomList.getRoomByID(roomID);
+    let caller = PlayerList.getPlayerBySocketID(socket.id);
+    if (room && caller && caller.isTeacher) {
+        let answersNeeded = room.missingResponses;
+        if (answersNeeded) {
+            answersNeeded.forEach(function (player) {
+                processStudentResponseRWRT(player.socket, roomID, "");
+            });
+        }
+    }
+}
 
 function endGame(socket, roomID) {
     let room = RoomList.getRoomByID(roomID);
@@ -578,6 +604,8 @@ module.exports = {
     toggleWordSearchMode: toggleWordSearchMode,
     changeGameMode: changeGameMode,
     sendLeaderboard: sendLeaderboard,
+    getTimer: getTimer,
+    forceQuestionFinished: forceQuestionFinished,
     endGame: endGame,
     DEFAULT_VOWELS: DEFAULT_VOWELS,
     VOWEL_LABELS: VOWEL_LABELS

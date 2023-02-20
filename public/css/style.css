@@ -372,6 +372,25 @@ button#playerListBtn:after {
     height: calc(100% - 5.75rem);
 }
 
+#teacherTimer, #teacherFailNotice {
+    background-color: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    top: 3.75rem;
+    bottom: 3.75rem;
+    left: 0;
+    right: 0;
+    z-index: 5;
+    pointer-events: all;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#teacherTimer > #answerTimer {
+    display: flex !important;
+    z-index:6
+}
+
 /* SETTINGS MODAL */
 #settings button {
     min-width: 3.75rem !important;
