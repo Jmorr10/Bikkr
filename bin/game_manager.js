@@ -138,8 +138,16 @@ function setQuestion(socket, roomID, questionSound, buttonOptions, studentsPlayS
             room.groupType === GroupTypes.TYPE_ONE_FOR_ALL &&
             room.ofaType === GroupModule.OFA_TYPE_SPEED)) ? 1 : room.expectedAnswerCount;
 
-        TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/answer_counter',
-            { answers_needed: answersNeeded });
+        // Send in the following modes: INDIVIDUAL - SCORE, GROUP - FFA, GROUP - OFA - SCORE
+        if (room.type === RoomModule.TYPE_INDIVIDUAL && room.individualType === RoomModule.INDIVIDUAL_MODE_SCORE_BASED ||
+            (room.type === RoomModule.TYPE_GROUP &&
+            (room.groupType === GroupTypes.TYPE_FREE_FOR_ALL ||
+                (room.groupType === GroupTypes.TYPE_ONE_FOR_ALL && room.ofaType === GroupModule.OFA_TYPE_SCORE))))
+        {
+            TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/answer_counter',
+                { answers_needed: answersNeeded });
+        }
+
 
         debug('Question set!');
     }
@@ -227,9 +235,11 @@ function processIndividualResponse(room, player, currentQuestionTmp, isCorrect) 
     let answersNeeded = (!isCorrect && room.individualType === RoomModule.INDIVIDUAL_MODE_SPEED_BASED) ?
         1 : room.expectedAnswerCount - room.individualCounter;
 
-    TemplateManager.sendPrecompiledTemplate(room.id, 'partials/answer_counter',
-        {answers_needed: answersNeeded }
-    );
+    if (room.individualType !== RoomModule.INDIVIDUAL_MODE_SPEED_BASED) {
+        TemplateManager.sendPrecompiledTemplate(room.id, 'partials/answer_counter',
+            {answers_needed: answersNeeded }
+        );
+    }
 
     if (isCorrect) {
         if (!room.fastestIndividual) {
@@ -305,9 +315,11 @@ function processOneForAllResponse(room, player, currentQuestionTmp, studentRespo
 
     let answersNeeded = (room.ofaType === GroupModule.OFA_TYPE_SPEED) ? 1 :  room.groupCount - responseCount;
 
-    TemplateManager.sendPrecompiledTemplate(room.id, 'partials/answer_counter',
-        { answers_needed: answersNeeded }
-    );
+    if (room.ofaType !== GroupModule.OFA_TYPE_SPEED) {
+        TemplateManager.sendPrecompiledTemplate(room.id, 'partials/answer_counter',
+            { answers_needed: answersNeeded }
+        );
+    }
 
     if (isCorrect) {
         if (!room.fastestIndividual) {

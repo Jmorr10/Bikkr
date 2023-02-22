@@ -129,7 +129,8 @@ class Room {
     }
 
     get groupCount() {
-        return this.groups.length;
+        // RETURNS THE CURRENT NUMBER OF *****VALID***** groups (i.e., groups with at least one member)
+        return this.groups.reduce((a,c) => { return a + Number(c && c.players && Object.keys(c.players).length > 0)}, 0);
     }
 
     get playerScores() {

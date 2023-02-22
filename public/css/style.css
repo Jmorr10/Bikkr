@@ -187,6 +187,18 @@ span.input-group-text {
     flex: 0 0;
 }
 
+.mw-25 {
+   max-width: 25% !important;
+}
+
+.mw-50 {
+  max-width: 50% !important;
+}
+
+.mw-75 {
+    max-width: 75% !important;
+}
+
 .transition-all {
     transition: all 2s;
 }
@@ -212,11 +224,11 @@ input[type="text"] {
 .modal-body {
     overflow: auto;
     margin-bottom: 1rem;
-    max-height: calc(100vh - 6.8125rem);
+    max-height: calc(100% - 6.8125rem);
 }
 
 #contentHolder {
-    height: calc(100vh - 2rem);
+    height: calc(100% - 2rem);
     overflow: auto;
     width: calc(100vw - 2rem);
 }
@@ -323,7 +335,17 @@ input[type="text"] {
 }
 
 #answerCounter {
+    background-color: var(--bkkr-red);
+    bottom: 3.75rem;
     display: none;
+    color: white;
+    height: 2rem;
+    line-height: 2rem;
+    left: 0;
+    position: fixed;
+    right: 0;
+    text-align: center;
+    z-index: 99;
 }
 
 #teacherBar {
@@ -1075,14 +1097,62 @@ input:disabled + .slider {
 
 ::-webkit-scrollbar-thumb{ background-color: rgba(204, 204, 204, 0.6); border-radius: 20.3125rem; }
 
+::-webkit-scrollbar-track {
+
+}
+
+::-webkit-scrollbar {
+}
+
 
 @media screen and (min-width: 760px) {
     #contentHolder {
-        height: calc(100vh - 6rem);
-        overflow: hidden !important;
-        width: calc(100vw - 6rem);
+        height: calc(100% - 15rem);
+        width: calc(100vw - 15rem);
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    #contentHolder {
+        max-width: 400px;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        height: 100%;
     }
 
-    ::-webkit-scrollbar{ display: block !important; width: 0.5rem; }
+    /*
+    .section-img {
+        flex: 1 !important;
+        height: 66%;
+        margin-top: auto;
+        margin-bottom: auto;
+    }
+
+    .desktop-setup-holder {
+        height: calc(100% - 3.5rem);
+        overflow: hidden;
+        align-items: center;
+    }
+
+    .desktop-setup-form-holder {
+        overflow: auto !important;
+        height: 100%;
+        padding-right: 1rem;
+        min-width: 40%;
+        width: 40%;
+        max-width: 40%;
+        margin-left: 1rem;
+    }*/
+
+    ::-webkit-scrollbar{
+        width: 1rem;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: rgba(204, 204, 204, 0.6);
+        border-radius: 9999px;
+        background-clip: padding-box;
+        border: 4px solid rgba(0, 0, 0, 0);
+    }
 
 }
