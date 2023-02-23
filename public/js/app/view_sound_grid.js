@@ -112,7 +112,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
         	if (currentQuestion && currentQuestion !== "") {
                 socket.emit(Events.SKIP_QUESTION, roomID, currentQuestion);
                 currentQuestion = "";
-				jQ('#answerCounter').fadeOut();
+				jQ('#answerCounter').hide();
 			} else {
         		shake(this);
 			}
@@ -209,7 +209,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 		currentQuestion = "";
 		resetTimer();
 		soundGridHolder.removeClass('locked');
-		jQ('#answerCounter').fadeOut();
+		jQ('#answerCounter').hide();
 		render_manager.renderResponse(template);
 	}
 
@@ -332,7 +332,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 	}
 
 	function endGame() {
-		jQ('#answerCounter').fadeOut();
+		jQ('#answerCounter').hide();
 		socket.emit(Events.END_GAME, roomID);
 		socket.once(Events.GAME_OVER, gameOver);
 	}
@@ -349,7 +349,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 	function setScoreboard(windowRef) {
 		scoreboard = windowRef;
 		if (answerTimerEnabled) {
-			socket.emit(Events.GET_TIMER, answerTimerLength);
+			socket.emit(Events.GET_TIMER, roomID, answerTimerLength);
 		}
 	}
 
@@ -398,7 +398,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 	}
 
 	function getTimer() {
-		socket.emit(Events.GET_TIMER, answerTimerLength);
+		socket.emit(Events.GET_TIMER, roomID, answerTimerLength);
 	}
 
 	function updateTeacherTimer(template) {
@@ -415,14 +415,13 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 
 	function setTimerLength(length) {
 		answerTimerLength = length;
-		socket.emit(Events.GET_TIMER, answerTimerLength);
+		socket.emit(Events.GET_TIMER, roomID, answerTimerLength);
 	}
 
 	function toggleAnswerTimerEnabled(enabled) {
 		answerTimerEnabled = enabled;
-		if (enabled) {
-			socket.emit(Events.GET_TIMER, answerTimerLength);
-		}
+		let length = (enabled) ? answerTimerLength : 0;
+		socket.emit(Events.GET_TIMER, roomID, length);
 	}
 
 	function startTimer() {

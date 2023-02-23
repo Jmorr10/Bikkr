@@ -50,7 +50,9 @@
                     </div>
                 </div>
             </div>
+            <div id="answerTimer" style="display: none;"></div>
         </div>
+
     </div>
     <div id="gameoverPodium" class="bg-white w-100 h-100 d-flex flex-column p-3 overflow-auto hidden">
 
@@ -139,7 +141,7 @@
 
         function startTimer() {
             jQ('#answerTimer').fadeIn().one('animationend', function () {
-                jQ('#answerTimer').fadeOut().removeClass('active');
+                jQ('#answerTimer').hide().removeClass('active');
                 parentWindow.timerEnded();
             }).addClass('active');
         }

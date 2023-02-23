@@ -72,6 +72,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types', 'app/util']
             socket.on(Events.QUESTION_FAILED, questionFailed);
             socket.on(Events.PLAY_SOUND, playSound);
             socket.on(Events.GAME_OVER_STUDENT, gameOver);
+            socket.on(Events.RENDERED_TIMER, updateTimer);
         }
 
         function addButtonListeners() {
@@ -83,9 +84,33 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types', 'app/util']
         }
 
         function unlockSoundGrid () {
-            //Close any open modals before unlocking
-            modalBlack.parent().removeClass('open');
+            let timer = jQ('#answerTimer');
+            if (!timer.hasClass('disabled')) {
+                startTimer();
+            }
             soundGridHolder.removeClass('locked');
+        }
+
+        function startTimer() {
+            let timer = jQ('#answerTimer');
+            let timerHolder = jQ('#studentTimer');
+            let headerContent = jQ('#headerContent');
+            headerContent.addClass('hide');
+            timerHolder.show();
+            timer.one('animationend', function () {
+                resetTimer();
+            }).fadeIn().addClass('active');
+        }
+
+        function resetTimer() {
+            let timer = jQ('#answerTimer');
+            if (!timer.hasClass('disabled')) {
+                let timerHolder = jQ('#studentTimer');
+                let headerContent = jQ('#headerContent');
+                timerHolder.hide();
+                timer.removeClass('active');
+                headerContent.removeClass('hide');
+            }
         }
 
         function processResults(template, correctAnswer, points) {
@@ -103,6 +128,9 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types', 'app/util']
                 }
                 player.points = points;
             }
+
+            resetTimer();
+
             soundGridHolder.addClass('locked');
 
             let correctBtn = soundGridHolder.find(`button[data-sound=${correctAnswer}]`);
@@ -142,6 +170,10 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types', 'app/util']
 
         function playSound(questionSound) {
             Player.getSoundElement().src = `/static/audio/${questionSound}.mp3`;
+        }
+
+        function updateTimer(template) {
+            render_manager.renderResponse(template);
         }
 
         function gameOver(template) {

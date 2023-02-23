@@ -6,11 +6,16 @@
 
         <div id="header">
             <img src="/static/img/logo.svg" class="mh-100 mw-25 me-3"/>
-            <div class="d-flex flex-column m-0 p-0" style="flex: 2 1;">
-                <h6 class="m-0">{{player.name}}</h6>
-                {{#if groupID}}<h6 class="m-0">{{groupID}}</h6>{{/if}}
+            <div id="studentTimer" style="display: none;">
+                <div id="answerTimer" class="disabled"></div>
             </div>
-            <button id="leaderboardBtn" class="icon-btn icon-award" data-bs-toggle="modal" data-bs-target="#leaderboard"></button>
+            <div id="headerContent" class="d-flex align-items-center flex-1 flex-no-wrap">
+                <div class="d-flex flex-column m-0 p-0" style="flex: 2 1;">
+                    <h6 class="m-0">{{player.name}}</h6>
+                    {{#if groupID}}<h6 class="m-0">{{groupID}}</h6>{{/if}}
+                </div>
+                <button id="leaderboardBtn" class="icon-btn icon-award" data-bs-toggle="modal" data-bs-target="#leaderboard"></button>
+            </div>
         </div>
 
         {{> vowel_grid}}

@@ -80,6 +80,8 @@ class Room {
         this.ofaType = Group.OFA_TYPE_SPEED;
         this.usernamesAssigned = false;
         this.wordSearchModeEnabled = false;
+        this.timerEnabled = false;
+        this.timerLength = 0;
         this.setUp = false;
 
         this.lastModeChangeDatetime = null;

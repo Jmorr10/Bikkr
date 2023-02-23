@@ -520,13 +520,19 @@ function sendLeaderboard(socket, roomID) {
     }
 }
 
-function getTimer(socket, length) {
+function getTimer(socket, roomID,length) {
     length = Number(length);
     let player = PlayerList.getPlayerBySocketID(socket.id);
-    if (!isNaN(length) && player && player.isTeacher) {
+    let room = RoomList.getRoomByID(roomID);
+    if (!isNaN(length) && player && player.isTeacher && room) {
+
+        room.timerEnabled = (length !== 0);
+        room.timerLength = length;
+
         TemplateManager.handlebars.render(TemplateManager.getTemplatePath('partials/timer_sass'), {timerLength: length})
             .then(function (data) {
-                TemplateManager.emitWithTemplate(socket.id, 'partials/timer', {sassString: data}, Events.RENDERED_TIMER);
+                let disabled = (length === 0);
+                TemplateManager.emitWithTemplate(room.id, 'partials/timer', {sassString: data, disabled:disabled}, Events.RENDERED_TIMER);
             })
             .catch(function (err) {
                 console.log(err);

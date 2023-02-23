@@ -297,7 +297,15 @@ function joinGroup(socket, roomID, groupID) {
                 playerCount: room.playerCount
             });
 
-
+            if (room.timerEnabled) {
+                TemplateManager.handlebars.render(TemplateManager.getTemplatePath('partials/timer_sass'), {timerLength: room.timerLength})
+                    .then(function (data) {
+                        TemplateManager.emitWithTemplate(socket.id, 'partials/timer', {sassString: data}, Events.RENDERED_TIMER);
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                    });
+            }
 
             TemplateManager.emitWithTemplateArray(
                 roomID,
@@ -397,6 +405,16 @@ function setUsername(socket, roomID, username) {
                     groupType: room.groupType,
                     playerCount: room.playerCount
                 });
+
+                if (room.timerEnabled) {
+                    TemplateManager.handlebars.render(TemplateManager.getTemplatePath('partials/timer_sass'), {timerLength: room.timerLength})
+                        .then(function (data) {
+                            TemplateManager.emitWithTemplate(socket.id, 'partials/timer', {sassString: data}, Events.RENDERED_TIMER);
+                        })
+                        .catch(function (err) {
+                            console.log(err);
+                        });
+                }
 
                 TemplateManager.sendPrecompiledTemplate(
                     roomID,
@@ -505,6 +523,16 @@ function reconnectPlayer(socket, playerState) {
         groupType: room.groupType,
         playerCount: room.playerCount
     });
+
+    if (room.timerEnabled) {
+        TemplateManager.handlebars.render(TemplateManager.getTemplatePath('partials/timer_sass'), {timerLength: room.timerLength})
+            .then(function (data) {
+                TemplateManager.emitWithTemplate(socket.id, 'partials/timer', {sassString: data}, Events.RENDERED_TIMER);
+            })
+            .catch(function (err) {
+                console.log(err);
+            });
+    }
 
     TemplateManager.emitWithTemplateArray(
         room.id,
