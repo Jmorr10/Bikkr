@@ -77,11 +77,14 @@ define(['jquery', 'app/render_manager', 'app/player', 'event_types'],
 		});
 	}
 
+	//TODO: TEST ME!
 	function toggleReconnectingMessage(show) {
-		if (show) {
-			jQ("#reconnecting").addClass('open');
-		} else {
-			jQ("#reconnecting").removeClass('open');
+		let reconnectModal = jQ("#reconnecting");
+		let isVisible = reconnectModal.hasClass('show');
+		if (show && !isVisible) {
+			reconnectModal.modal('show');
+		} else if (!show && isVisible) {
+			reconnectModal.modal('hide');
 		}
 	}
 

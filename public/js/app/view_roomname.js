@@ -33,11 +33,13 @@
  * @version 1.0
  * @since 1.0
  */
-define(['jquery', 'app/player', 'app/view_room_options', 'app/view_username', 'app/render_manager', 'event_types', 'app/messages'],
-	function (jQ, Player, roomOptions, username, render_manager, Events, Messages) {
+define(['jquery', 'nosleep', 'app/player', 'app/view_room_options', 'app/view_username', 'app/render_manager', 'event_types', 'app/messages'],
+	function (jQ, NoSleep, Player, roomOptions, username, render_manager, Events, Messages) {
 
 	const socket = Player.getConnection();
 	let player;
+
+	let noSleepInstance = new NoSleep("BIKKR");
 
 	let submitBtn;
 	let roomNameField;
@@ -52,10 +54,14 @@ define(['jquery', 'app/player', 'app/view_room_options', 'app/view_username', 'a
         roomNameField = jQ('#roomName');
         errorLbl = jQ('.error-lbl');
 
-		submitBtn.click(signIn);
+		submitBtn.click(function (e) {
+			noSleepInstance.enable();
+			signIn();
+		});
 
 		roomNameField.keypress(function (e) {
             if (e.which === 13) {
+				noSleepInstance.enable();
                 signIn();
             }
         });

@@ -121,17 +121,17 @@ define(['event_types', 'app/messages'], function (Events, Messages) {
         socket.once(Events.SOCKET_CONNECTED, ping);
 
         socket.once("connect_error", (err) => {
-            alert(getPlayer()?.getErrorMessage(Messages.get(Messages.keys.ERR_CANT_CONNECT_TO_SERVER)));
+            alert(Messages.get(Messages.keys.ERR_CANT_CONNECT_TO_SERVER));
         });
 
-        socket.on('reconnect_attempt', function () {
+        socket.io.on('reconnect_attempt', function () {
             let player = getPlayer();
             if (!player.isTeacher) {
                 gameRef.toggleReconnectingMessage(true);
             }
         });
 
-        socket.on('reconnect', function () {
+        socket.io.on('reconnect', function () {
             let player = getPlayer();
             if (!player.isTeacher) {
                 socket.emit(Events.CONNECT_AGAIN, {
