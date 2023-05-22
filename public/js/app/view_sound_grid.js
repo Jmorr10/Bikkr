@@ -69,6 +69,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 		"LONG_U": ["/u/", "ue", "oo", "ew"]
 	};
 	let enabledVowelLabels = jQ.extend(true, {}, vowelLabels);
+	let gameRef;
 
 	function start() {
 
@@ -79,6 +80,10 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 		teacherFailNotice = jQ('#teacherFailNotice');
         errorLbl = jQ('.error-lbl');
         roomID = jQ('#roomIDVal').val();
+
+		require(['app/game',], function (Game) {
+			gameRef = Game;
+		});
 
         startBtn.click(function () {
         	if (playerCount === 0) {
@@ -112,7 +117,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
         	if (currentQuestion && currentQuestion !== "") {
                 socket.emit(Events.SKIP_QUESTION, roomID, currentQuestion);
                 currentQuestion = "";
-				jQ('#answerCounter').hide();
+				closeAnswerCounter();
 			} else {
         		shake(this);
 			}
@@ -209,7 +214,16 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 		currentQuestion = "";
 		resetTimer();
 		soundGridHolder.removeClass('locked');
-		jQ('#answerCounter').hide();
+		closeAnswerCounter();
+
+		let winner = arguments[arguments.length - 1];
+
+		if (winner && winner.indexOf("<") === -1) {
+			gameRef.showNotification(
+				`Winner: ${winner}`, "winner", {type: gameRef.NOTICE_TYPES.success}
+			);
+		}
+
 		render_manager.renderResponse(template);
 	}
 
@@ -264,7 +278,9 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 	function changeGameMode(gameMode) {
 		if (gameMode) {
 			socket.once(Events.GAME_MODE_CHANGED, function () {
-				alert("Game mode changed successfully! Scores reset.");
+				gameRef.showNotification(
+					"Game mode changed successfully! Scores reset.", "mode_reset", {parent: '#gameModeOptions', type: gameRef.NOTICE_TYPES.success}
+				);
 			});
 			socket.emit(Events.CHANGE_GAME_MODE, roomID, gameMode);
 		}
@@ -332,7 +348,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 	}
 
 	function endGame() {
-		jQ('#answerCounter').hide();
+		closeAnswerCounter();
 		socket.emit(Events.END_GAME, roomID);
 		socket.once(Events.GAME_OVER, gameOver);
 	}
@@ -394,6 +410,15 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 			}
 		} else {
 			alert('Your browser does not support the HTML5 Blob.');
+		}
+	}
+
+	function closeAnswerCounter() {
+		let answerCounter = jQ('#answerCounter');
+		if (answerCounter.hasClass('closable')) {
+			answerCounter.fadeOut(()=>{ answerCounter.removeClass('closable'); })
+		} else {
+			setTimeout(()=> {answerCounter.fadeOut(()=>{ answerCounter.removeClass('closable'); })}, 400);
 		}
 	}
 

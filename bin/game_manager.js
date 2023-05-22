@@ -284,7 +284,9 @@ function processIndividualResponse(room, player, currentQuestionTmp, isCorrect) 
             Events.QUESTION_FINISHED,
             currentQuestionTmp,
             room.playerScores,
-            (room.wordSearchModeEnabled) ? room.currentWSQuestion : ""
+            (room.wordSearchModeEnabled) ? room.currentWSQuestion : "",
+            // TODO TEST THIS
+            room.lastLeaderboard.winner.name
         );
         debug('Question answered and finished!');
         return [false, true];
@@ -367,7 +369,9 @@ function processOneForAllResponse(room, player, currentQuestionTmp, studentRespo
             Events.QUESTION_FINISHED,
             currentQuestionTmp,
             room.groupScores,
-            (room.wordSearchModeEnabled) ? room.currentWSQuestion : ""
+            (room.wordSearchModeEnabled) ? room.currentWSQuestion : "",
+            //TODO TEST THIS
+            room.lastLeaderboard.winner.id
         );
         debug('Question answered and finished!');
         return [false, true];
@@ -412,7 +416,9 @@ function processFreeForAllResponse(room, player, currentQuestionTmp, isCorrect) 
                 Events.QUESTION_FINISHED,
                 currentQuestionTmp,
                 room.playerScores,
-                (room.wordSearchModeEnabled) ? room.currentWSQuestion : ""
+                (room.wordSearchModeEnabled) ? room.currentWSQuestion : "",
+                // There is no winner since it is FFA
+                null
             );
 
             debug('Question answered and finished!');

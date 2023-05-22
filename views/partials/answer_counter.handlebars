@@ -1,7 +1,10 @@
 <span data-target="#answersNeeded">{{answers_needed}}
 <script>require(['jquery'], function (jQ) {
     if (jQ('#T_soundGridHolder').hasClass('locked')) {
-        jQ('#answerCounter').fadeIn();
+        let answerCounter = jQ('#answerCounter');
+        answerCounter.fadeIn(()=> {
+            answerCounter.addClass('closable');
+        });
     }
 
 });</script>

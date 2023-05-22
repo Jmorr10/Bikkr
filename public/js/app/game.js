@@ -31,16 +31,18 @@
  * @since 1.0
  */
 
-define(['jquery', 'app/render_manager', 'app/player', 'event_types'],
-	function (jQ, render_manager, Player, Events) {
+define(['jquery', 'app/render_manager', 'app/player', 'event_types', 'app/messages'],
+	function (jQ, render_manager, Player, Events, Messages) {
 
 	require(['bootstrap'], function() {});
 
 	const SERVER_PATH = window.location.origin;
+	const DEFAULT_NOTICE_DURATION = 2500;
+	const NOTICE_TYPES = {warning: 'warning', danger: 'danger', success: 'success'};
 
-	let imageRoot = "/static/img/";
+	const imageRoot = "/static/img/";
 
-	let socket = Player.getConnection();
+	const socket = Player.getConnection();
 
 	function init(isTeacher) {
 
@@ -77,18 +79,74 @@ define(['jquery', 'app/render_manager', 'app/player', 'event_types'],
 		});
 	}
 
-	//TODO: TEST ME!
 	function toggleReconnectingMessage(show) {
-		let reconnectModal = jQ("#reconnecting");
-		let isVisible = reconnectModal.hasClass('show');
+		let notificationContainer = jQ(`#notificationContainer[data-key="reconnecting"]`);
+		let isVisible = notificationContainer.length > 0;
+
 		if (show && !isVisible) {
-			reconnectModal.modal('show');
+			showNotification(Messages.RECONNECTING, "reconnecting", {duration: 0, type:NOTICE_TYPES.warning});
 		} else if (!show && isVisible) {
-			reconnectModal.modal('hide');
+			removeNotification("reconnecting");
 		}
 	}
 
+	function showNotification(msg, key, opt) {
+
+		let type = (opt?.type && NOTICE_TYPES.hasOwnProperty(opt.type)) ? opt.type : "";
+		let parent = (opt?.parent && jQ(opt.parent).length !== 0) ? jQ(opt.parent) : jQ('body');
+
+		if (!key || key.length === 0) {
+			throw Error("You must specify a message key.");
+		}
+
+		let existingNotice = jQ(`div[data-key="${key}"`);
+
+		if (existingNotice.length > 0) {
+			existingNotice.remove();
+		}
+
+		const notificationTemplate =
+			`<div id="notificationContainer" data-content="${msg}" class="${type}" data-key="${key}"></div>`;
+
+		let notificationContainer = jQ().add(notificationTemplate).hide();
+
+		parent.append(notificationContainer);
+		notificationContainer.fadeIn(350);
+
+		let duration = (opt && opt.hasOwnProperty("duration")) ? opt.duration : null;
+
+		if (duration !== null && duration !== 0) {
+			setTimeout(function() {
+				notificationContainer.fadeOut(350, ()=> {
+					notificationContainer.remove();
+				});
+			}, duration);
+		} else if (duration === null) {
+			setTimeout(function() {
+				notificationContainer.fadeOut(350, ()=> {
+					notificationContainer.remove();
+				});
+			}, DEFAULT_NOTICE_DURATION);
+		}
+	}
+
+
+
+	function removeNotification(key) {
+
+		if (!key || key.length === 0) {
+			throw Error("You must specify a message key.");
+		}
+
+		let notificationContainer = jQ(`#notificationContainer[data-key="${key}"]`);
+
+		notificationContainer.fadeOut(350, ()=> {
+			notificationContainer.remove();
+		});
+	}
+
 	function preload(imageArray, callbk, index) {
+		// TODO: Add error handling
 		index = index || 0;
 		if (imageArray && imageArray.length > index) {
 			let img = new Image ();
@@ -103,7 +161,10 @@ define(['jquery', 'app/render_manager', 'app/player', 'event_types'],
 
 	return {
 		init : init,
+		showNotification: showNotification,
+		removeNotification: removeNotification,
 		toggleReconnectingMessage: toggleReconnectingMessage,
+		NOTICE_TYPES: NOTICE_TYPES,
 		SERVER_PATH: SERVER_PATH
 	};
 

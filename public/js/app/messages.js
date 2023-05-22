@@ -43,11 +43,15 @@ define([], function () {
             ERR_NO_USERNAME: "Please enter a username to begin!",
             ERR_NO_ROOMNAME: "Please enter a room name to begin!",
             ERR_CANT_CONNECT_TO_SERVER: 'Could not connect to the server. Please reload the page.',
+            RECONNECTING: "Reconnecting...",
+            RECONNECTED: "Successfully reconnected!"
         };
         const MESSAGES_JA = {
             ERR_NO_USERNAME: "ユーザー名を入力してください！",
             ERR_NO_ROOMNAME: "部屋名を入力してください！",
             ERR_CANT_CONNECT_TO_SERVER: 'サーバーに接続できませんでした。ページを再読み込みしてください。',
+            RECONNECTING: "再接続中...",
+            RECONNECTED: "再接続に成功しました！"
         };
 
         let keyset = {};

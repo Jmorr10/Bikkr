@@ -121,7 +121,12 @@ define(['event_types', 'app/messages'], function (Events, Messages) {
         socket.once(Events.SOCKET_CONNECTED, ping);
 
         socket.once("connect_error", (err) => {
-            alert(Messages.get(Messages.keys.ERR_CANT_CONNECT_TO_SERVER));
+
+            let player = getPlayer();
+            let duration = (player.isTeacher) ? 0 : 2000;
+            gameRef.showNotification(
+                Messages.ERR_CANT_CONNECT_TO_SERVER, "disconnected", {duration: duration, type: gameRef.NOTICE_TYPES.danger}
+            );
         });
 
         socket.io.on('reconnect_attempt', function () {
@@ -140,7 +145,10 @@ define(['event_types', 'app/messages'], function (Events, Messages) {
                     points: player.points,
                     group: player.group
                 });
-                gameRef.toggleReconnectingMessage(false);
+                gameRef.removeNotification("reconnecting");
+                gameRef.showNotification(
+                    Messages.RECONNECTED, "reconnected", {type: gameRef.NOTICE_TYPES.success}
+                );
             }
         });
     }

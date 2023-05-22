@@ -219,6 +219,47 @@ input[type="text"] {
     display: none;
 }
 
+#notificationContainer {
+    display: flex;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--bkkr-dark-blue);
+    align-items: center;
+    justify-content: center;
+}
+
+#notificationContainer:after {
+    content: attr(data-content);
+    background-color: var(--bkkr-dark-primary);
+    border-radius: 3px;
+    text-align: center;
+    padding: 4px 6px 4px 6px;
+    display: inline;
+    color: white;
+    width: 80%;
+    z-index: 9999;
+    max-width: 440px;
+    margin: 1rem auto;
+}
+
+#notificationContainer.warning {
+    background-color: var(--bkkr-yellow);
+    color: black;
+}
+
+#notificationContainer.danger {
+    background-color: var(--bkkr-red);
+    color: white;
+}
+
+#notificationContainer.success {
+    background-color: var(--bkkr-green);
+    color: white;
+}
+
 /* MODALS */
 .modal-header button {
     min-width: 3rem !important;
@@ -231,8 +272,12 @@ input[type="text"] {
     max-height: calc(100% - 6.8125rem);
 }
 
+#outerWrapper {
+    height: 100%;
+}
+
 #contentHolder {
-    height: calc(100% - 2rem);
+    height: 100%;
     overflow: auto;
     width: calc(100vw - 2rem);
 }
@@ -1132,7 +1177,7 @@ input:disabled + .slider {
 
 @media screen and (min-width: 760px) {
     #contentHolder {
-        height: calc(100% - 15rem);
+        height: 100%;
         width: calc(100vw - 15rem);
     }
 
