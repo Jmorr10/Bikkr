@@ -1,0 +1,231 @@
+button {
+    cursor: pointer;
+}
+
+button:disabled {
+    cursor: default;
+}
+
+#answerCounter {
+    display: none;
+}
+
+#vowelSelectorContent {
+    overflow-y: hidden;
+}
+
+.group-score-name {
+    order: -999 !important;
+}
+
+.login-holder input[type="submit"], .word-list-toolbar > * {
+    background-color: #003c8f;
+    border: none;
+    border-radius: 30px;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    margin: auto auto 0 auto;
+    outline: none !important;
+    padding: 0.5rem;
+    width: 50%;
+}
+
+.scoreboard button {
+    display: none !important;
+}
+
+.scoreboard {
+    zoom: 1.5;
+}
+
+.radio, .radio-label, .radio + label, .checkbox + label {
+    cursor: pointer;
+}
+
+input:disabled + .radio-label, input:disabled + label {
+    cursor: default;
+}
+
+input:disabled {
+    cursor: default;
+}
+
+
+
+#vowelSelectorContent ul {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+#vowelSelectorContent ul li {
+    display: flex;
+    font-size: 1.5rem;
+    margin-left: -16px;
+    margin-right: 16px;
+    padding-left: 32px;
+}
+
+#vowelSelectorContent ul li label:first-child {
+    flex: 1;
+}
+
+#vowelSelectorContent ul li label:last-child {
+    margin-right: 16px;
+}
+
+#vowelSelectorContent ul li:first-child {
+    padding-top: 10px;
+}
+
+
+
+
+.hidden {
+    height: 0;
+    opacity: 0;
+    visibility: hidden;
+}
+
+
+
+
+.no-data-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.ffa .podium-name {
+    align-self: flex-start;
+    border-bottom: 1px solid white;
+    flex: 0;
+    font-size: 2rem;
+    margin-right: 0;
+    padding: 0.5rem 1rem;
+    text-align: left;
+    width: 100%;
+}
+
+.ffa .group-winner {
+    align-items: center;
+    color: white;
+    display: flex;
+    flex: 1;
+    font-size: 1.5rem;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+}
+
+#gameoverContent h1 {
+    flex: 0;
+    width: 100%;
+}
+
+#typeCustom:checked ~ .default-group-options {
+    display: none;
+}
+
+#typeCustom:not(:checked) ~ .custom-group-options {
+    display: none;
+}
+
+.custom-group-options {
+    display: flex;
+}
+
+.custom-group-options input {
+    border-radius: 0.5rem;
+    max-width: 9rem;
+}
+
+#groupOneForAll:not(:checked) ~ .ofa-options {
+    display: none;
+}
+
+#wordListEditorContent input {
+    align-self: flex-end;
+    display: block;
+    margin-top: 1rem;
+}
+
+.word-list-toolbar {
+    align-items: center;
+    display: flex;
+    margin-bottom: 1rem;
+}
+
+.custom-file-upload {
+    text-align: center;
+}
+
+#wordListEditor .bootstrap-tagsinput {
+    width: 100%;
+}
+
+.no-bullets {
+    list-style: none;
+}
+
+#reconnectingContent {
+    text-align: center;
+    top: 0;
+    bottom: 0;
+    height: 5.5rem;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+}
+
+@media only screen and (min-width: 532px) {
+
+    .modal-popup-content {
+        left: 0;
+        max-width: 500px;
+        right: 0;
+    }
+
+    #popupContent {
+        max-width: 700px;
+    }
+
+    html {
+        background-color: #303030;
+    }
+
+    body {
+        margin-left: auto !important;
+        margin-right: auto !important;
+        max-width: 700px;
+    }
+
+    .login-img {
+        flex: 0 0 23vw;
+        max-width: 700px !important;
+    }
+
+
+    #header, #teacherBar {
+        left: 0;
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 700px;
+        right: 0;
+    }
+
+}
+
+@media only screen and (min-aspect-ratio: 13/9) {
+    body {
+        height: auto !important;
+        overflow: auto !important;
+    }
+
+}
+
+@media only screen and (min-width: 700px) {
+    body {
+        height: 100% !important;
+        overflow: hidden !important;
+    }
+}

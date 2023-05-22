@@ -11,5 +11,10 @@
 .icon-help-circled:before { content: '\e809'; } /* '' */
 .icon-stopwatch:before { content: '\e80a'; } /* '' */
 .icon-target:before { content: '\e80b'; } /* '' */
+.icon-qrcode:before { content: '\e80c'; } /* '' */
+.icon-floppy:before { content: '\e80d'; } /* '' */
 .icon-crown:before { content: '\e844'; } /* '' */
+.icon-upload-cloud:before { content: '\f0ee'; } /* '' */
 .icon-circle-empty:before { content: '\f10c'; } /* '' */
+.icon-eraser:before { content: '\f12d'; } /* '' */
+.icon-history:before { content: '\f1da'; } /* '' */
