@@ -1,5 +1,7 @@
 <div id="answerTimer" class="{{#if disabled}}disabled{{/if}}" data-mode="update" data-add="self" style="display: none;">
-    <style>
-        {{{sass sassString}}}
-    </style>
+    {{#unless disabled}}
+        <style>
+                {{{sass sassString}}}
+        </style>
+    {{/unless}}
 </div>

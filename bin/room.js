@@ -39,7 +39,7 @@ const KEY_INDIVIDUAL_TYPE = "individualType";
 const INDIVIDUAL_MODE_SCORE_BASED = "individualScoreBased";
 const INDIVIDUAL_MODE_SPEED_BASED = "individualSpeedBased";
 
-const DEFAULT_WORD_LISTS= {
+const DEFAULT_WORD_LISTS = {
     "SHORT_A": ["man","ran","pan","can","fat","hat","rat","mat","sat","lack","sack","tack","back","rack","cap","tap","gap","answer","add","ask","bad","apple","and","task","trash","last","math","class","example","practical","handsome","angry","anxiety","national","salad","plan","expansive"],
     "LONG_A": ["mane","rain","pain","cane","fate","hate","rate","mate","lake","take","bake","rake","cape","tape","gape","late","save","wait","weight","they","eight","same","stay","base","neigh","break","brake","crazy","lady","basic","paper","table","radio","potato","tomato","came","space"],
     "SHORT_E": ["bet","set","pet","met","tell","sell","fell","well","men","bed","red","led","wed","pep","peck","beg","web","said","says","get","heavy","measure","again","against","any","many","next","better","friend","extra","effort","metal","breath","lend","bend","send","rent"],
@@ -329,6 +329,10 @@ class Room {
 
     hasWord(listKey, item) {
         return this.wordLists[listKey].indexOf(item) !== -1;
+    }
+
+    resetWordLists() {
+        this.wordLists = JSON.parse(JSON.stringify(DEFAULT_WORD_LISTS));
     }
 
     getWordLists() {

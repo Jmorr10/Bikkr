@@ -11,7 +11,7 @@
 <script>
 	require(['/static/js/app.js'], function () {
 		requirejs(["app/game"], function (game) {
-			game.init(false);
+            game.init(false, "{{urlRoom}}");
 		});
 	});
 </script>

@@ -300,14 +300,14 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 
 	function saveWordLists() {
 		let lists = {}
-		jQ('#wordListEditor .modal-scroll-container input').each(function () {
+		jQ('#wordListEditor input[data-wl-key]').each(function () {
 			let el = jQ(this);
 			if (el.attr('id')) {
 				lists[el.attr('id')] = el.val();
 			}
 		});
 		let saveName = prompt("Please enter a name for this save file:");
-		if(saveName) {
+		if (saveName) {
 			downloadTxt(saveName, JSON.stringify(lists));
 		}
 	}
@@ -345,6 +345,23 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 			alert('An error occurred.')
 			btns.prop('disabled', false);
 		}
+	}
+
+	function resetWordLists() {
+		jQ('#wordListEditor').modal('hide');
+		socket.emit(Events.RESET_WORD_LISTS, roomID);
+		let msgKey = "resetting_wls";
+		gameRef.showNotification("Resetting...", msgKey);
+		setTimeout(()=> {
+			jQ('#wordListEditor').modal('show');
+			gameRef.removeNotification(msgKey)
+		}, 500);
+	}
+
+	function clearWordLists() {
+		socket.emit(Events.CLEAR_WORD_LISTS, roomID);
+		let tagHolders = jQ(`input[data-wl-key]`);
+		tagHolders.tagsinput('removeAll');
 	}
 
 	function endGame() {
@@ -491,6 +508,8 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 		changeGameMode: changeGameMode,
 		addWordListItem: addWordListItem,
 		deleteWordListItem: deleteWordListItem,
+		clearWordLists: clearWordLists,
+		resetWordLists: resetWordLists,
 		saveWordLists: saveWordLists,
 		loadWordLists: loadWordLists,
 		setTimerLength: setTimerLength,

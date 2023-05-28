@@ -203,6 +203,12 @@ span.input-group-text {
     display: none !important;
 }
 
+.ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .transition-all {
     transition: all 2s;
 }
@@ -261,7 +267,7 @@ input[type="text"] {
 }
 
 /* MODALS */
-.modal-header button {
+.modal-header button, .custom-file-upload {
     min-width: 3rem !important;
     width: 3rem !important;
 }
@@ -635,10 +641,12 @@ input:disabled + .slider {
 .scoreboard {
     background-color: var(--bkkr-dark-primary);
     padding: 2rem;
+    height: 100%;
+    overflow: hidden;
 }
 
 .scoreboard #volatile, .scoreboard #hudArea {
-    zoom: 2;
+    font-size: 2vw;
     flex: 0 0 50% !important;
 }
 
@@ -660,6 +668,7 @@ input:disabled + .slider {
     width: 50%;
     margin-left: auto;
     margin-right: auto;
+    overflow: auto;
     height: 100%;
     justify-content: unset;
     gap: 1rem;
@@ -671,6 +680,7 @@ input:disabled + .slider {
     background-color: #003c8f;
     border-radius: 0.5rem;
     display: flex;
+    flex-shrink: 0;
     height: 9.375rem;
     margin-bottom: 1rem;
     transition: all 1s;
@@ -687,6 +697,10 @@ input:disabled + .slider {
     font-size: 2.5rem;
     margin-right: 1rem;
     text-align: center;
+}
+
+.hud-txt-size {
+    font-size: 3vw;
 }
 
 .place-img {
@@ -1226,4 +1240,32 @@ input:disabled + .slider {
         margin-left: 1rem;
     }*/
 
+}
+
+/* QR CODE DISPLAY CSS */
+html.qr {
+    background-color: #2D2D2D;
+}
+
+body.qr {
+    display: flex;
+    flex-direction: column;
+    margin: 1rem;
+    overflow: auto;
+    background-color: white;
+    height: calc(100% - 2rem);
+}
+
+.qr h1 {
+    text-align: center;
+    font-weight: bold;
+    color: black;
+    font-size: 3rem;
+    position: absolute;
+    left: 0;
+    right: 0;
+}
+
+.qr #canvas {
+    margin: auto;
 }

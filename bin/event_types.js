@@ -74,6 +74,7 @@ const GAME_OVER_STUDENT = 'game_over_student';
 const ADD_WORD_TO_LIST = "add_word";
 const REMOVE_WORD_FROM_LIST = "remove_word";
 const CLEAR_WORD_LISTS = "clear_lists";
+const RESET_WORD_LISTS = "reset_lists";
 const TOGGLE_WORD_SEARCH_MODE = "toggle_word_search";
 const CHANGE_GAME_MODE = "change_game_mode";
 const GAME_MODE_CHANGED = "game_mode_changed";
@@ -123,6 +124,7 @@ module.exports = {
     ADD_WORD_TO_LIST: ADD_WORD_TO_LIST,
     REMOVE_WORD_FROM_LIST: REMOVE_WORD_FROM_LIST,
     CLEAR_WORD_LISTS: CLEAR_WORD_LISTS,
+    RESET_WORD_LISTS: RESET_WORD_LISTS,
     TOGGLE_WORD_SEARCH_MODE: TOGGLE_WORD_SEARCH_MODE,
     CHANGE_GAME_MODE: CHANGE_GAME_MODE,
     GAME_MODE_CHANGED: GAME_MODE_CHANGED,

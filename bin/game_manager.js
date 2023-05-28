@@ -52,6 +52,7 @@ const RoomTypes = {
 };
 
 const GroupModule = require('./group');
+const {sendPrecompiledTemplate} = require("./template_manager");
 const Group = GroupModule.Group;
 const GroupTypes = {
     TYPE_ONE_FOR_ALL: GroupModule.TYPE_ONE_FOR_ALL,
@@ -478,6 +479,17 @@ function clearWordLists(socket, roomID) {
     }
 }
 
+function resetWordLists(socket, roomID) {
+    let room = RoomList.getRoomByID(roomID);
+    let player = PlayerList.getPlayerBySocketID(socket.id);
+    if (room && player.isTeacher) {
+        room.resetWordLists();
+        TemplateManager.sendPrecompiledTemplate(
+            player.id, 'partials/word_list_editor', {wordLists: room.wordLists}
+        );
+    }
+}
+
 function toggleWordSearchMode(socket, roomID, enabled) {
     let room = RoomList.getRoomByID(roomID);
     let player = PlayerList.getPlayerBySocketID(socket.id);
@@ -625,6 +637,7 @@ module.exports = {
     addWordToList: addWordToList,
     removeWordFromList: removeWordFromList,
     clearWordLists: clearWordLists,
+    resetWordLists: resetWordLists,
     toggleWordSearchMode: toggleWordSearchMode,
     changeGameMode: changeGameMode,
     sendLeaderboard: sendLeaderboard,

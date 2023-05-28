@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html lang="en" translate="no" class="qr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="google" content="notranslate">
+    <title>Bikkr QR Code</title>
+    <script src="/static/js/lib/jquery-2.2.4.min.js"></script>
+    <link rel='stylesheet' href='/static/css/style.css' />
+</head>
+
+<body class="qr">
+<h1>Scan me!</h1>
+<canvas id="canvas"></canvas>
+</body>
+
+<script src="/static/js/lib/qrcode.js"></script>
+
+<script>
+    $(document).ready(function () {
+        let roomID = window.location.pathname.split('/');
+        roomID = (roomID && roomID.length > 1) ? roomID[roomID.length - 1] : null;
+
+        if (roomID) {
+            let url = `${document.location.origin}/room/${roomID}`;
+            let size = (screen.availHeight < screen.availWidth ? screen.availHeight : screen.availWidth)/1.5;
+            QRCode.toCanvas(document.getElementById('canvas'), url, {width:size}, function (error) {
+                if (error) console.error(error)
+                console.log('success!');
+            });
+        } else {
+            alert('Invalid request. Check the URL and try again.');
+        }
+
+    });
+</script>
+
+</html>

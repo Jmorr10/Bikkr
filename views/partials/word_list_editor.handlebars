@@ -1,14 +1,18 @@
-<div id="wordListEditor" class="modal fade" data-target="body" data-add="self" data-mode="append" tabindex="-1" aria-labelledby="wordListEditorModalLabel" aria-hidden="true">
+<div id="wordListEditor" class="modal fade" data-target="body" data-add="self" data-mode="append-update" tabindex="-1" aria-labelledby="wordListEditorModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header hstack gap-2">
                 <h1 class="modal-title fs-2 flex-1" id="wordListEditorModalLabel">Word Lists</h1>
-                <button id="saveWordListsBtn" class="btn btn-bkr-primary icon-" style="margin-right: 2rem;">Save</button>
-                <label class="custom-file-upload">
-                    <input id="loadWordListsBtn" type="file" accept="text/text" name="files[]" style="display: none;">
-                    Load
-                </label>
                 <button type="button" class="btn-close" data-bs-toggle="modal" data-bs-target="#settings" aria-label="Close"></button>
+            </div>
+            <div class="modal-header rounded-0 sticky-top d-flex flex-nowrap align-content-center gap-2" style="background-color: #f0f0f0;">
+                <button id="saveWordListsBtn" class="btn btn-bkr-primary icon-floppy"></button>
+                <label class="custom-file-upload btn btn-bkr-primary icon-upload-cloud">
+                    <input id="loadWordListsBtn" type="file" accept="text/text" name="files[]" style="display: none;">
+                </label>
+                <button id="clearWordListsBtn" class="btn btn-bkr-primary icon-eraser"></button>
+                <button id="resetWordListsBtn" class="btn btn-bkr-primary icon-history"></button>
+                <button id="helpWordListsBtn" class="btn btn-bkr-primary icon-help-circled" data-bs-toggle="modal" data-bs-target="#wordListEditorHelp"></button>
             </div>
             <div class="modal-body">
                 {{#each wordLists}}
@@ -18,6 +22,9 @@
             </div>
         </div>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.min.js"
+            integrity="sha512-9UR1ynHntZdqHnwXKTaOm1s6V9fExqejKvg5XMawEMToW4sSw+3jtLrYfZPijvnwnnE8Uol1O9BcAskoxgec+g=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
         require(['jquery', 'app/view_sound_grid'], function (jQ, soundGrid) {
 
@@ -34,8 +41,38 @@
 
             jQ('#saveWordListsBtn').click(soundGrid.saveWordLists);
 
+            jQ('#clearWordListsBtn').click(soundGrid.clearWordLists);
+            jQ('#resetWordListsBtn').click(soundGrid.resetWordLists);
+
             jQ('#loadWordListsBtn').change(soundGrid.loadWordLists);
 
+
+
         });
+
+
+
     </script>
+</div>
+
+<div id="wordListEditorHelp" class="modal fade" data-target="body" data-add="self" data-mode="append-update" tabindex="-1" aria-labelledby="wordListEditorHelpModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header hstack gap-2">
+                <h1 class="modal-title fs-2 flex-1" id="wordListEditorHelpModalLabel">Help</h1>
+                <button type="button" class="btn-close" data-bs-toggle="modal" data-bs-target="#wordListEditor" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h3>Word List Editor Buttons:</h3>
+                <ul class="no-bullets">
+                    <li><i class="icon-floppy"></i> - This button will allow you to save your current word lists as a text file. You can later load this text file to restore your lists.</li>
+                    <li><i class="icon-upload-cloud"></i> - This button will allow you to load a previously saved word list. </li>
+                    <li><i class="icon-eraser"></i> - This button will clear all word lists. You can also erase words in word lists by pressing the "x" button or by pressing backspace when using the "Add new" input. </li>
+                    <li><i class="icon-history"></i> - This button will reset the word lists to their default values. </li>
+                </ul>
+                <h3>Deleting Words:</h3>
+                <p style="text-indent: 1rem;">When you delete all the words from a list, that vowel sound will no longer be used. This means that the button for that vowel sound will be removed from everyone's screen. This can be useful if you are trying to practice minimal pair sounds.</p>
+            </div>
+        </div>
+    </div>
 </div>

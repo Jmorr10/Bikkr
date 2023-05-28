@@ -31,8 +31,8 @@
  * @since 1.0
  */
 
-define(['jquery', 'app/render_manager', 'app/player', 'event_types', 'app/messages'],
-	function (jQ, render_manager, Player, Events, Messages) {
+define(['jquery', 'app/render_manager', 'app/player', 'event_types', 'app/messages', 'app/view_username'],
+	function (jQ, render_manager, Player, Events, Messages, view_username) {
 
 	require(['bootstrap'], function() {});
 
@@ -44,7 +44,7 @@ define(['jquery', 'app/render_manager', 'app/player', 'event_types', 'app/messag
 
 	const socket = Player.getConnection();
 
-	function init(isTeacher) {
+	function init(isTeacher, urlRoom) {
 
 		jQ('html').css('height', window.innerHeight + "px");
 
@@ -76,6 +76,19 @@ define(['jquery', 'app/render_manager', 'app/player', 'event_types', 'app/messag
             // Let the server know we are connecting as a new player. This will kick off the application.
 			socket.emit(Events.CLIENT_CONNECTED, isTeacher, /^ja\b/.test(navigator.language));
 
+			Player.initializePlayer(isTeacher);
+
+			if (urlRoom) {
+				socket.on(Events.ROOM_JOINED, function (template) {
+					render_manager.renderResponse(template);
+					Player.getPlayer().room = urlRoom;
+					view_username.start(urlRoom);
+				});
+
+				socket.emit(Events.JOIN_ROOM, urlRoom);
+			}
+
+
 		});
 	}
 
@@ -90,6 +103,10 @@ define(['jquery', 'app/render_manager', 'app/player', 'event_types', 'app/messag
 		}
 	}
 
+	//Opts:
+	// type - one of NOTICE_TYPES
+	// parent - the selector of the parent element (default: body)
+	// duration - 0 to keep open (default: 2500)
 	function showNotification(msg, key, opt) {
 
 		let type = (opt?.type && NOTICE_TYPES.hasOwnProperty(opt.type)) ? opt.type : "";

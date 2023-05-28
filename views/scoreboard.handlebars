@@ -38,15 +38,15 @@
                 <div class="vstack gap-3">
                     <div class="no-data-container">
                         <img src="/static/img/fail.svg" class="mh-100 mb-3 w-50"/>
-                        <span class="fs-1">Question Failed!</span>
+                        <span class="hud-txt-size">Question Failed!</span>
                     </div>
                 </div>
             </div>
-            <div id="correctAnswer" style="display: none;">
-                <h1 class="text-center">Correct Answer:</h1>
+            <div id="correctAnswer" style="display: none;" class="hud-txt-size">
+                <h1 class="text-center" style="font-size: inherit !important;">Correct Answer:</h1>
                 <div class="vstack gap-3 justify-content-center">
                     <div class="podium-box">
-                        <span class="podium-name fs-1 mx-4" id="correctAnswerTxt"></span>
+                        <span class="podium-name mx-4" style="font-size: inherit !important;" id="correctAnswerTxt"></span>
                     </div>
                 </div>
             </div>
@@ -54,7 +54,7 @@
         </div>
 
     </div>
-    <div id="gameoverPodium" class="bg-white w-100 h-100 d-flex flex-column p-3 overflow-auto hidden">
+    <div id="gameoverPodium" class="bg-white w-100 h-100 d-flex flex-column p-3 overflow-hidden hidden">
 
     </div>
 
@@ -84,31 +84,66 @@
             updateArea.empty().append(content[0].outerHTML);
         };
 
+        let animChainTimer = null;
+        let correctAnswerOpen = false;
+        let questionFailedOpen = false;
+
+        function closeOtherDisplays () {
+
+            clearTimeout(animChainTimer);
+            animChainTimer = null;
+
+            if (correctAnswerOpen || questionFailedOpen) {
+                update();
+            }
+
+            if (correctAnswerOpen) {
+                answerNotification.hide(0);
+                correctAnswerOpen = false;
+            }
+            if (questionFailedOpen) {
+                failNotification.hide(0);
+                questionFailedOpen = false;
+            }
+        }
+
         let questionFailed = function (template, correctAnswer, wordSearchWord) {
             resetTimer();
-            failNotification.fadeIn();
-            setTimeout(function () {
+            if (animChainTimer) {
+                closeOtherDisplays();
+            }
+            failNotification.fadeIn(()=> {questionFailedOpen = true});
+            animChainTimer = setTimeout(function () {
                 failNotification.fadeOut(400, function () {
                     showAnswer(template, correctAnswer, null, wordSearchWord);
+                    questionFailedOpen = false;
                     update();
                 });
             }, 4000);
         };
 
         let showAnswer = function (template, correctAnswer, points, wordSearchWord) {
+            if (animChainTimer) {
+                closeOtherDisplays();
+            }
             let vowel_sound = parentWindow.VOWEL_LABELS[correctAnswer][0];
             let answerText = (wordSearchWord) ? `${vowel_sound} - ${wordSearchWord}` : vowel_sound;
             answerTxt.text(answerText);
             resetTimer();
-            answerNotification.fadeIn();
-            setTimeout(function () {
-                answerNotification.fadeOut();
+            answerNotification.fadeIn(()=>{correctAnswerOpen = true});
+            animChainTimer = setTimeout(function () {
+                answerNotification.fadeOut(()=>{correctAnswerOpen = false});
+                animChainTimer = null;
                 update();
             }, 5000);
         }
 
         let showPodium = function (template) {
             mainContainer.addClass('hidden');
+            if (animChainTimer) {
+                closeOtherDisplays();
+            }
+            gameoverPodium.off('transitionend');
             gameoverPodium.one('transitionend', function () {
                 let temp = jQ(template);
                 gameoverPodium.empty().append(temp.children());
@@ -133,6 +168,7 @@
         }
 
         function resetScoreboard() {
+            gameoverPodium.off('transitionend');
             gameoverPodium.empty().one('transitionend', function () {
                 mainContainer.removeClass('hidden');
                 update();
@@ -140,6 +176,9 @@
         }
 
         function startTimer() {
+            if (animChainTimer) {
+                closeOtherDisplays();
+            }
             jQ('#answerTimer').fadeIn().one('animationend', function () {
                 jQ('#answerTimer').hide().removeClass('active');
                 parentWindow.timerEnded();

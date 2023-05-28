@@ -6,7 +6,11 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body vstack gap-4">
-                <div class="vstack gap-4 card p-2">
+                <div class="vstack gap-4 card p-2 qr-err-parent">
+                    <div class="d-flex align-items-center">
+                        <label class="flex-1">Show QR Code</label>
+                        <button id="showQRCodeBtn" class="btn btn-bkr-primary icon-qrcode"></button>
+                    </div>
                     <div class="d-flex align-items-center">
                         <label class="flex-1">Show Popup Scoreboard</label>
                         <button id="showScoreboardBtn" class="btn btn-bkr-primary icon-award"></button>
@@ -108,12 +112,26 @@
         </div>
     </div>
     <script>
-        require(['jquery', 'app/view_sound_grid'], function (jQ, soundGrid) {
+        require(['jquery', 'app/view_sound_grid', 'app/player'], function (jQ, soundGrid, Player) {
 
             let SERVER_PATH;
+            let gameRef;
+
 
             require(['app/game'], function (game) {
                 SERVER_PATH = game.SERVER_PATH;
+                gameRef = game;
+            });
+
+            jQ('#showQRCodeBtn').click(function () {
+                let roomID = {{#if roomID}}"{{roomID}}"{{else}}null{{/if}};
+                if (!roomID) {
+                    gameRef.showNotification(
+                        "An error occurred!", "UNK_ERR", {parent: '.qr-err-parent', type: gameRef.NOTICE_TYPES.danger});
+                    throw Error("BS RAWWWRRR!!!");
+                } else {
+                    window.open(`/qr/${roomID}`, '_blank', 'Scoreboard');
+                }
             });
 
             jQ('#showScoreboardBtn').click(function () {
