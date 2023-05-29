@@ -98,10 +98,6 @@ const VOWEL_LABELS = {
     "LONG_U": ["/u/", "ue", "oo", "ew"]
 };
 
-
-// FIXME: ALL OF THIS INFORMATION NEEDS TO BE STORED ON THE ROOM. OTHERWISE, THE SERVER CAN
-// ONLY HANDLE ONE GAME ROOM AT A TIME. DUHHHHHHHHH...
-
 class Button {
     constructor(sound, label) {
         this.sound = sound;
@@ -286,7 +282,6 @@ function processIndividualResponse(room, player, currentQuestionTmp, isCorrect) 
             currentQuestionTmp,
             room.playerScores,
             (room.wordSearchModeEnabled) ? room.currentWSQuestion : "",
-            // TODO TEST THIS
             room.lastLeaderboard.winner.name
         );
         debug('Question answered and finished!');
@@ -300,15 +295,7 @@ function processOneForAllResponse(room, player, currentQuestionTmp, studentRespo
 
     // Each group can only have one response for One-for-All mode
     if (room.groupsAnswered.hasOwnProperty(group.id)) {
-        TemplateManager.emitWithTemplate(
-            //`${group.id}@${room.id}`, --> sends to the entire group. But let's encourage individual participation!
-            player.socket.id,
-            'partials/player_already_answered',
-            {player: room.groupsAnswered[group.id],
-                myAnswer: studentResponse, correctAnswer: currentQuestionTmp},
-            Events.QUESTION_ALREADY_ANSWERED,
-            room.groupsAnswered[group.id]
-        );
+        player.socket.emit(Events.QUESTION_ALREADY_ANSWERED, room.groupsAnswered[group.id] )
         // [failed?, finished?]
         return [false, false];
     }
@@ -371,7 +358,6 @@ function processOneForAllResponse(room, player, currentQuestionTmp, studentRespo
             currentQuestionTmp,
             room.groupScores,
             (room.wordSearchModeEnabled) ? room.currentWSQuestion : "",
-            //TODO TEST THIS
             room.lastLeaderboard.winner.id
         );
         debug('Question answered and finished!');

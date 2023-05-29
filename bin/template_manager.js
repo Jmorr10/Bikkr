@@ -40,6 +40,8 @@ const path = require('path');
 const Handlebars = require('handlebars')
 const SASS = require('node-sass');
 const {allowInsecurePrototypeAccess} = require('@handlebars/allow-prototype-access')
+const Messages = require("./messages");
+const PlayerList = require("./player_list");
 
 const helpers = require('handlebars-helpers')();
 
@@ -50,7 +52,8 @@ let handlebars = require('express-handlebars').create({
     defaultLayout: 'main',
     helpers: Object.assign({
         for: forHelper,
-        sass: render_sass
+        sass: render_sass,
+        lang: getMessage
     }, helpers)
 });
 
@@ -75,9 +78,14 @@ function sendPrecompiledTemplate(socketID, templateName, context) {
 
     if (Array.isArray(socketID)) {
         for (const soc of socketID) {
+            let player = PlayerList.getPlayerBySocketID(soc);
+            context["INT_MESSAGES"] = (player && player.japaneseLang) ? Messages.jpn : Messages.default;
             sendPrecompiledTemplate(soc, templateName, context);
         }
     } else {
+        let player = PlayerList.getPlayerBySocketID(socketID);
+        context["INT_MESSAGES"] = (player && player.japaneseLang) ? Messages.jpn : Messages.default;
+
         handlebars.render(getTemplatePath(templateName), context)
             .then(function (data) {
                 io.sockets.to(socketID).emit(Events.RENDER_TEMPLATE, data);
@@ -110,9 +118,13 @@ function emitWithTemplate(socketID, templateName, context, eventType, ...args) {
 
     if (Array.isArray(socketID)) {
         for (const soc of socketID) {
+            let player = PlayerList.getPlayerBySocketID(soc);
+            context["INT_MESSAGES"] = (player && player.japaneseLang) ? Messages.jpn : Messages.default;
             emitWithTemplate(soc, templateName, context, eventType, ...args);
         }
     } else {
+        let player = PlayerList.getPlayerBySocketID(socketID);
+        context["INT_MESSAGES"] = (player && player.japaneseLang) ? Messages.jpn : Messages.default;
         handlebars.render(getTemplatePath(templateName), context)
             .then(function (data) {
                 // The spread operator (...) is used here to convert args (an Array) back into individual arguments.
@@ -143,6 +155,8 @@ function emitWithIndividualizedTemplate(socketArray, templateName, contextArray,
 
     if (Array.isArray(socketArray) && Array.isArray(contextArray) && socketArray.length === contextArray.length) {
         for (let i = 0; i < socketArray.length; i++) {
+            let player = PlayerList.getPlayerBySocketID(socketArray[i]);
+            context["INT_MESSAGES"] = (player && player.japaneseLang) ? Messages.jpn : Messages.default;
             emitWithTemplate(socketArray[i], templateName, contextArray[i], eventType, ...args);
         }
     } else {
@@ -171,16 +185,19 @@ function emitWithTemplateArray(socketID, templateNames, contexts, eventType, ...
 
     // Check if each template has its own context
     if (templateNames && contexts && templateNames.length === contexts.length) {
-
+        let player = PlayerList.getPlayerBySocketID(socketID);
         for (let i = 0, len = templateNames.length; i < len; i++) {
+            contexts[i]["INT_MESSAGES"] = (player && player.japaneseLang) ? Messages.jpn : Messages.default;
             emitWithTemplate(socketID, templateNames[i], contexts[i], eventType, ...args);
         }
 
     } else if (contexts && contexts.length === 1) {
 
-        // We using only one context for all the templates here
+        // We are using only one context for all the templates here
         // contexts is an array, so contexts[0] is necessary
+        let player = PlayerList.getPlayerBySocketID(socketID);
         for (let i = 0, len = templateNames.length; i < len; i++) {
+            contexts[0]["INT_MESSAGES"] = (player && player.japaneseLang) ? Messages.jpn : Messages.default;
             emitWithTemplate(socketID, templateNames[i], contexts[0], eventType, ...args);
         }
 
@@ -210,6 +227,11 @@ function render_sass (sassString) {
     return SASS.renderSync({
         data: sassString
     }).css.toString();
+}
+
+function getMessage(userLangJpn, messageKey, default_val) {
+    let messageSet = (userLangJpn) ? Messages.jpn : Messages.default;
+    return (messageKey && messageSet.hasOwnProperty(messageKey)) ? messageSet[messageKey] : (default_val) ? default_val : "";
 }
 
 module.exports = {

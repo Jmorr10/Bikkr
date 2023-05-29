@@ -656,8 +656,9 @@ input:disabled + .slider {
     margin-right: auto;
 }
 
-
-
+.scoreboard .group-score-name {
+    font-size: 2.2vw !important;
+}
 
 /* STUDENT PODIUM */
 #podium {
@@ -694,7 +695,7 @@ input:disabled + .slider {
 .podium-name {
     color: white;
     flex: 1;
-    font-size: 2.5rem;
+    font-size: 3vw;
     margin-right: 1rem;
     text-align: center;
 }
@@ -708,7 +709,8 @@ input:disabled + .slider {
     background-repeat: no-repeat;
     background-size: contain;
     height: calc(100% - 2rem);
-    width: 9.375rem;
+    width: 25%;
+    flex-shrink: 0;
 }
 
 .p1 .place-img {
@@ -772,7 +774,7 @@ input:disabled + .slider {
     align-self: flex-start;
     border-bottom: 1px solid white;
     flex: 0;
-    font-size: 2rem;
+    font-size: 2vw;
     margin-right: 0;
     padding: 0.5rem 1rem;
     text-align: left;
@@ -784,10 +786,14 @@ input:disabled + .slider {
     color: white;
     display: flex;
     flex: 1;
-    font-size: 1.5rem;
+    font-size: 2vw;
     justify-content: center;
     text-align: center;
     width: 100%;
+}
+
+.group-score-name {
+    font-size: 1.3rem !important;
 }
 
 .hidden {

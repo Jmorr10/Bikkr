@@ -14,6 +14,21 @@ const MESSAGES_EN = {
     DISCONNECTED_TEXT: 'Your teacher has disconnected. Please <a href="/">click here</a> to reload the page.',
     KICKED: 'Kicked out!',
     KICKED_TEXT: 'You were kicked out of the room by the teacher. Please <a href="/">click here</a> to reload the page.',
+    ERR_NO_USERNAME: "Please enter a username to begin!",
+    ERR_NO_ROOMNAME: "Please enter a room name to begin!",
+    ERR_CANT_CONNECT_TO_SERVER: 'Disconnected from the server.',
+    RECONNECTING: "Reconnecting...",
+    RECONNECTED: "Successfully reconnected!",
+    LEADERBOARD: "Leaderboard",
+    NO_SCORES: "No scores!",
+    PLAYER_LIST: "Player List",
+    NO_PLAYERS: "No players!",
+    JOIN_GROUP: "Join Group",
+    CHOOSE_GROUP: "Choose a group to join",
+    USERNAME: "Username",
+    ENTER_USERNAME: "Please enter a username.",
+    ROOM_NAME: "Room Name",
+    ENTER_ROOM_NAME: "Please enter the room name."
 };
 const MESSAGES_JA = {
     ERR_ROOM_NAME_REQUIRED: '部屋の名前を入力する必要があります!',
@@ -30,6 +45,21 @@ const MESSAGES_JA = {
     DISCONNECTED_TEXT: '先生が切断しました。ページを再読み込みするには<a href="/">こちらをクリック</a>してください。',
     KICKED: '部屋から出されした！',
     KICKED_TEXT: 'あなたは先生によって部屋から出されした。ページを再読み込みするには、<a href="/">こちらをクリック</a>してください。',
+    ERR_NO_USERNAME: "ユーザー名を入力してください！",
+    ERR_NO_ROOMNAME: "部屋名を入力してください！",
+    ERR_CANT_CONNECT_TO_SERVER: 'サーバーから切断されました。',
+    RECONNECTING: "再接続中...",
+    RECONNECTED: "再接続に成功しました！",
+    LEADERBOARD: "リーダーボード",
+    NO_SCORES: "スコアはありません！",
+    PLAYER_LIST: "プレイヤーリスト",
+    NO_PLAYERS: "プレイヤーはいません！",
+    JOIN_GROUP: "グループ",
+    CHOOSE_GROUP: "グループを選択してください。",
+    USERNAME: "ユーザー名",
+    ENTER_USERNAME: "ユーザー名を入力してください。",
+    ROOM_NAME: "ルーム",
+    ENTER_ROOM_NAME: "部屋名を入力してください。"
 };
 
 module.exports = {

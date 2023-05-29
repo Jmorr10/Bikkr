@@ -2,10 +2,10 @@
     <input type="hidden" value="{{roomID}}" id="roomIDVal"/>
     <div class="section-header d-flex flex-nowrap align-items-center mb-4">
         <img src="/static/img/logo.svg" class="mh-100 me-3"/>
-        <h1 class="mb-0 fs-2 flex-1">Join Group</h1>
+        <h1 class="mb-0 fs-2 flex-1" data-lang="JOIN_GROUP">{{INT_MESSAGES.JOIN_GROUP}}</h1>
     </div>
     <div class="section-img text-center"><img src="/static/img/room_settings.svg" alt="Room settings page" class="mh-100"/></div>
-    <label class="form-label mt-4 fw-bold text-center">Choose a group to join</label>
+    <label class="form-label mt-4 fw-bold text-center" data-lang="CHOOSE_GROUP">{{INT_MESSAGES.CHOOSE_GROUP}}</label>
     <div class="d-flex flex-row flex-wrap justify-content-around card p-3 my-4" id="groupSelectionForm">
         {{#each groups}}
             <button class="icon-btn" data-group="{{id}}">{{add @index 1}}</button>

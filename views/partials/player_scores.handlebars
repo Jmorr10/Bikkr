@@ -1,4 +1,4 @@
-<div id="playerScores" class="modal-inner-content">
+<div id="playerScores" class="modal-inner-content scores-update">
     <div class="vstack gap-3">
         {{#if players}}
             {{#each players}}
@@ -18,7 +18,7 @@
         {{else}}
             <div class="no-data-container">
                 <img src="/static/img/no_data.svg" class="mh-100 mb-3 w-25"/>
-                <span class="no-data-title">No scores!</span>
+                <span class="no-data-title" data-lang="NO_SCORES">{{INT_MESSAGES.NO_SCORES}}</span>
             </div>
         {{/if}}
     </div>

@@ -22,8 +22,6 @@
 
         {{> leaderboard}}
 
-        {{> reconnecting}}
-
         <div id="popup">
             <div id="popupContent"></div>
         </div>
@@ -32,13 +30,12 @@
             require(['app/view_sound_grid_student', 'app/player'], function (view_sound_grid_student, Player) {
                 let player = Player.getPlayer();
                 player.name = "{{player.name}}";
-                        {{#if groupID}}player.group = "{{groupID}}";{{/if}}
+                {{#if groupID}}player.group = "{{groupID}}";{{/if}}
+                player.room = "{{roomID}}";
                 view_sound_grid_student.start();
             });
         </script>
     </div>
 
 </div>
-
-<div id="notificationContainer" data-target="body" data-add="self" data-mode="no-update" style="display:none"></div>
 

@@ -1,13 +1,13 @@
 <div id="content" data-add="self" data-mode="update" class="d-flex flex-column flex-nowrap m-0 w-100 h-100">
     <div class="section-header d-flex flex-nowrap align-items-center mb-4">
         <img src="/static/img/logo.svg" class="mh-100 me-3"/>
-        <h1 class="mb-0 fs-2 flex-1">Room Name</h1>
+        <h1 class="mb-0 fs-2 flex-1">{{INT_MESSAGES.ROOM_NAME}}</h1>
     </div>
     <div class="section-img flex-1 text-center"><img src="/static/img/room.svg" alt="Enter room name." class="mh-100"/></div>
     <div class="flex-1 text-center">
         <div class="vstack mx-auto gap-4 my-4 text-center flex-wrap justify-content-center align-content-center card p-3">
-            <label class="form-label mb-0 fw-bold" for="roomName">Please enter a room name.</label>
-            <input class="form-control text-center" type="text" name="roomName" id="roomName" placeholder="部屋の名前">
+            <label class="form-label mb-0 fw-bold" for="roomName">{{INT_MESSAGES.ENTER_ROOM_NAME}}</label>
+            <input class="form-control text-center" type="text" name="roomName" id="roomName">
         </div>
         <div class="alert alert-danger text-center mb-0 error-lbl">{{errorTxt}}</div>
         <input class="btn btn-bkr-confirm mx-auto mt-4" type="submit" id="submitRoom" value="OK">

@@ -155,6 +155,7 @@
         }
 
         socket.on(Events.QUESTION_FINISHED, update);
+        socket.on(Events.RENDER_TEMPLATE, checkForUpdate);
         socket.on(Events.QUESTION_FAILED, questionFailed);
         socket.on(Events.QUESTION_FINISHED, showAnswer);
         socket.on(Events.GAME_OVER, showPodium);
@@ -187,6 +188,12 @@
 
         function resetTimer() {
             jQ('#answerTimer').hide().off('animationend').removeClass('active');
+        }
+
+        function checkForUpdate(template) {
+            if (template.indexOf("scores-update") !== -1) {
+                update();
+            }
         }
 
         window.bikkr = {

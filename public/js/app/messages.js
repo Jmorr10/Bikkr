@@ -42,16 +42,30 @@ define([], function () {
         const MESSAGES_EN = {
             ERR_NO_USERNAME: "Please enter a username to begin!",
             ERR_NO_ROOMNAME: "Please enter a room name to begin!",
-            ERR_CANT_CONNECT_TO_SERVER: 'Could not connect to the server. Please reload the page.',
+            ERR_CANT_CONNECT_TO_SERVER: 'Disconnected from the server.',
             RECONNECTING: "Reconnecting...",
-            RECONNECTED: "Successfully reconnected!"
+            RECONNECTED: "Successfully reconnected!",
+            LEADERBOARD: "Leaderboard",
+            NO_SCORES: "No scores!",
+            PLAYER_LIST: "Player List",
+            NO_PLAYERS: "No players!",
+            JOIN_GROUP: "Join Group",
+            CHOOSE_GROUP: "Choose a group to join",
+            ALREADY_ANSWERED: (x) => `${x} already answered for your group!`
         };
         const MESSAGES_JA = {
             ERR_NO_USERNAME: "ユーザー名を入力してください！",
             ERR_NO_ROOMNAME: "部屋名を入力してください！",
-            ERR_CANT_CONNECT_TO_SERVER: 'サーバーに接続できませんでした。ページを再読み込みしてください。',
+            ERR_CANT_CONNECT_TO_SERVER: 'サーバーから切断されました。',
             RECONNECTING: "再接続中...",
-            RECONNECTED: "再接続に成功しました！"
+            RECONNECTED: "再接続に成功しました！",
+            LEADERBOARD: "リーダーボード",
+            NO_SCORES: "スコアはありません！",
+            PLAYER_LIST: "プレイヤーリスト",
+            NO_PLAYERS: "プレイヤーはいません！",
+            JOIN_GROUP: "グループ",
+            CHOOSE_GROUP: "グループを選択してください。",
+            ALREADY_ANSWERED: (x) => `${x}はすでにあなたのグループのために答えてくれました！`
         };
 
         let keyset = {};

@@ -82,32 +82,34 @@
                     </div>
                 </div>
 
-                <div id="gameModeOptions" class="d-flex flex-column align-items-center card p-2">
-                    <label class="flex-1 mb-3">Change Game Mode</label>
-                    <div class="d-flex align-items-center justify-content-center">
-                        {{#eq roomType "individual"}}
-                            <input type="radio" class="btn-check" name="gameMode" id="switchToIndividualSpeed"
-                                   {{#eq individualType "individualSpeedBased"}}checked{{/eq}} autocomplete="off" value="individualSpeedBased">
-                            <label class="btn btn-bkr-secondary icon-stopwatch d-flex flex-column justify-content-center align-items-center" for="switchToIndividualSpeed">Speed</label>
+                {{#or (eq roomType "individual") (eq groupType "oneForAll")}}
+                    <div id="gameModeOptions" class="d-flex flex-column align-items-center card p-2">
+                        <label class="flex-1 mb-3">Change Game Mode</label>
+                        <div class="d-flex align-items-center justify-content-center">
+                            {{#eq roomType "individual"}}
+                                <input type="radio" class="btn-check" name="gameMode" id="switchToIndividualSpeed"
+                                       {{#eq individualType "individualSpeedBased"}}checked{{/eq}} autocomplete="off" value="individualSpeedBased">
+                                <label class="btn btn-bkr-secondary icon-stopwatch d-flex flex-column justify-content-center align-items-center" for="switchToIndividualSpeed">Speed</label>
 
-                            <input type="radio" class="btn-check" name="gameMode" id="switchToIndividualScore"
-                                   {{#eq individualType "individualScoreBased"}}checked{{/eq}} autocomplete="off" value="individualScoreBased">
-                            <label class="btn btn-bkr-secondary icon-target d-flex flex-column justify-content-center align-items-center ms-3" for="switchToIndividualScore">Score</label>
-                        {{/eq}}
-
-                        {{#eq roomType "group"}}
-                            {{#eq groupType "oneForAll"}}
-                                <input type="radio" class="btn-check" name="gameMode" id="switchToOFASpeed"
-                                       {{#eq ofaType "OFASpeedBased"}}checked{{/eq}} autocomplete="off" value="OFASpeedBased">
-                                <label class="btn btn-bkr-secondary icon-stopwatch d-flex flex-column justify-content-center align-items-center" for="switchToOFASpeed">Speed</label>
-
-                                <input type="radio" class="btn-check" name="gameMode" id="switchToOFAScore"
-                                       {{#eq ofaType "OFAScoreBased"}}checked{{/eq}} autocomplete="off" value="OFAScoreBased">
-                                <label class="btn btn-bkr-secondary icon-target d-flex flex-column justify-content-center align-items-center ms-3" for="switchToOFAScore">Score</label>
+                                <input type="radio" class="btn-check" name="gameMode" id="switchToIndividualScore"
+                                       {{#eq individualType "individualScoreBased"}}checked{{/eq}} autocomplete="off" value="individualScoreBased">
+                                <label class="btn btn-bkr-secondary icon-target d-flex flex-column justify-content-center align-items-center ms-3" for="switchToIndividualScore">Score</label>
                             {{/eq}}
-                        {{/eq}}
+
+                            {{#eq roomType "group"}}
+                                {{#eq groupType "oneForAll"}}
+                                    <input type="radio" class="btn-check" name="gameMode" id="switchToOFASpeed"
+                                           {{#eq ofaType "OFASpeedBased"}}checked{{/eq}} autocomplete="off" value="OFASpeedBased">
+                                    <label class="btn btn-bkr-secondary icon-stopwatch d-flex flex-column justify-content-center align-items-center" for="switchToOFASpeed">Speed</label>
+
+                                    <input type="radio" class="btn-check" name="gameMode" id="switchToOFAScore"
+                                           {{#eq ofaType "OFAScoreBased"}}checked{{/eq}} autocomplete="off" value="OFAScoreBased">
+                                    <label class="btn btn-bkr-secondary icon-target d-flex flex-column justify-content-center align-items-center ms-3" for="switchToOFAScore">Score</label>
+                                {{/eq}}
+                            {{/eq}}
+                        </div>
                     </div>
-                </div>
+                {{/or}}
             </div>
         </div>
     </div>
@@ -128,7 +130,6 @@
                 if (!roomID) {
                     gameRef.showNotification(
                         "An error occurred!", "UNK_ERR", {parent: '.qr-err-parent', type: gameRef.NOTICE_TYPES.danger});
-                    throw Error("BS RAWWWRRR!!!");
                 } else {
                     window.open(`/qr/${roomID}`, '_blank', 'Scoreboard');
                 }

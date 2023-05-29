@@ -33,19 +33,23 @@
  * @version 1.0
  * @since 1.0
  */
-define(['jquery', 'app/player', 'app/render_manager', 'event_types', 'app/util'],
-    function (jQ, Player, render_manager, Events, Util) {
+define(['jquery', 'app/player', 'app/render_manager', 'event_types', 'app/util', 'app/messages'],
+    function (jQ, Player, render_manager, Events, Util, Messages) {
 
         const socket = Player.getConnection();
         let player;
+
+        let gameRef;
+        require(['app/game'], function (game) {
+            gameRef = game;
+        });
+
 
         let soundGridHolder;
         let leaderboardBtn;
         let leaderboard;
         let closeLeaderboardBtn;
         let modalBlack;
-        let popup;
-        let closePopupBtn;
         let errorLbl;
         let roomID;
         let myAnswer = "";
@@ -58,8 +62,6 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types', 'app/util']
             leaderboardBtn = jQ('#leaderboardBtn');
             leaderboard = jQ('#leaderboard');
             closeLeaderboardBtn = jQ('#closeLeaderboardBtn');
-            popup = jQ('#popupContent');
-            closePopupBtn = jQ('#closePopupBtn');
             modalBlack = jQ('.modal-black').not('#reconnecting > .modal-black');
             errorLbl = jQ('.error-lbl');
             roomID = jQ('#roomIDVal').val();
@@ -148,14 +150,13 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types', 'app/util']
 
         }
 
-        function alreadyAnswered(template, playerName, correctAnswer) {
+        function alreadyAnswered(playerName) {
             if (player.name !== playerName) {
-                render_manager.renderResponse(template);
                 soundGridHolder.addClass('locked');
-                popup.addClass('open');
-                setTimeout(function () {
-                    popup.removeClass('open');
-                }, 5000);
+                gameRef.showNotification(
+                    Messages.ALREADY_ANSWERED(playerName), "already_answered",
+                    {type:gameRef.NOTICE_TYPES.warning}
+                );
             }
         }
 

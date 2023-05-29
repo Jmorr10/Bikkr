@@ -32,7 +32,7 @@
  * @version 1.0
  * @since 1.0
  */
-define(['jquery'], function(jQ) {
+define(['jquery', 'app/messages'], function(jQ, Messages) {
 
     /**
      * Renders a response from the server onto the page.
@@ -106,8 +106,23 @@ define(['jquery'], function(jQ) {
                         }
                         break;
                 }
+
+                //Just BIKKR
+                /*
+                target.children('[data-lang]').forEach(function () {
+                    // Swap languages here.
+                    let el = jQ(this);
+                    let msg = (Messages.hasOwnProperty(el.attr('data-lang'))) ? Messages[el.attr('data-lang')] : null;
+                    if (msg) {
+                        el.text(msg);
+                    }
+                });*/
+
             }
         }
+
+
+
 
         if (callback) {
             callback();
