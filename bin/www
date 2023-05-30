@@ -23,7 +23,8 @@ app.set('port', port);
 
 const server = http.createServer(app);
 const io = socketIO(server, {
-    pingTimeout: 1200000
+    pingInterval: 2500,
+    pingTimeout: 4000
 });
 
 /**

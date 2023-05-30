@@ -55,7 +55,6 @@ function addSocketListeners (socket) {
     socket.on(Events.JOIN_GROUP, MatchmakingManager.joinGroup.bind(null, socket));
     socket.on(Events.KICK_PLAYER, MatchmakingManager.kickPlayer.bind(null, socket));
     socket.on(Events.CONNECT_AGAIN, MatchmakingManager.reconnectPlayer.bind(null, socket));
-    //socket.on(Events.HEARTBEAT, MatchmakingManager.handleHeartbeat.bind(null, socket));
 }
 
 

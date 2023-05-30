@@ -33,7 +33,8 @@ const io = socketIO(server, {
     cors: {
         origin: ["https://bikkr.jrmsoftworks.com", "https://www.bikkr.jrmsoftworks.com", "https://localhost:6000"]
     },
-    pingTimeout: 1200000
+    pingInterval: 2500,
+    pingTimeout: 4000
 });
 
 /**

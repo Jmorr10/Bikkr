@@ -93,7 +93,6 @@ define(['event_types', 'app/messages'], function (Events, Messages) {
         set group(value) {
             this._group = value;
         }
-
 	}
 
 	function initializePlayer(isTeacher) {
@@ -110,6 +109,7 @@ define(['event_types', 'app/messages'], function (Events, Messages) {
                 reconnectionDelayMax: 2000,
                 reconnectionAttempts: Infinity,
                 closeOnBeforeunload: false,
+                upgrade: false,
                 transports: ["websocket"]
             }
         );
@@ -117,8 +117,6 @@ define(['event_types', 'app/messages'], function (Events, Messages) {
         window.addEventListener('beforeunload',(event) =>{
             socket.emit(Events.DISCONNECTING);
         });
-
-        socket.once(Events.SOCKET_CONNECTED, ping);
 
         socket.once("connect_error", (err) => {
 
@@ -151,13 +149,7 @@ define(['event_types', 'app/messages'], function (Events, Messages) {
                 );
             }
         });
-    }
 
-    function ping() {
-	    if (socket.connected) {
-            socket.emit(Events.HEARTBEAT);
-        }
-        setTimeout(ping, 16000);
     }
 
     function getPlayer() {
