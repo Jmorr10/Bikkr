@@ -156,7 +156,7 @@ function emitWithIndividualizedTemplate(socketArray, templateName, contextArray,
     if (Array.isArray(socketArray) && Array.isArray(contextArray) && socketArray.length === contextArray.length) {
         for (let i = 0; i < socketArray.length; i++) {
             let player = PlayerList.getPlayerBySocketID(socketArray[i]);
-            context["INT_MESSAGES"] = (player && player.japaneseLang) ? Messages.jpn : Messages.default;
+            contextArray[i]["INT_MESSAGES"] = (player && player.japaneseLang) ? Messages.jpn : Messages.default;
             emitWithTemplate(socketArray[i], templateName, contextArray[i], eventType, ...args);
         }
     } else {
