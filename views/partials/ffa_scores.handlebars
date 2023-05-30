@@ -11,7 +11,7 @@
                             {{/eq}}
                         {{/if}}
                     {{/if}}>
-                        <div class="score-name flex-1" data-name="{{name}}">{{name}}</div>
+                        <div class="score-name flex-1 ellipsis" data-name="{{name}}">{{name}}</div>
                         {{#if ../../winners}}
                             {{#if (hasOwn ../../winners ../id)}}
                                 {{#eq (get "name" (get ../id ../../winners)) name}}

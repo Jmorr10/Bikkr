@@ -12,7 +12,7 @@
                     {{#lte this.ranking 3}}
                         <div class="podium-box p{{this.ranking}} hidden">
                             <div class="place-img"></div>
-                            <span class="podium-name">{{default this.name this.id "---"}}</span>
+                            <span class="podium-name ellipsis">{{default this.name this.id "---"}}</span>
                         </div>
                     {{/lte}}
                 {{/each}}

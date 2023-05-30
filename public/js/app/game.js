@@ -61,7 +61,13 @@ define(['jquery', 'app/render_manager', 'app/player', 'event_types', 'app/messag
 			'group_selection.svg',
 			'room.svg',
 			'room_settings.svg',
-			'username.svg'
+			'username.svg',
+			'1_place.svg',
+			'2_place.svg',
+			'3_place.svg',
+			'fail.svg',
+			'good_try.svg',
+			'no_data.svg'
 		], function () {
 
             // Set up our template rendering system to receive templates from the server.

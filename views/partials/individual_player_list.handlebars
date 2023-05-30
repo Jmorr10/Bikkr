@@ -1,7 +1,7 @@
 {{#if players}}
     {{#each players}}
         <div class="player-row d-flex">
-            <div class="player-name flex-1">{{name}}</div>
+            <div class="player-name flex-1 ellipsis">{{name}}</div>
             <button class="player-value icon-cancel kick-btn" data-user="{{id}}"></button>
         </div>
     {{/each}}

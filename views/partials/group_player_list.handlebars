@@ -5,7 +5,7 @@
                 <h4 class="group-name">{{id}}</h4>
                 {{#each playerScores}}
                     <div class="player-row d-flex{{#not @last}} mb-2{{/not}}">
-                        <div class="player-name flex-1 ps-3">{{name}}</div>
+                        <div class="player-name flex-1 ps-3 ellipsis">{{name}}</div>
                         <button class="player-value icon-cancel kick-btn" data-user="{{id}}"></button>
                     </div>
                 {{/each}}

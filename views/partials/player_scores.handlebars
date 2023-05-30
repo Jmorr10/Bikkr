@@ -4,7 +4,7 @@
             {{#each players}}
                 {{#with this}}
                     <div class="score-row d-flex px-3 py-2" {{#if ../winner}}{{#eq ../winner.name name}}style="order:-1 !important;"{{/eq}}{{/if}}>
-                        <div class="score-name flex-1" data-name="{{name}}">{{name}}</div>
+                        <div class="score-name flex-1 ellipsis" data-name="{{name}}">{{name}}</div>
                         {{#if ../winner}}
                             {{#eq ../winner.name name}}
                                 <i class="icon-crown round-winner"></i>
