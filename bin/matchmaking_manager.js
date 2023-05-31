@@ -244,7 +244,7 @@ function createGroups(socket, room, options) {
 }
 
 
-function joinRoom(socket, roomID) {
+function joinRoom(socket, roomID, normalFlow) {
     let player = PlayerList.getPlayerBySocketID(socket.id);
     if (player && !player.isTeacher) {
         let room = RoomList.getRoomByID(roomID);
@@ -253,7 +253,7 @@ function joinRoom(socket, roomID) {
         } else if (room) {
             room.addPlayer(player);
             if (room.usernamesAssigned) {
-                setUsername(socket, roomID, getRandomUsername());
+                setUsername(socket, roomID, getRandomUsername(), normalFlow);
             } else {
                 debug(`Sent username selection`);
                 TemplateManager.emitWithTemplate(socket.id, 'username', {roomID: room.id}, Events.ROOM_JOINED, room.id);
@@ -374,7 +374,7 @@ function getRandomUsername() {
  * @param socket The socket of the player that is logging in
  * @param username The player's desired username
  */
-function setUsername(socket, roomID, username) {
+function setUsername(socket, roomID, username, normalFlow) {
     let player = PlayerList.getPlayerBySocketID(socket.id);
     if (isUserNameValid(username)) {
 
@@ -382,6 +382,11 @@ function setUsername(socket, roomID, username) {
             let room = RoomList.getRoomByID(roomID);
             if (room) {
                 player.name = username;
+
+                if (!normalFlow) {
+                    TemplateManager.sendPrecompiledTemplate(socket.id, 'partials/join_interstitial', {roomID: room.id});
+                }
+
                 TemplateManager.sendPrecompiledTemplate(roomID, 'partials/player_list_content', {players: room.players, roomType: room.type, groupType: room.groupType, groups: room.groups, playerCount: room.playerCount});
                 let template = (room.type === RoomTypes.TYPE_GROUP && !room.groupsAssigned) ? 'group_selection' : 'sound_grid_student';
 

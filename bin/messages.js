@@ -28,7 +28,8 @@ const MESSAGES_EN = {
     USERNAME: "Username",
     ENTER_USERNAME: "Please enter a username.",
     ROOM_NAME: "Room Name",
-    ENTER_ROOM_NAME: "Please enter the room name."
+    ENTER_ROOM_NAME: "Please enter the room name.",
+    JOIN: "Join"
 };
 const MESSAGES_JA = {
     ERR_ROOM_NAME_REQUIRED: '部屋の名前を入力する必要があります!',
@@ -59,7 +60,8 @@ const MESSAGES_JA = {
     USERNAME: "ユーザー名",
     ENTER_USERNAME: "ユーザー名を入力してください。",
     ROOM_NAME: "ルーム",
-    ENTER_ROOM_NAME: "部屋名を入力してください。"
+    ENTER_ROOM_NAME: "部屋名を入力してください。",
+    JOIN: "参加"
 };
 
 module.exports = {

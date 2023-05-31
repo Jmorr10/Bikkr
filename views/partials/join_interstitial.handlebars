@@ -1,0 +1,19 @@
+<div id="join-interstitial" data-target="body" data-add="self" data-mode="append"
+     class="bg-white d-flex flex-column align-items-center justify-content-center">
+
+    <h1>Room: {{roomID}}</h1>
+    <button id="joinBtn" class="btn btn-bkr-confirm mx-auto mt-4">{{INT_MESSAGES.JOIN}}</button>
+
+    <script>
+        require(['jquery', 'app/player'], function (jQ, Player) {
+            jQ('#joinBtn').click(function (e) {
+                const soundContainer = new Audio();
+                soundContainer.autoplay = true;
+                soundContainer.src = "data:audio/mpeg;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaWdTb3VuZEJhbmsuY29tIC8gTGFTb25vdGhlcXVlLm9yZwBURU5DAAAAHQAAA1N3aXRjaCBQbHVzIMKpIE5DSCBTb2Z0d2FyZQBUSVQyAAAABgAAAzIyMzUAVFNTRQAAAA8AAANMYXZmNTcuODMuMTAwAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV";
+                Player.setSoundElement(soundContainer);
+                jQ('#join-interstitial').remove();
+            });
+        });
+    </script>
+
+</div>

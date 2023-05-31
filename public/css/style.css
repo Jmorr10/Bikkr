@@ -305,6 +305,18 @@ input[type="text"] {
     width: 4.375rem;
 }
 
+#join-interstitial {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+#join-interstitial #joinBtn {
+
+}
+
 
 /* VOWEL GRID */
 .vowel-grid-holder {

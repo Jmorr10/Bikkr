@@ -67,7 +67,7 @@ define(['jquery', 'app/render_manager', 'app/player', 'event_types', 'app/messag
 			'3_place.svg',
 			'fail.svg',
 			'good_try.svg',
-			'no_data.svg'
+			'no_data.svg',
 		], function () {
 
             // Set up our template rendering system to receive templates from the server.
@@ -88,10 +88,10 @@ define(['jquery', 'app/render_manager', 'app/player', 'event_types', 'app/messag
 				socket.on(Events.ROOM_JOINED, function (template) {
 					render_manager.renderResponse(template);
 					Player.getPlayer().room = urlRoom;
-					view_username.start(urlRoom);
+					view_username.start(urlRoom, false);
 				});
 
-				socket.emit(Events.JOIN_ROOM, urlRoom);
+				socket.emit(Events.JOIN_ROOM, urlRoom, false);
 			}
 
 

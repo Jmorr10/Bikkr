@@ -26,7 +26,6 @@
 			return {{{constants}}};
 		});
 	</script>
-
 </head>
 
 <body class="scoreboard d-flex flex-center">
@@ -58,6 +57,17 @@
 
     </div>
 
+    <audio id="aud_fail" preload="auto">
+        <source src="/static/audio/fail.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="aud_podium" preload="auto">
+        <source src="/static/audio/podium.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="aud_clock" preload="auto">
+        <source src="/static/audio/clock.mp3" type="audio/mpeg">
+    </audio>
 
 </body>
 
@@ -79,6 +89,8 @@
         let answerNotification = jQ('#correctAnswer');
         let answerTxt= jQ('#correctAnswerTxt');
         let updateArea = jQ('#volatile');
+        let audClock = document.querySelector('#aud_clock');
+
         let update = function () {
             content = jQ('#leaderboardContent .vstack', opener.document);
             updateArea.empty().append(content[0].outerHTML);
@@ -112,7 +124,12 @@
             if (animChainTimer) {
                 closeOtherDisplays();
             }
-            failNotification.fadeIn(()=> {questionFailedOpen = true});
+            failNotification.fadeIn(()=> {
+                if (parentWindow.getSoundEffectsEnabled()) {
+                    document.querySelector('#aud_fail').play();
+                }
+                questionFailedOpen = true
+            });
             animChainTimer = setTimeout(function () {
                 failNotification.fadeOut(400, function () {
                     showAnswer(template, correctAnswer, null, wordSearchWord);
@@ -148,6 +165,9 @@
                 let temp = jQ(template);
                 gameoverPodium.empty().append(temp.children());
             }).removeClass('hidden');
+            if (parentWindow.getSoundEffectsEnabled()) {
+                document.querySelector('#aud_podium').play();
+            }
         }
 
         function updateScoreboardTimer (template) {
@@ -180,13 +200,33 @@
             if (animChainTimer) {
                 closeOtherDisplays();
             }
+
+            if (parentWindow.getSoundEffectsEnabled()) {
+                audClock.play();
+                audClock.addEventListener('ended', _restartClockSound, false);
+            }
+
             jQ('#answerTimer').fadeIn().one('animationend', function () {
+                stopClockSound();
                 jQ('#answerTimer').hide().removeClass('active');
                 parentWindow.timerEnded();
             }).addClass('active');
         }
 
+        function _restartClockSound() {
+            if (parentWindow.getSoundEffectsEnabled()) {
+                audClock.play();
+            }
+        }
+
+        function stopClockSound() {
+            audClock.removeEventListener("ended", _restartClockSound);
+            audClock.pause();
+            audClock.currentTime = 0;
+        }
+
         function resetTimer() {
+            stopClockSound();
             jQ('#answerTimer').hide().off('animationend').removeClass('active');
         }
 
@@ -196,9 +236,16 @@
             }
         }
 
+        function stopAudio() {
+            stopClockSound();
+            document.querySelector('#aud_fail').pause();
+            document.querySelector('#aud_podium').pause();
+        }
+
         window.bikkr = {
             resetScoreboard: resetScoreboard,
-            startTimer: startTimer
+            startTimer: startTimer,
+            stopAudio: stopAudio
         }
 
 

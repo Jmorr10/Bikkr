@@ -53,6 +53,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 	let answerTimerLength = 10;
 	let studentsPlaySound = false;
 	let disableMainSound = false;
+	let soundEffectsEnabled = true;
 	let randomizeVowelLabels = false;
 	let randomizeVowelPositions = false;
 	let wordSearchModeEnabled = false;
@@ -244,6 +245,13 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 
 	function setDisableMainSound(val) {
 		disableMainSound = val;
+	}
+
+	function setSoundEffects(val) {
+		soundEffectsEnabled = val;
+		if (!val) {
+			scoreboard.bikkr.stopAudio();
+		}
 	}
 
 	function toggleVowelLabel(listID, itemID, enabled) {
@@ -484,11 +492,16 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 		socket.emit(Events.FORCE_QUESTION_FINISHED, roomID);
 	}
 
+	function getSoundEffectsEnabled() {
+		return soundEffectsEnabled;
+	}
+
 	window.getParentConnection = function () {
 		return {
 			socket: socket,
 			getTimer: getTimer,
 			getTimerEnabled: getTimerEnabled,
+			getSoundEffectsEnabled: getSoundEffectsEnabled,
 			timerEnded: timerEnded,
 			VOWEL_LABELS: vowelLabels
 		};
@@ -499,6 +512,7 @@ define(['jquery', 'app/player', 'app/render_manager', 'event_types'],
 		kickPlayer: kickPlayer,
 		setStudentsPlaySound: setStudentsPlaySound,
 		setDisableMainSound: setDisableMainSound,
+		setSoundEffects: setSoundEffects,
 		toggleVowelLabel: toggleVowelLabel,
         setRandomizeVowelLabels: setRandomizeVowelLabels,
 		setRandomizeVowelPositions: setRandomizeVowelPositions,

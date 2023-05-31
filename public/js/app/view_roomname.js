@@ -84,7 +84,7 @@ define(['jquery', 'nosleep', 'app/player', 'app/view_room_options', 'app/view_us
 		let roomname = roomNameField.val();
 		if (roomname && roomname !== '') {
 			let event = (player.isTeacher) ? Events.NEW_ROOM : Events.JOIN_ROOM;
-			socket.emit(event, roomname);
+			socket.emit(event, roomname, true);
 		} else {
 			setError(Messages.ERR_NO_ROOMNAME);
 		}
@@ -99,7 +99,8 @@ define(['jquery', 'nosleep', 'app/player', 'app/view_room_options', 'app/view_us
 		if (player.isTeacher) {
 			roomOptions.start(roomID);
 		} else {
-			username.start(roomID);
+			//roomID, isNormalFlow
+			username.start(roomID, true);
 		}
 	}
 

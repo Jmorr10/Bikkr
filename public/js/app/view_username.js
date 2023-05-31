@@ -45,18 +45,18 @@ define(['jquery', 'app/view_group_selection', 'app/view_sound_grid_student', 'ap
 
 	const ERR_NO_USERNAME = 'Please enter a username to begin!';
 	
-	function start(rID) {
+	function start(rID, isNormalFlow) {
 		player = Player.getPlayer();
 		roomID = rID;
         submitBtn = jQ('#submitUsername');
         usernameField = jQ('#username');
         errorLbl = jQ('.error-lbl');
 
-		submitBtn.click(signIn);
+		submitBtn.click(signIn.bind(null, isNormalFlow));
 
 		usernameField.keypress(function (e) {
             if (e.which === 13) {
-                signIn();
+                signIn(isNormalFlow);
             }
         });
 
@@ -64,10 +64,18 @@ define(['jquery', 'app/view_group_selection', 'app/view_sound_grid_student', 'ap
 	}
 
 
-	function signIn () {
+	function signIn (isNormalFlow) {
+
+		if (!isNormalFlow) {
+			const soundContainer = new Audio();
+			soundContainer.autoplay = true;
+			soundContainer.src = "data:audio/mpeg;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaWdTb3VuZEJhbmsuY29tIC8gTGFTb25vdGhlcXVlLm9yZwBURU5DAAAAHQAAA1N3aXRjaCBQbHVzIMKpIE5DSCBTb2Z0d2FyZQBUSVQyAAAABgAAAzIyMzUAVFNTRQAAAA8AAANMYXZmNTcuODMuMTAwAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV";
+			Player.setSoundElement(soundContainer);
+		}
+
 		let username = usernameField.val();
 		if (username && username !== '') {
-			socket.emit(Events.SET_USERNAME, roomID, username);
+			socket.emit(Events.SET_USERNAME, roomID, username, true);
 		} else {
 			setError(ERR_NO_USERNAME);
 		}
