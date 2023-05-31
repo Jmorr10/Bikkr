@@ -5,13 +5,16 @@
     <button id="joinBtn" class="btn btn-bkr-confirm mx-auto mt-4">{{INT_MESSAGES.JOIN}}</button>
 
     <script>
-        require(['jquery', 'app/player'], function (jQ, Player) {
+        require(['jquery', 'app/player', 'nosleep'], function (jQ, Player, NoSleep) {
             jQ('#joinBtn').click(function (e) {
                 const soundContainer = new Audio();
                 soundContainer.autoplay = true;
                 soundContainer.src = "data:audio/mpeg;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaWdTb3VuZEJhbmsuY29tIC8gTGFTb25vdGhlcXVlLm9yZwBURU5DAAAAHQAAA1N3aXRjaCBQbHVzIMKpIE5DSCBTb2Z0d2FyZQBUSVQyAAAABgAAAzIyMzUAVFNTRQAAAA8AAANMYXZmNTcuODMuMTAwAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV";
                 Player.setSoundElement(soundContainer);
                 jQ('#join-interstitial').remove();
+
+                let noSleepInstance = new NoSleep("BIKKR");
+                noSleepInstance.enable();
             });
         });
     </script>

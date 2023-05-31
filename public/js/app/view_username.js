@@ -33,8 +33,8 @@
  * @version 1.0
  * @since 1.0
  */
-define(['jquery', 'app/view_group_selection', 'app/view_sound_grid_student', 'app/player', 'app/render_manager', 'event_types'],
-	function (jQ, groupSelection, soundGridStudent, Player, render_manager, Events) {
+define(['jquery', 'nosleep', 'app/view_group_selection', 'app/view_sound_grid_student', 'app/player', 'app/render_manager', 'event_types'],
+	function (jQ, NoSleep, groupSelection, soundGridStudent, Player, render_manager, Events) {
 
 	const socket = Player.getConnection();
 	let player;
@@ -71,6 +71,10 @@ define(['jquery', 'app/view_group_selection', 'app/view_sound_grid_student', 'ap
 			soundContainer.autoplay = true;
 			soundContainer.src = "data:audio/mpeg;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaWdTb3VuZEJhbmsuY29tIC8gTGFTb25vdGhlcXVlLm9yZwBURU5DAAAAHQAAA1N3aXRjaCBQbHVzIMKpIE5DSCBTb2Z0d2FyZQBUSVQyAAAABgAAAzIyMzUAVFNTRQAAAA8AAANMYXZmNTcuODMuMTAwAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV";
 			Player.setSoundElement(soundContainer);
+
+			let noSleepInstance = new NoSleep("BIKKR");
+			noSleepInstance.enable();
+
 		}
 
 		let username = usernameField.val();
